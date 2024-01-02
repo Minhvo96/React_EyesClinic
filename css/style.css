@@ -8189,9 +8189,9 @@ h1, h2, h3, h4, h5,
         display: none; } }
 
 .form-control {
-  height: 52px !important;
-  background: #fff !important;
-  color: #000 !important;
+  height: 52px ;
+  background: #fff;
+  color: #000;
   font-size: 16px;
   border-radius: 0px;
   padding-right: 0;
