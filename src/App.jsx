@@ -13,8 +13,6 @@ import Patient from './components/dashboard/Patient';
 
 
 function App() {
-
-
   return (
     <>
       <BrowserRouter>
