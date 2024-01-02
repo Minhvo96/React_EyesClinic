@@ -45,16 +45,16 @@ export default function Sidebar() {
                             <span className="hide-menu">PATIENTS</span>
                         </li>
                         <li className="sidebar-item">
-                            <a
-                                className="sidebar-link"
-                                href="./ui-buttons.html"
-                                aria-expanded="false"
-                            >
-                                <span>
-                                    <i className="ti ti-users" />
-                                </span>
-                                <span className="hide-menu">Patients</span>
-                            </a>
+                            <Link to='/patient'>
+                                <a
+                                    className="sidebar-link"
+                                >
+                                    <span>
+                                        <i className="ti ti-users" />
+                                    </span>
+                                    <span className="hide-menu">Patients</span>
+                                </a>
+                            </Link>                           
                         </li>
                         <li className="sidebar-item">
                             <a

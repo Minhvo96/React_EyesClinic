@@ -9,6 +9,7 @@ import History from './components/history/History';
 import WaitingList from './components/waitingList/WaitingList';
 import Doctor from './doctorComponents/Doctor';
 import Dashboard from './components/dashboard/Dashboard';
+import Patient from './components/dashboard/Patient';
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
           <Route path='/waitinglist' element={<WaitingList />} />
           <Route path='/doctor' element={<Doctor />} />
           <Route path='/dashboard' element={<Dashboard/>} />
+          <Route path='/patient' element={<Patient/>} />
         </Routes>
       
       </BrowserRouter>
