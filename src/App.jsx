@@ -5,16 +5,11 @@ import Register from './components/login_register/Register';
 import Login from './components/login_register/Login';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import PageServices from './components/services/PageServices';
-import UseEffectForRender from './UseEffect';
 import History from './components/history/History';
 import WaitingList from './components/waitingList/WaitingList';
 import Doctor from './doctorComponents/Doctor';
 
 function App() {
-
-  useEffect(() => {
-    UseEffectForRender()
-  }, []);
 
   return (
     <>
