@@ -1,12 +1,23 @@
 import Header from "./Header";
 import Sidebar from "./Sidebar";
+// import '../../../src/assets/css/styles.min.css';
+import { useEffect } from "react";
 
 export default function Dashboard() {
+
+    // useEffect(() => {
+    //     const script = document.createElement('script');
+    //     script.src = '../../../src/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js';
+    //     script.async = true;
+    //     document.body.appendChild(script);
+    //   }, []);
+
+
     return (
         <>
             {/*  Body Wrapper */}
             <div
-                className="page-wrapper"
+                className='page-wrapper'
                 id="main-wrapper"
                 data-layout="vertical"
                 data-navbarbg="skin6"

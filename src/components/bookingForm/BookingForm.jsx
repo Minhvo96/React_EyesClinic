@@ -103,7 +103,6 @@ export default function BookingForm() {
                                         <input
                                             type="date"
                                             className="form-control"
-
                                         />
                                     </div>
                                 </div>
@@ -125,7 +124,6 @@ export default function BookingForm() {
                                             }
                                         </select>
                                     </div>
-
                                 </div>
 
                                 <div className="col-sm-6">
