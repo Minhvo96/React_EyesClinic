@@ -7,10 +7,11 @@ export default function Dashboard() {
 
     addStyleDashboard();
 
+
     return (
         <>
             <div
-                className="page-wrapper"
+                className='page-wrapper'
                 id="main-wrapper"
                 data-layout="vertical"
                 data-navbarbg="skin6"

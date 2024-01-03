@@ -19,7 +19,7 @@ export default function NavbarDoctor() {
                 <div className='col-5 d-flex justify-content-end'>
                     <i className="fa-regular fa-circle-question mt-3" style={{ fontSize: 30, marginRight: '20px' }} />
                     <i className="fa-regular fa-bell mt-3" style={{ fontSize: 30, marginRight: '20px' }} />
-                    <div className="dropdown" style={{ fontSize: '10px' }}>
+                    <div className="dropdown" style={{ fontSize: '15px' }}>
                         <div className="btn" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false" style={{ borderRadius: '0' }}>
                             <div className='d-flex align-items-center'>
                                 <img className='rounded-circle' src='images/BSMinh2.jpg' style={{ width: 50, height: 'auto', marginRight: '10px' }} />
