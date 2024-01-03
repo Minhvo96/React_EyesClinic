@@ -1,10 +1,14 @@
+import { useEffect, useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
+import addStyleDashboard from "../../AddStyleDashboard";
 
 export default function Dashboard() {
+
+    addStyleDashboard();
+
     return (
         <>
-            {/*  Body Wrapper */}
             <div
                 className="page-wrapper"
                 id="main-wrapper"
@@ -14,16 +18,9 @@ export default function Dashboard() {
                 data-sidebar-position="fixed"
                 data-header-position="fixed"
             >
-                {/* Sidebar Start */}
                 <Sidebar />
-                {/*  Sidebar End */}
-                {/*  Main wrapper */}
                 <div className="body-wrapper">
-
-                    {/*  Header Start */}
                     <Header />
-                    {/*  Header End */}
-
                     <div className="container-fluid">
                         {/*  Row 1 */}
                         <div className="row">
@@ -334,9 +331,8 @@ export default function Dashboard() {
                                 </div>
                             </div>
                         </div>
-                        
-                    </div>
 
+                    </div>
                 </div>
             </div>
         </>

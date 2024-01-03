@@ -9,6 +9,7 @@ import AboutDoctor from './aboutDoctor/AboutDoctor'
 import UseEffectForRender from '../UseEffect'
 
 export default function Home() {
+
     useEffect(() => {
         UseEffectForRender()
     }, []);
