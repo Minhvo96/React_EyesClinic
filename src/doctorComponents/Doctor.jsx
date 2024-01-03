@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import patientService from '../services/bookingServices';
 import medicineService from '../services/medicineService';
 import NavbarDoctor from './NavbarDoctor';
-
+import medicinePrescriptionService from '../services/medicinePrescriptionService';
 
 export default function Doctor() {
     const [patientInfo, setPatientInfo] = useState([]);
     const [medicines, setMedicines] = useState([]);
     const [diseases, setDiseases] = useState([]);
+
+    const [selectedMedicines, setSelectedMedicines] = useState([]);
+    const [quantityInput, setQuantityInput] = useState({});
+    const [usingMedicine, setUsingMedicine] = useState({});
+    const [medicineStatus, setMedicineStatus] = useState(false);
+    const [diagnoseInputs, setDiagnoseInputs] = useState();
+
+    const [prescription, setPrescription] = useState();
+    // const [medicinePrescription, setMedicinePrescription] = useState();
 
     const getPatientInfo = async () => {
         const data = await patientService.getPatientInfo();
@@ -23,13 +31,59 @@ export default function Doctor() {
     const handleAddDisease = () => {
         const sideDisease = document.getElementsByClassName('side-disease');
         const sideDiseaseArray = Array.from(sideDisease);
-        
+
         const checkedCheckboxes = sideDiseaseArray.filter(checkbox => checkbox.checked);
         const checkboxesValues = checkedCheckboxes.map(item => item.value);
 
         setDiseases(checkboxesValues);
     }
 
+    const handleChangeMedicine = (id, nameMedicine, stockQuantity) => {
+        const isSelected = selectedMedicines.some(medicine => medicine.id === id);
+
+        if (isSelected) {
+            const updatedMedicines = selectedMedicines.filter(medicine => medicine.id !== id);
+            setSelectedMedicines(updatedMedicines);
+        } else {
+            setSelectedMedicines([...selectedMedicines, { id, nameMedicine, stockQuantity, quantity: quantityInput[id] || '', usingMedicine: usingMedicine[id] || '' }]);
+        }
+    };
+
+    const handleQuantityInputChange = (e, id) => {
+        const updatedInputs = { ...quantityInput, [id]: e.target.value };
+        setQuantityInput(updatedInputs);
+
+        const updatedMedicines = selectedMedicines.filter(medicine => medicine.id == id);
+        const updatedMedicine = updatedMedicines[0];
+
+        const index = selectedMedicines.findIndex(medicine => medicine.id == id);
+
+        const updateNewMedicine = { ...updatedMedicine, quantity: updatedInputs[id] };
+        const newSelectedMedicines = [...selectedMedicines];
+        newSelectedMedicines[index] = updateNewMedicine;
+
+        setSelectedMedicines([...newSelectedMedicines]);
+    }
+
+    const handleUsingMedicine = (e, id) => {
+        const updatedInputs = { ...usingMedicine, [id]: e.target.value };
+        setUsingMedicine(updatedInputs);
+
+        const updatedMedicines = selectedMedicines.filter(medicine => medicine.id == id);
+        const updatedMedicine = updatedMedicines[0];
+
+        const index = selectedMedicines.findIndex(medicine => medicine.id == id);
+
+        const updateNewMedicine = {...updatedMedicine, usingMedicine: updatedInputs[id]};
+        const newSelectedMedicines = [...selectedMedicines];
+        newSelectedMedicines[index] = updateNewMedicine;
+
+        setSelectedMedicines([...newSelectedMedicines]);
+    }
+
+    const handleAddMedicines = () => {
+        setMedicineStatus(true);
+    }
 
     useEffect(() => {
         getPatientInfo();
@@ -37,8 +91,40 @@ export default function Doctor() {
     }, [])
 
     useEffect(() => {
-        console.log(diseases);
-    }, [diseases])
+        console.log(prescription);
+        console.log(patientInfo);
+    }, [prescription])
+
+
+    const handleChangePrescription = (e) => {
+        setDiagnoseInputs({
+            ...diagnoseInputs,
+            [e.target.name] : e.target.value
+        })
+    }
+
+    const handleAddPrescription = async () => {
+        const idsMedicine = selectedMedicines.map(item => ({
+            id: String(item.id),
+            quantity: item.quantity,
+            usingMedicine: item.usingMedicine
+        }))
+
+        setPrescription({
+            idBooking: String(patientInfo[0].id),
+            idDoctor: "1",
+            eyeSight: diagnoseInputs.leftEye + ', ' + diagnoseInputs.rightEye,
+            diagnose: diagnoseInputs.diagnose,
+            note: diagnoseInputs.note,
+            idsMedicine: idsMedicine
+        })
+        await medicinePrescriptionService.createMedicinePrescription(prescription);
+
+        const booking = await patientService.getById(patientInfo[0].id);
+        const newBooking = {...booking, status: 'WAITPAY'};
+
+        await patientService.updatePatientInfo(newBooking.id, newBooking);
+    }
 
 
     return (
@@ -48,11 +134,11 @@ export default function Doctor() {
             <div className='container-fluid mt-4 d-flex'>
                 <div className='col-2'>
                     <ul className="list-group">
-                        <li className="list-group-item" > <i className="fa-solid fa-capsules" /> Thuốc</li>
-                        <li className="list-group-item" > <i className="fa-solid fa-notes-medical" /> Hồ sơ bệnh án </li>
-                        <li className="list-group-item" > <i className="fa-solid fa-stethoscope" /> Lịch khám</li>
-                        <li className="list-group-item" > <i className="fa-regular fa-eye" /> Dịch vụ mắt</li>
-                        <li className="list-group-item" > <i className="fa-solid fa-heart-circle-plus" /> Quản lý</li>
+                        <li className="list-group-item p-4" > <i className="fa-solid fa-capsules" /> Thuốc</li>
+                        <li className="list-group-item p-4" > <i className="fa-solid fa-notes-medical" /> Hồ sơ bệnh án </li>
+                        <li className="list-group-item p-4" > <i className="fa-solid fa-stethoscope" /> Lịch khám</li>
+                        <li className="list-group-item p-4" > <i className="fa-regular fa-eye" /> Dịch vụ mắt</li>
+                        <li className="list-group-item p-4" > <i className="fa-solid fa-heart-circle-plus" /> Quản lý</li>
                     </ul>
                 </div>
                 <div className='col-7'>
@@ -61,13 +147,13 @@ export default function Doctor() {
                         <div className="col-6">
                             <label htmlFor="basic-url" className="form-label">Mắt trái :</label>
                             <div className="input-group mb-3">
-                                <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder='.../10' />
+                                <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder='.../10' name="leftEye" onChange={handleChangePrescription} />
                             </div>
                         </div>
                         <div className="col-6">
                             <label htmlFor="basic-url" className="form-label">Mắt phải :</label>
                             <div className="input-group mb-3">
-                                <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder='.../10' />
+                                <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder='.../10' name="rightEye" onChange={handleChangePrescription} />
                             </div>
                         </div>
                     </div>
@@ -75,7 +161,7 @@ export default function Doctor() {
                         <div className="col-6">
                             <label htmlFor="basic-url" className="form-label">Chẩn đoán bệnh :</label>
                             <div className="input-group mb-3">
-                                <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder='...' />
+                                <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder='...' name="diagnose" onChange={handleChangePrescription} />
                             </div>
                         </div>
                         <div className="col-6">
@@ -88,20 +174,19 @@ export default function Doctor() {
                     <label htmlFor="basic-url" className="form-label">Bệnh phụ :</label>
                     <div className='d-flex'>
                         <div className="form-check mr-5">
-                            <input className="side-disease" type="checkbox" value="Bệnh tiểu đường" id="flexCheckDefault" onClick={handleAddDisease} />
+                            <input className="form-check-input side-disease" type="checkbox" value="Bệnh tiểu đường" id="flexCheckDefault" onClick={handleAddDisease} />
                             <label className="form-check-label" htmlFor="flexCheckDefault">
                                 Bệnh tiểu đường
                             </label>
-
                         </div>
                         <div className="form-check mr-5">
-                            <input className="side-disease" type="checkbox" value="Bệnh tim mạch" id="flexCheckChecked" onClick={handleAddDisease} />
+                            <input className="form-check-input side-disease" type="checkbox" value="Bệnh tim mạch" id="flexCheckChecked" onClick={handleAddDisease} />
                             <label className="form-check-label" htmlFor="flexCheckChecked">
                                 Bệnh tim mạch
                             </label>
                         </div>
                         <div className="form-check mr-5">
-                            <input className="side-disease" type="checkbox" value="Các loại dị ứng" id="flexCheckChecked" onClick={handleAddDisease} />
+                            <input className="form-check-input side-disease" type="checkbox" value="Các loại dị ứng" id="flexCheckChecked" onClick={handleAddDisease} />
                             <label className="form-check-label" htmlFor="flexCheckChecked">
                                 Các loại dị ứng
                             </label>
@@ -111,16 +196,38 @@ export default function Doctor() {
                         <div className="col-12">
                             <label htmlFor="basic-url" className="form-label">Ghi chú :</label>
                             <div className="input-group mb-3">
-                                <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder='...' />
+                                <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder='...' name="note" onChange={handleChangePrescription} />
                             </div>
                         </div>
                     </div>
+                    <table className="table text-center">
+                        {medicineStatus && (
+                            <thead className="thead-dark">
+                                <tr>
+                                    <th scope="col">STT</th>
+                                    <th scope="col">Tên thuốc</th>
+                                    <th scope="col">Số lượng</th>
+                                    <th scope="col">Cách dùng</th>
+                                </tr>
+                            </thead>
+                        )}
+                        <tbody>
+                            {medicineStatus && selectedMedicines.map((selectedMedicine, index) => (
+                                <tr key={index}>
+                                    <th scope="row">{index + 1}</th>
+                                    <td>{selectedMedicine.nameMedicine}</td>
+                                    <td>{selectedMedicine.quantity}</td>
+                                    <td>{selectedMedicine.usingMedicine}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                     <button type="button" className="btn btn-secondary rounded-0 py-3 px-5" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         Chọn thuốc
                     </button>
                     <div className='d-flex row mt-4 justify-content-end'>
                         <div>
-                            <button type="button" className="btn btn-primary rounded-0">Lưu bệnh án</button>
+                            <button type="button" className="btn btn-primary rounded-0" onClick={handleAddPrescription}>Lưu bệnh án</button>
                             <button type="button" className="btn btn-danger ml-2 rounded-0">Hủy thao tác</button>
                         </div>
                     </div>
@@ -129,7 +236,7 @@ export default function Doctor() {
                     <h3>Thông tin bệnh nhân</h3>
                     <div className='text-center'>
                         <img src='images/BSMinh2.jpg' style={{ width: 150, borderRadius: '50%' }} />
-                        <p style={{ fontWeight: 'bold' }} readOnly>{patientInfo.length > 0 ? patientInfo[0].customer.user.fullName + ', ' + patientInfo[0].customer.age : ''}</p>
+                        <p style={{ fontWeight: 'bold' }} readOnly>{patientInfo.length > 0 ? patientInfo[0].customer.user.fullName + ', ' + patientInfo[0].customer.age + ' tuổi' : ''}</p>
                     </div>
                     <div>
                         <label htmlFor="basic-url" className="form-label">Số điện thoại:</label>
@@ -165,17 +272,22 @@ export default function Doctor() {
                                             <th data-field="state" data-checkbox="true"></th>
                                             <th className="col-xs-4" data-field="Medicine" data-sortable="true">Tên thuốc</th>
                                             <th className="col-xs-4" data-field="Quantity" data-sortable="true">Số lượng kê đơn</th>
-                                            <th className="col-xs-4" data-field="QuantityStock">Trong kho</th>
+                                            <th className="col-xs-4" data-field="QuantityStock">Cách dùng</th>
                                         </tr>
                                     </thead>
                                     <tbody className='text-center'>
                                         {
                                             medicines.map(medicine =>
                                                 <tr className="tr-class-2" key={medicine.id}>
-                                                    <td><input type="checkbox" /></td>
-                                                    <td style={{ width: '33.33%' }} value={medicine.nameMedicine}>{medicine.nameMedicine}</td>
-                                                    <td style={{ width: '33.33%' }}><input type="text" className='form-control text-center' /></td>
-                                                    <td style={{ width: '33.33%' }} className='text-center' value={medicine.stockQuantity}>{medicine.stockQuantity}</td>
+                                                    <td><input type="checkbox" onChange={() => handleChangeMedicine(medicine.id, medicine.nameMedicine, medicine.stockQuantity)} /></td>
+                                                    <td style={{ width: '33.33%' }}>{medicine.nameMedicine}</td>
+                                                    <td style={{ width: '33.33%' }}><input type="text" className='form-control text-center'
+                                                        onChange={(e) => handleQuantityInputChange(e, medicine.id)} />
+                                                    </td>
+                                                    <td style={{ width: '33.33%' }}><input type="text" className='form-control text-center'
+                                                        onChange={(e) => handleUsingMedicine(e, medicine.id)} />
+                                                    </td>
+                                                    {/* <td style={{ width: '33.33%' }} className='text-center'>{medicine.stockQuantity}</td> */}
                                                 </tr>
                                             )
                                         }
@@ -185,7 +297,7 @@ export default function Doctor() {
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal">Thêm thuốc</button>
+                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleAddMedicines}>Thêm thuốc</button>
                         </div>
                     </div>
                 </div>
