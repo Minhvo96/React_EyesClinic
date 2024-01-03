@@ -1,21 +1,15 @@
+import { useEffect, useState } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
-// import '../../../src/assets/css/styles.min.css';
-import { useEffect } from "react";
+import addStyleDashboard from "../../AddStyleDashboard";
 
 export default function Dashboard() {
 
-    // useEffect(() => {
-    //     const script = document.createElement('script');
-    //     script.src = '../../../src/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js';
-    //     script.async = true;
-    //     document.body.appendChild(script);
-    //   }, []);
+    addStyleDashboard();
 
 
     return (
         <>
-            {/*  Body Wrapper */}
             <div
                 className='page-wrapper'
                 id="main-wrapper"
@@ -25,16 +19,9 @@ export default function Dashboard() {
                 data-sidebar-position="fixed"
                 data-header-position="fixed"
             >
-                {/* Sidebar Start */}
                 <Sidebar />
-                {/*  Sidebar End */}
-                {/*  Main wrapper */}
                 <div className="body-wrapper">
-
-                    {/*  Header Start */}
                     <Header />
-                    {/*  Header End */}
-
                     <div className="container-fluid">
                         {/*  Row 1 */}
                         <div className="row">
@@ -345,9 +332,8 @@ export default function Dashboard() {
                                 </div>
                             </div>
                         </div>
-                        
-                    </div>
 
+                    </div>
                 </div>
             </div>
         </>

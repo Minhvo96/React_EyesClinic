@@ -63,11 +63,11 @@ export default function Header() {
             <li className="nav-item dropdown">
               <a
                 className="nav-link nav-icon-hover"
-                href="javascript:void(0)"
                 id="user-profile"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
                 onClick={() => showDropdownMenu()}
+                style={{cursor:'pointer'}}
               >
                 <img
                   src="../../src/assets/images/profile/user-1.jpg"
