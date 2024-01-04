@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 
 const addStyleDashboard = () => {
-
-
-  
-    
     useEffect(() => {
 
       console.log('useEffect');

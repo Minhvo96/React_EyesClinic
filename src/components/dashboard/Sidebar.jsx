@@ -42,7 +42,7 @@ export default function Sidebar() {
                         </li>
                         <li className="nav-small-cap">
                             <i className="ti ti-dots nav-small-cap-icon fs-4" />
-                            <span className="hide-menu">PATIENTS</span>
+                            <span className="hide-menu">Bệnh nhân</span>
                         </li>
                         <li className="sidebar-item">
                             <Link to='/patient'>
