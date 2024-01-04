@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import patientService from '../services/bookingServices';
+import bookingService from '../services/bookingServices';
 import medicineService from '../services/medicineService';
 import NavbarDoctor from './NavbarDoctor';
 import medicinePrescriptionService from '../services/medicinePrescriptionService';
 
 export default function Doctor() {
-    const [patientInfo, setPatientInfo] = useState([]);
+    const [patientInfo, setPatientInfo] = useState({});
     const [medicines, setMedicines] = useState([]);
     const [diseases, setDiseases] = useState([]);
 
@@ -19,8 +19,9 @@ export default function Doctor() {
     // const [medicinePrescription, setMedicinePrescription] = useState();
 
     const getPatientInfo = async () => {
-        const data = await patientService.getPatientInfo();
-        setPatientInfo(data);
+        const data = await bookingService.getBookingByStatus();
+        console.log(data);
+        setPatientInfo(data);   
     }
 
     const getAllMedicines = async () => {
@@ -111,7 +112,7 @@ export default function Doctor() {
         }))
 
         setPrescription({
-            idBooking: String(patientInfo[0].id),
+            idBooking: String(patientInfo.id),
             idDoctor: "1",
             eyeSight: diagnoseInputs.leftEye + ', ' + diagnoseInputs.rightEye,
             diagnose: diagnoseInputs.diagnose,
@@ -119,11 +120,15 @@ export default function Doctor() {
             idsMedicine: idsMedicine
         })
         await medicinePrescriptionService.createMedicinePrescription(prescription);
+        console.log(patientInfo.id);
 
-        const booking = await patientService.getById(patientInfo[0].id);
-        const newBooking = {...booking, status: 'WAITPAY'};
+        const booking = await bookingService.getBookingById(patientInfo.id);
+        console.log(booking);
+        const newBooking = {idEyeCategory: String(booking.eyeCategory.id), idCustomer: String(booking.customer.id), timeBooking: booking.timeBooking, dateBooking: booking.dateBooking, status: 'UNPAID'};
 
-        await patientService.updatePatientInfo(newBooking.id, newBooking);
+        console.log(newBooking);
+
+        await bookingService.editBooking(newBooking, booking.id);
     }
 
 
@@ -167,7 +172,7 @@ export default function Doctor() {
                         <div className="col-6">
                             <label htmlFor="basic-url" className="form-label">Dịch vụ :</label>
                             <div className="input-group mb-3">
-                                <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" value={patientInfo.length > 0 ? patientInfo[0].services.name : ''} readOnly />
+                                <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" value={patientInfo?.eyeCategory?.nameCategory} readOnly />
                             </div>
                         </div>
                     </div>
@@ -236,24 +241,24 @@ export default function Doctor() {
                     <h3>Thông tin bệnh nhân</h3>
                     <div className='text-center'>
                         <img src='images/BSMinh2.jpg' style={{ width: 150, borderRadius: '50%' }} />
-                        <p style={{ fontWeight: 'bold' }} readOnly>{patientInfo.length > 0 ? patientInfo[0].customer.user.fullName + ', ' + patientInfo[0].customer.age + ' tuổi' : ''}</p>
+                        <p style={{ fontWeight: 'bold' }} readOnly>{patientInfo?.customer?.user?.fullName + ', ' + patientInfo?.customer?.age + ' tuổi'}</p>
                     </div>
                     <div>
                         <label htmlFor="basic-url" className="form-label">Số điện thoại:</label>
                         <div className="input-group mb-3">
-                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo.length > 0 ? patientInfo[0].customer.user.phoneNumber : ''} />
+                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo?.customer?.user?.phoneNumber} />
                         </div>
                         <label htmlFor="basic-url" className="form-label">Địa chỉ:</label>
                         <div className="input-group mb-3">
-                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo.length > 0 ? patientInfo[0].customer.user.address : ''} />
+                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo?.customer?.user?.address} />
                         </div>
                         <label htmlFor="basic-url" className="form-label">Ngày đến khám:</label>
                         <div className="input-group mb-3">
-                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo.length > 0 ? patientInfo[0].dateBooking : ''} />
+                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo?.dateBooking} />
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> 
 
 
             {/* <// Modal --> */}

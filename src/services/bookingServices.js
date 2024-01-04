@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const URL_API = 'https://json-server-five-mu.vercel.app/booking';
-const patientService = {
-    getPatientInfo: async () => {
+const URL_API = 'http://localhost:8080/api/booking';
+const bookingService = {
+    getAllBookings: async () => {
         return axios
             .get(URL_API)
             .then((response) => {
@@ -12,9 +12,9 @@ const patientService = {
                 console.log(error);
             });
     },
-    updatePatientInfo: async (id, obj) => {
+    createBooking: async (obj) => {
         return axios
-            .patch(URL_API + '/' + id, obj)
+            .post(URL_API, obj)
             .then((response) => {
                 return response.data;
             })
@@ -22,7 +22,27 @@ const patientService = {
                 console.log(error);
             });
     },
-    getById: async (id) => {
+    editBooking: async (obj, id) => {
+        return axios
+            .put(URL_API + '/' + id, obj)
+            .then((response) => {
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    },
+    deleteBooking: async (id) => {
+        return axios
+            .delete(URL_API + '/' + id)
+            .then((response) => {
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    },
+    getBookingById: async (id) => {
         return axios
             .get(URL_API + '/' + id)
             .then((response) => {
@@ -31,9 +51,19 @@ const patientService = {
             .catch((error) => {
                 console.log(error);
             });
-    }
+    },
+    getBookingByStatus: async () => {
+        return axios
+            .get(URL_API + '/examining')
+            .then((response) => {
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    },
 
 
 }
 
-export default patientService;
+export default bookingService;
