@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import patientService from '../services/bookingServices';
+import bookingService from '../services/bookingServices';
 import medicineService from '../services/medicineService';
 import NavbarDoctor from './NavbarDoctor';
 import medicinePrescriptionService from '../services/medicinePrescriptionService';
 
 export default function Doctor() {
-    const [patientInfo, setPatientInfo] = useState([]);
+    const [patientInfo, setPatientInfo] = useState({});
     const [medicines, setMedicines] = useState([]);
     const [diseases, setDiseases] = useState([]);
 
@@ -19,7 +19,7 @@ export default function Doctor() {
     // const [medicinePrescription, setMedicinePrescription] = useState();
 
     const getPatientInfo = async () => {
-        const data = await patientService.getPatientInfo();
+        const data = await bookingService.getBookingByStatus();
         console.log(data);
         setPatientInfo(data);   
     }
@@ -112,7 +112,7 @@ export default function Doctor() {
         }))
 
         setPrescription({
-            idBooking: String(patientInfo[0].id),
+            idBooking: String(patientInfo.id),
             idDoctor: "1",
             eyeSight: diagnoseInputs.leftEye + ', ' + diagnoseInputs.rightEye,
             diagnose: diagnoseInputs.diagnose,
@@ -120,11 +120,15 @@ export default function Doctor() {
             idsMedicine: idsMedicine
         })
         await medicinePrescriptionService.createMedicinePrescription(prescription);
+        console.log(patientInfo.id);
 
-        const booking = await patientService.getById(patientInfo[0].id);
-        const newBooking = {...booking, status: 'WAITPAY'};
+        const booking = await bookingService.getBookingById(patientInfo.id);
+        console.log(booking);
+        const newBooking = {idEyeCategory: String(booking.eyeCategory.id), idCustomer: String(booking.customer.id), timeBooking: booking.timeBooking, dateBooking: booking.dateBooking, status: 'UNPAID'};
 
-        await patientService.updatePatientInfo(newBooking.id, newBooking);
+        console.log(newBooking);
+
+        await bookingService.editBooking(newBooking, booking.id);
     }
 
 
