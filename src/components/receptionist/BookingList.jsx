@@ -113,7 +113,7 @@ export default function BookingList() {
 
     const handleUpdateBookingList = async (obj) => {
 
-        const bookingUp = await BookingApi.editBooking(obj.id, obj)
+        const bookingUp = await bookingService.editBooking(obj.id, obj)
 
         const index = bookingList.findIndex(item => item.id === bookingUp.id)
        
@@ -134,14 +134,14 @@ export default function BookingList() {
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     Swal.fire('Xóa thành công!', '', 'success')
-                    await BookingApi.deleteBooking(bookingId)
+                    await bookingService.deleteBooking(bookingId)
                     setBookingList((booking) => booking.filter((booking) => booking.id !== bookingId))
                 }
             })
     }
 
     const handleChangeStatusBooking = async (id) => {
-        const booking = await BookingApi.getBookingById(id);
+        const booking = await bookingService.getBookingById(id);
         const newBooking = {...booking,
             "status": "WAITING"
         }
@@ -184,7 +184,8 @@ export default function BookingList() {
         <>
             <div className="container mr-3" style={{position: 'fixed',
                                                             zIndex: '20',
-                                                            marginTop: '100px'
+                                                            marginTop: '100px',
+                                                            paddingRight: '50px'
                                                                             }}>
                 <div className='d-flex mb-5 align-items-center'>
                     <h6 className='mr-3'>Chọn ngày: </h6>

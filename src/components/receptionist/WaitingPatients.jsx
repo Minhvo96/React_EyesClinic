@@ -105,7 +105,7 @@ export default function WaitingPatients() {
       </div>
       {
         bookingList.length ?
-          <table className="table" style={{verticalAlign: ''}}>
+          <table className="table">
             <thead className="thead-primary">
               <tr>
                 <th>STT</th>
