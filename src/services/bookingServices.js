@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const URL_API = 'http://localhost:8080/api/booking';
+const URL_API = 'https://json-server-five-mu.vercel.app/booking';
 const patientService = {
     getPatientInfo: async () => {
         return axios
