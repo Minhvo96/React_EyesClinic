@@ -10,6 +10,10 @@ import WaitingList from './components/waitingList/WaitingList';
 import Doctor from './doctorComponents/Doctor';
 import Dashboard from './components/dashboard/Dashboard';
 import Patient from './components/dashboard/Patient';
+import Receptionist from './components/receptionist/Receptionist';
+import WaitingPay from './components/receptionist/WaitingPay';
+import BookingList from './components/receptionist/BookingList';
+import WaitingPatients from './components/receptionist/WaitingPatients';
 
 
 function App() {
@@ -26,6 +30,11 @@ function App() {
           <Route path='/doctor' element={<Doctor />} />
           <Route path='/dashboard' element={<Dashboard/>} />
           <Route path='/patient' element={<Patient/>} />
+          <Route path='/receptionist' element={<Receptionist/>}>
+            <Route path='' element={<BookingList/>}/>
+            <Route path='waiting-list' element={<WaitingPatients/>}/>
+            <Route path='waiting-pay' element={<WaitingPay/>}/>
+          </Route>
         </Routes>
       
       </BrowserRouter>
