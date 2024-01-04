@@ -83,31 +83,50 @@ export default function Sidebar() {
                     
                         <li className="nav-small-cap">
                             <i className="ti ti-dots nav-small-cap-icon fs-4" />
-                            <span className="hide-menu">STAFFS</span>
+                            <span className="hide-menu">LỄ TÂN</span>
                         </li>
                         <li className="sidebar-item">
-                            <a
+                            <Link to= '/receptionist'>
+                                <a
                                 className="sidebar-link"
                                 href="./authentication-login.html"
                                 aria-expanded="false"
                             >
                                 <span>
-                                    <i className="ti ti-nurse" />
+                                <i className="fa-solid fa-list-check fa-md"></i>
                                 </span>
-                                <span className="hide-menu">Receptionist</span>
-                            </a>
+                                <span className="hide-menu">Danh sách hẹn khám</span>
+                                </a>
+                            </Link>
                         </li>
                         <li className="sidebar-item">
+                            <Link to='/receptionist/waiting-list'>
                             <a
                                 className="sidebar-link"
                                 href="./authentication-register.html"
                                 aria-expanded="false"
                             >
                                 <span>
-                                    <i className="ti ti-stethoscope" />
+                                <i className="fa-regular fa-rectangle-list fa-md" ></i>
                                 </span>
-                                <span className="hide-menu">Doctor</span>
+                                <span className="hide-menu">Danh sách chờ khám</span>
                             </a>
+                            </Link>
+                        </li>
+                        <li className="sidebar-item">
+                            <Link to='/receptionist/waiting-pay'>
+                            <a
+                                className="sidebar-link"
+                                href="./authentication-register.html"
+                                aria-expanded="false"
+                            >
+                                <span>
+                                    
+                                    <i className="fa-solid fa-money-check-dollar fa-md"></i>
+                                </span>
+                                <span className="hide-menu">Danh sách chờ thanh toán</span>
+                            </a>
+                            </Link>
                         </li>
                         
                     </ul>
