@@ -7,7 +7,6 @@ import addStyleDashboard from "../../AddStyleDashboard";
 
 export default function Receptionist() {
 
-  console.log('Receptionist render');
   addStyleDashboard();
 
   return (
@@ -20,8 +19,6 @@ export default function Receptionist() {
     data-header-position="fixed">
 
       <Sidebar/>
-
-
       <div className="body-wrapper">
         <Header />
         <Outlet />
