@@ -94,7 +94,7 @@ const ModalHistoryExam = ({ showModal, closeModal }) => {
                                         <thead className="text-dark fs-4">
                                             <tr>
                                                 <th className="border-bottom-0">
-                                                    <h6 className="fw-semibold mb-0">Thời gian hẹn khám</h6>
+                                                    <h6 className="fw-semibold mb-0">Ngày giờ khám</h6>
                                                 </th>
                                                 <th className="border-bottom-0">
                                                     <h6 className="fw-semibold mb-0">Dịch vụ</h6>

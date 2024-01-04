@@ -20,7 +20,8 @@ export default function Doctor() {
 
     const getPatientInfo = async () => {
         const data = await patientService.getPatientInfo();
-        setPatientInfo(data);
+        console.log(data);
+        setPatientInfo(data);   
     }
 
     const getAllMedicines = async () => {
@@ -167,7 +168,7 @@ export default function Doctor() {
                         <div className="col-6">
                             <label htmlFor="basic-url" className="form-label">Dịch vụ :</label>
                             <div className="input-group mb-3">
-                                <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" value={patientInfo.length > 0 ? patientInfo[0].services.name : ''} readOnly />
+                                <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" value={patientInfo?.eyeCategory?.nameCategory} readOnly />
                             </div>
                         </div>
                     </div>
@@ -236,24 +237,24 @@ export default function Doctor() {
                     <h3>Thông tin bệnh nhân</h3>
                     <div className='text-center'>
                         <img src='images/BSMinh2.jpg' style={{ width: 150, borderRadius: '50%' }} />
-                        <p style={{ fontWeight: 'bold' }} readOnly>{patientInfo.length > 0 ? patientInfo[0].customer.user.fullName + ', ' + patientInfo[0].customer.age + ' tuổi' : ''}</p>
+                        <p style={{ fontWeight: 'bold' }} readOnly>{patientInfo?.customer?.user?.fullName + ', ' + patientInfo?.customer?.age + ' tuổi'}</p>
                     </div>
                     <div>
                         <label htmlFor="basic-url" className="form-label">Số điện thoại:</label>
                         <div className="input-group mb-3">
-                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo.length > 0 ? patientInfo[0].customer.user.phoneNumber : ''} />
+                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo?.customer?.user?.phoneNumber} />
                         </div>
                         <label htmlFor="basic-url" className="form-label">Địa chỉ:</label>
                         <div className="input-group mb-3">
-                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo.length > 0 ? patientInfo[0].customer.user.address : ''} />
+                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo?.customer?.user?.address} />
                         </div>
                         <label htmlFor="basic-url" className="form-label">Ngày đến khám:</label>
                         <div className="input-group mb-3">
-                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo.length > 0 ? patientInfo[0].dateBooking : ''} />
+                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo?.dateBooking} />
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> 
 
 
             {/* <// Modal --> */}
