@@ -14,6 +14,7 @@ import Receptionist from './components/receptionist/Receptionist';
 import WaitingPay from './components/receptionist/WaitingPay';
 import BookingList from './components/receptionist/BookingList';
 import WaitingPatients from './components/receptionist/WaitingPatients';
+import Medicine from './components/dashboard/Medicine';
 
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
             <Route path='waiting-list' element={<WaitingPatients/>}/>
             <Route path='waiting-pay' element={<WaitingPay/>}/>
           </Route>
+          <Route path='/medicine' element={<Medicine/>} />
         </Routes>
       
       </BrowserRouter>
