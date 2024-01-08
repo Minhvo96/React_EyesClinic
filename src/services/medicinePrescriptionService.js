@@ -13,8 +13,7 @@ const medicinePrescriptionService = {
             });
     },
     createMedicinePrescription: async (obj) => {
-
-        console.log("obj",JSON.stringify( obj));
+        console.log("prescription obj: ", JSON.stringify(obj));
         return axios
             .post(URL_API, obj)
             .then((response) => {
