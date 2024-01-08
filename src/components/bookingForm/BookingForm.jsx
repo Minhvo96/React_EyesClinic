@@ -1,13 +1,120 @@
 import { Button } from 'bootstrap';
 import React, { useEffect, useState } from 'react'
+import * as yup from 'yup'
+import { yupResolver } from "@hookform/resolvers/yup"
+import bookingService from '../../services/bookingServices';
+import { useForm } from 'react-hook-form';
+import eyeCategoriesService from '../../services/eyeCategoriesServices';
+import customerService from '../../services/customerService';
+import moment from 'moment';
+import Swal from 'sweetalert2';
 
 export default function BookingForm() {
 
-    const [times, setTimes] = useState(['8:00', '8:30', '9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30']);
+    const [times, setTimes] = useState(['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30']);
+    const [booking, setBooking] = useState({})
+    const [eyeCategories, setEyeCategories] = useState([])
+    const [login, setLogin] = useState(false);
+    const [customer, setCustomer] = useState({})
+    const [showTime, setShowTime] = useState(false)
+    const [timeFreeBooking, setTimeFreeBooking] = useState([])
+
+    const getCustomerById = async () => {
+        const customer = await customerService.getCustomerById(1);
+        setCustomer(customer)
+    }
+
+    const getAllEyeCategories = async () => {
+        const eyeCategories = await eyeCategoriesService.getAllEyeCategories();
+        setEyeCategories(eyeCategories);
+    }
+
+    const registerSchema = yup.object({
+        dateBooking: yup.date()
+            .required('Vui lòng chọn ngày hẹn')
+            .typeError('Vui lòng chọn ngày đặt hẹn'),
+        timeBooking: yup.string(),
+        eyeCategory: yup.string().required('Vui lòng chọn dịch vụ khám')
+    })
+
+
+    const { register, handleSubmit, formState: { errors }, reset } = useForm({
+        resolver: yupResolver(registerSchema)
+    })
 
     const handleChangeTime = (e) => {
         console.log(e.target.value);
     }
+
+    const handleSubmitForm = async (data) => {
+        const dateBooking = String(data.dateBooking);
+        const formattedDate = moment(dateBooking).format('YYYY-MM-DD');
+
+        const bookingNew = {
+            idEyeCategory: String(data.eyeCategory),
+            idCustomer: String(customer.id),
+            timeBooking: data.timeBooking,
+            dateBooking: formattedDate,
+            status: "PENDING"
+        }
+        console.log(bookingNew);
+
+        await bookingService.createBooking(bookingNew)
+        Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Thêm Mới Thành Công !',
+            showConfirmButton: false,
+            timer: 1500
+        })
+
+        reset()
+        setShowTime(false)
+
+    }
+
+    const handleChangeShowTime = async (e) => {
+        const dateBooking = String(e.target.value);
+
+        const newBooking = {
+            idEyeCategory: "",
+            idCustomer: "",
+            timeBooking: "",
+            dateBooking: dateBooking,
+            status: ""
+        };
+
+        const bookings = await bookingService.getBookingByStatusPending(newBooking);
+
+        const listTimeBooked = bookings.map(item => item.timeBooking)
+
+        const currentDate = new Date();
+        const hours = currentDate.getHours();
+        const minutes = currentDate.getMinutes();
+        const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+
+
+        if (new Date(dateBooking) > currentDate) {
+            const listTimeFreeBooking = times.filter(item => !listTimeBooked.includes(item));
+            console.log(listTimeFreeBooking);
+            setTimeFreeBooking(listTimeFreeBooking)
+            
+        }
+        else {
+            const listTimeFreeBooking = times.filter(item => !listTimeBooked.includes(item) && item.localeCompare(formattedTime) > 0);
+            console.log(listTimeFreeBooking);
+            setTimeFreeBooking(listTimeFreeBooking)
+            
+        }
+
+        setShowTime(true)
+    }
+
+    useEffect(() => {
+        getAllEyeCategories();
+        getCustomerById()
+    }, [])
 
     return (
         <section className="ftco-intro">
@@ -32,7 +139,7 @@ export default function BookingForm() {
                     </div>
                     <div className="col-md-6 color-3 p-4">
                         <h3 className="mb-2">Đặt lịch hẹn ngay</h3>
-                        <form action="#" className="appointment-form">
+                        <form onSubmit={handleSubmit(handleSubmitForm)} className="appointment-form">
                             <div className="row">
                                 <div className="col-sm-6">
                                     <div className="form-group">
@@ -44,6 +151,7 @@ export default function BookingForm() {
                                             className="form-control"
                                             id="appointment_name"
                                             placeholder="Tên khách hàng"
+                                            value={customer?.user?.fullName}
                                         />
                                     </div>
                                 </div>
@@ -57,6 +165,7 @@ export default function BookingForm() {
                                             className="form-control"
                                             id="phone"
                                             placeholder="Số điện thoại"
+                                            value={customer?.user?.phoneNumber}
                                         />
                                     </div>
                                 </div>
@@ -72,6 +181,7 @@ export default function BookingForm() {
                                             className="form-control"
                                             id="appointment_name"
                                             placeholder="Tuổi"
+                                            value={customer?.age}
                                         />
                                     </div>
                                 </div>
@@ -85,26 +195,35 @@ export default function BookingForm() {
                                             className="form-control"
                                             id="phone"
                                             placeholder="Địa chỉ"
+                                            value={customer?.user?.address}
                                         />
                                     </div>
                                 </div>
                             </div>
                             <div className="row">
-                                <div className="col-sm-6 d-flex">
-                                    <div className="form-group">
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Ngày hẹn:"
-                                            disabled
-                                        />
+                                <div className="col-sm-6">
+                                    <div className="d-flex">
+                                        <div className="form-group">
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                placeholder="Ngày hẹn:"
+                                                disabled
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <input
+                                                type="date"
+                                                className="form-control"
+                                                placeholder="Ngày hẹn:"
+                                                {...register("dateBooking")}
+                                                onChange={handleChangeShowTime}
+                                            />
+
+                                        </div>
                                     </div>
-                                    <div className="form-group">
-                                        <input
-                                            type="date"
-                                            className="form-control"
-                                        />
-                                    </div>
+                                    <span className="text-warning font-weight-bold">{errors?.dateBooking?.message}</span>
+
                                 </div>
                                 <div className="col-sm-6 d-flex">
                                     <div className="form-group">
@@ -115,15 +234,19 @@ export default function BookingForm() {
                                             disabled
                                         />
                                     </div>
-                                    <div className="form-group">
-                                        <select className="form-control" onChange={(e) => handleChangeTime(e)}>
-                                            {
-                                                times.map((time, index) =>
-                                                    <option value={time} key={index} style={{ color: 'black' }} className="form-control">{time}</option>
-                                                )
-                                            }
-                                        </select>
-                                    </div>
+                                    {
+                                        showTime &&
+                                        <div className="form-group">
+                                            <select className="form-control" onChange={(e) => handleChangeTime(e)} {...register("timeBooking")}>
+                                                {
+                                                    timeFreeBooking.map((time, index) =>
+                                                        <option value={time} key={index} style={{ color: 'black' }} className="form-control">{time}</option>
+                                                    )
+                                                }
+                                            </select>
+                                        </div>
+                                    }
+
                                 </div>
 
                                 <div className="col-sm-6">
@@ -145,13 +268,17 @@ export default function BookingForm() {
                                             <div className="icon">
                                                 <span className="ion-ios-arrow-down" />
                                             </div>
-                                            <select name="" id="" className="form-control">
-                                                <option value="" style={{ color: 'black' }}>Dịch vụ</option>
-                                                <option value="" style={{ color: 'black' }}>Teeth Whitening</option>
-                                                <option value="" style={{ color: 'black' }}>Teeth CLeaning</option>
-                                                <option value="" style={{ color: 'black' }}>Quality Brackets</option>
-                                                <option value="" style={{ color: 'black' }}>Modern Anesthetic</option>
+                                            <select {...register("eyeCategory")} className="form-control">
+                                                <option value="" style={{ color: 'black' }}>Chọn dịch vụ</option>
+                                                {
+                                                    eyeCategories.map(item => {
+                                                        return (
+                                                            <option key={item.id} value={item.id} style={{ color: 'black' }}>{item.nameCategory} </option>
+                                                        )
+                                                    })
+                                                }
                                             </select>
+                                            <div className='mt-3'><span className="text-warning font-weight-bold">{errors?.eyeCategory?.message}</span></div>
                                         </div>
                                     </div>
                                 </div>

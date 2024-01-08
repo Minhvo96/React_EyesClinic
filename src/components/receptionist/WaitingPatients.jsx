@@ -5,15 +5,15 @@ import Swal from 'sweetalert2';
 
 export default function WaitingPatients() {
   
-
+  const [status, setStatus] = useState(false)
   const [bookingList, setBookingList] = useState([])
   const [defaultDate, setDefaultDate] = useState('');
-  const [timeBooking, setTimeBooking] = useState(["8:00", "8:30", "9:00", "9:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"])
+  const [timeBooking, setTimeBooking] = useState(["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"])
 
   const getAllBookingList = async () => {
     const bookings = await bookingService.getAllBookings();
-    
-    const bookingsFilter = bookings.filter((booking) => booking.status == "WAITING" && booking.dateBooking == defaultDate)
+
+    const bookingsFilter = bookings.filter((booking) => booking.status == "WAITING" || booking.status == "EXAMINING" && booking.dateBooking == defaultDate)
 
     setBookingList(bookingsFilter);
 
@@ -22,31 +22,47 @@ export default function WaitingPatients() {
 
   const handleChangeListByDate = async (e) => {
     const bookings = await bookingService.getAllBookings();
-    const bookingsFilter = bookings.filter((booking) => booking.status == "WAITING" && booking.dateBooking == e.target.value)
+    const bookingsFilter = bookings.filter((booking) => booking.status == "WAITING" || booking.status == "EXAMINING" && booking.dateBooking == e.target.value)
     setBookingList(bookingsFilter);
   }
 
-  const handleChangeStatus = (e, id) => {
+  const handleChangeStatus = (e, id, count) => {
     if (e.target.value == 'cancel') {
-      handleChangeStatusBooking(id)
+      handleChangeStatusBooking(id, e.target.value)
+    }
+
+    if (e.target.value == 'true' && count == 1) {
+        setStatus(true)
+        handleChangeStatusBooking(id, e.target.value)
     }
   }
 
-  const handleChangeStatusBooking = async (id) => {
+  const handleChangeStatusBooking = async (id, status) => {
     const booking = await bookingService.getBookingById(id);
-    const newBooking = {
-      ...booking,
-      "status": "CANCELLED"
-    }
 
-    await handleUpdateBookingList(newBooking)
-    Swal.fire({
-      position: 'center',
-      icon: 'success',
-      title: 'Hủy Thành Công !',
-      showConfirmButton: false,
-      timer: 1500
-    })
+    if(status == 'cancel') {
+      const newBooking = {
+        ...booking,
+        "status": "CANCELLED"
+      }
+  
+      await handleUpdateBookingList(newBooking)
+      Swal.fire({
+        position: 'center',
+        icon: 'success',
+        title: 'Hủy Thành Công !',
+        showConfirmButton: false,
+        timer: 1500
+      })
+    }
+     if(status == 'true') {
+      const newBooking = {
+        ...booking,
+        "status": "EXAMINING"
+      }
+  
+      await handleUpdateBookingList(newBooking)
+     }
 
 
   }
@@ -71,8 +87,15 @@ export default function WaitingPatients() {
   }
 
   const handleUpdateBookingList = async (obj) => {
+    const newBooking = {
+      idEyeCategory: String(obj.eyeCategory.id),
+      idCustomer: String(obj.customer.id),
+      timeBooking: obj.timeBooking,
+      dateBooking: obj.dateBooking,
+      status: obj.status
+  };
 
-    await bookingService.editBooking(obj.id, obj)
+    await bookingService.editBooking(newBooking, obj.id)
 
     getAllBookingList()
   }
@@ -143,7 +166,7 @@ export default function WaitingPatients() {
 
                         </td>
                         <td>
-                          <select className='form-control' value={count == 1 ? 'true' : 'false'} onChange={(e) => handleChangeStatus(e, booking.id)}>
+                          <select className='form-control' value={count == 1 && status ? 'true' : 'false'} onChange={(e) => handleChangeStatus(e, booking.id, count)}>
                             <option value="true">Đang khám</option>
                             <option value="false">Chờ khám</option>
                             <option value="cancel">Hủy</option>
