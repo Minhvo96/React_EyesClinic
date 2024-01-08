@@ -12,7 +12,6 @@ export default function WaitingPatients() {
 
   const getAllBookingList = async () => {
     const bookings = await bookingService.getAllBookings();
-    console.log('aaa');
 
     const bookingsFilter = bookings.filter((booking) => booking.status == "WAITING" || booking.status == "EXAMINING" && booking.dateBooking == defaultDate)
 

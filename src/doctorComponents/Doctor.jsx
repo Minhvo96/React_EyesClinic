@@ -3,8 +3,30 @@ import bookingService from '../services/bookingServices';
 import medicineService from '../services/medicineService';
 import NavbarDoctor from './NavbarDoctor';
 import medicinePrescriptionService from '../services/medicinePrescriptionService';
+import addStyleDashboard from '../AddStyleDashboard';
+import Sidebar from '../components/dashboard/Sidebar';
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import * as yup from 'yup'
+
+const schemaPrescription = yup.object({
+    leftEye: yup.number()
+        .required("Cần phải nhập thị lực của bệnh nhân")
+        .typeError("Cần phải nhập số")
+        .min(0, "Thị lực không được nhỏ hơn 0")
+        .max(10, "Thị lực không được lớn hơn 10"),
+    rightEye: yup.number()
+        .required("Cần phải nhập thị lực của bệnh nhân")
+        .typeError("Cần phải nhập số")
+        .min(0, "Thị lực không được nhỏ hơn 0")
+        .max(10, "Thị lực không được lớn hơn 10"),
+    diagnose: yup.string()
+        .required("Không được để trống chẩn đoán")
+});
 
 export default function Doctor() {
+    addStyleDashboard();
+
     const [patientInfo, setPatientInfo] = useState({});
     const [medicines, setMedicines] = useState([]);
     const [diseases, setDiseases] = useState([]);
@@ -15,13 +37,22 @@ export default function Doctor() {
     const [medicineStatus, setMedicineStatus] = useState(false);
     const [diagnoseInputs, setDiagnoseInputs] = useState();
 
-    const [prescription, setPrescription] = useState();
-    // const [medicinePrescription, setMedicinePrescription] = useState();
+    const [quantityValidates, setQuantityValidates] = useState(Array(medicines.length).fill(''));
+    const [quantityErrors, setQuantityErrors] = useState(Array(medicines.length).fill(''));
+    const [usingMedicineErrors, setUsingMedicineErrors] = useState(Array(medicines.length).fill(''));
+
+    const [prescription, setPrescription] = useState({});
+
+    const { register: registerPrescription, handleSubmit: handleSubmitPrescription, formState: { errors: errorsPrescription }, reset: resetPrescription } = useForm({
+        resolver: yupResolver(schemaPrescription),
+        mode: "onBlur",
+        criteriaMode: "all"
+    });
 
     const getPatientInfo = async () => {
         const data = await bookingService.getBookingByStatus();
         console.log(data);
-        setPatientInfo(data);   
+        setPatientInfo(data);
     }
 
     const getAllMedicines = async () => {
@@ -50,7 +81,10 @@ export default function Doctor() {
         }
     };
 
-    const handleQuantityInputChange = (e, id) => {
+    const handleQuantityInputChange = (e, id, indexs) => {
+
+        validateQuantityInputs(e, indexs);
+
         const updatedInputs = { ...quantityInput, [id]: e.target.value };
         setQuantityInput(updatedInputs);
 
@@ -66,7 +100,28 @@ export default function Doctor() {
         setSelectedMedicines([...newSelectedMedicines]);
     }
 
-    const handleUsingMedicine = (e, id) => {
+    const validateQuantityInputs = (e, indexs) => {
+        const value = e.target.value;
+
+        // Tạo một bản sao mới của mảng trạng thái
+        const newQuantityValidates = [...quantityValidates];
+        newQuantityValidates[indexs] = value;
+        setQuantityValidates(newQuantityValidates);
+
+        // Kiểm tra xem giá trị nhập vào có phải là số nguyên dương không
+        const isValidQuantity = /^\d+$/.test(value) && parseInt(value, 10) > 0;
+
+        // Tạo một bản sao mới của mảng lỗi
+        const newQuantityErrors = [...quantityErrors];
+        newQuantityErrors[indexs] = isValidQuantity ? '' : 'Vui lòng nhập số thuốc hợp lệ';
+        setQuantityErrors(newQuantityErrors);
+    }
+
+
+    const handleUsingMedicine = (e, id, indexs) => {
+
+        validateUsingMedicineInputs(e, indexs);
+
         const updatedInputs = { ...usingMedicine, [id]: e.target.value };
         setUsingMedicine(updatedInputs);
 
@@ -75,32 +130,35 @@ export default function Doctor() {
 
         const index = selectedMedicines.findIndex(medicine => medicine.id == id);
 
-        const updateNewMedicine = {...updatedMedicine, usingMedicine: updatedInputs[id]};
+        const updateNewMedicine = { ...updatedMedicine, usingMedicine: updatedInputs[id] };
         const newSelectedMedicines = [...selectedMedicines];
         newSelectedMedicines[index] = updateNewMedicine;
 
         setSelectedMedicines([...newSelectedMedicines]);
     }
 
-    const handleAddMedicines = () => {
-        setMedicineStatus(true);
+    const validateUsingMedicineInputs = (e, indexs) => {
+        const value = e.target.value;
+
+        const isValidUsingMedicine = value !== '';
+
+        const newUsingMedicineErrors = [...usingMedicineErrors];
+        newUsingMedicineErrors[indexs] = isValidUsingMedicine ? '' : 'Vui lòng nhập HDSD thuốc cho bệnh nhân';
+        setUsingMedicineErrors(newUsingMedicineErrors);
     }
 
-    useEffect(() => {
-        getPatientInfo();
-        getAllMedicines();
-    }, [])
-
-    useEffect(() => {
-        console.log(prescription);
-        console.log(patientInfo);
-    }, [prescription])
-
+    const handleAddMedicines = () => {
+        if (selectedMedicines.length == 0) {
+            setMedicineStatus(false);
+        } else {
+            setMedicineStatus(true);
+        }
+    }
 
     const handleChangePrescription = (e) => {
         setDiagnoseInputs({
             ...diagnoseInputs,
-            [e.target.name] : e.target.value
+            [e.target.name]: e.target.value
         })
     }
 
@@ -119,147 +177,175 @@ export default function Doctor() {
             note: diagnoseInputs.note,
             idsMedicine: idsMedicine
         })
-        await medicinePrescriptionService.createMedicinePrescription(prescription);
-        console.log(patientInfo.id);
-
-        const booking = await bookingService.getBookingById(patientInfo.id);
-        console.log(booking);
-        const newBooking = {idEyeCategory: String(booking.eyeCategory.id), idCustomer: String(booking.customer.id), timeBooking: booking.timeBooking, dateBooking: booking.dateBooking, status: 'UNPAID'};
-
-        console.log(newBooking);
-
-        await bookingService.editBooking(newBooking, booking.id);
     }
 
+    useEffect(() => {
+
+        async function CreatePrescription() {
+            await medicinePrescriptionService.createMedicinePrescription(prescription);
+
+            const booking = await bookingService.getBookingById(patientInfo.id);
+
+            const newBooking = {
+                idEyeCategory: String(booking.eyeCategory.id),
+                idCustomer: String(booking.customer.id),
+                timeBooking: booking.timeBooking,
+                dateBooking: booking.dateBooking,
+                status: 'UNPAID'
+            };
+
+            await bookingService.editBooking(newBooking, booking.id);
+
+            setMedicineStatus(false);
+            setPatientInfo({});
+        }
+
+        if (Object.keys(prescription).length) {
+            CreatePrescription();
+        }
+
+    }, [prescription])
+
+    useEffect(() => {
+        getPatientInfo();
+        getAllMedicines();
+    }, [])
 
     return (
         <>
+            <Sidebar />
             <NavbarDoctor />
 
-            <div className='container-fluid mt-4 d-flex'>
-                <div className='col-2'>
-                    <ul className="list-group">
-                        <li className="list-group-item p-4" > <i className="fa-solid fa-capsules" /> Thuốc</li>
-                        <li className="list-group-item p-4" > <i className="fa-solid fa-notes-medical" /> Hồ sơ bệnh án </li>
-                        <li className="list-group-item p-4" > <i className="fa-solid fa-stethoscope" /> Lịch khám</li>
-                        <li className="list-group-item p-4" > <i className="fa-regular fa-eye" /> Dịch vụ mắt</li>
-                        <li className="list-group-item p-4" > <i className="fa-solid fa-heart-circle-plus" /> Quản lý</li>
-                    </ul>
-                </div>
-                <div className='col-7'>
-                    <h3>Bệnh án điện tử</h3>
-                    <div className='d-flex row mt-4'>
-                        <div className="col-6">
-                            <label htmlFor="basic-url" className="form-label">Mắt trái :</label>
-                            <div className="input-group mb-3">
-                                <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder='.../10' name="leftEye" onChange={handleChangePrescription} />
+            <div className='container mt-4 d-flex'>
+                {Object.keys(patientInfo).length ?
+                    <div className='d-flex row' style={{ position: 'absolute', width: '85%' }}>
+                        <div className='col-9'>
+                            <h3>Bệnh án điện tử</h3>
+                            <form className="needs-validation">
+                                <div className='d-flex row mt-4'>
+                                    <div className="col-6">
+                                        <label htmlFor="basic-url" className="form-label">Mắt trái :</label>
+                                        <div className="input-group mb-3">
+                                            <input type="text" className={`form-control ${errorsPrescription?.leftEye?.message ? 'is-invalid' : ''}`}
+                                                {...registerPrescription('leftEye')}
+                                                id="basic-url" aria-describedby="basic-addon3" placeholder='.../10' name="leftEye" onChange={handleChangePrescription} />
+                                            <span className="invalid-feedback">{errorsPrescription?.leftEye?.message}</span>
+                                        </div>
+                                    </div>
+                                    <div className="col-6">
+                                        <label htmlFor="basic-url" className="form-label">Mắt phải :</label>
+                                        <div className="input-group mb-3">
+                                            <input type="text" className={`form-control ${errorsPrescription?.rightEye?.message ? 'is-invalid' : ''}`}
+                                                {...registerPrescription('rightEye')}
+                                                id="basic-url" aria-describedby="basic-addon3" placeholder='.../10' name="rightEye" onChange={handleChangePrescription} />
+                                            <span className="invalid-feedback">{errorsPrescription?.rightEye?.message}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='d-flex row mt-4'>
+                                    <div className="col-6">
+                                        <label htmlFor="basic-url" className="form-label">Chẩn đoán bệnh :</label>
+                                        <div className="input-group mb-3">
+                                            <input type="text" className={`form-control ${errorsPrescription?.diagnose?.message ? 'is-invalid' : ''}`}
+                                                {...registerPrescription('diagnose')}
+                                                id="basic-url" aria-describedby="basic-addon3" placeholder='...' name="diagnose" onChange={handleChangePrescription} />
+                                            <span className="invalid-feedback">{errorsPrescription?.diagnose?.message}</span>
+                                        </div>
+                                    </div>
+                                    <div className="col-6">
+                                        <label htmlFor="basic-url" className="form-label">Dịch vụ :</label>
+                                        <div className="input-group mb-3">
+                                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" value={patientInfo?.eyeCategory?.nameCategory} readOnly />
+                                        </div>
+                                    </div>
+                                </div>
+                                <label htmlFor="basic-url" className="form-label">Bệnh phụ :</label>
+                                <div className='d-flex'>
+                                    <div className="form-check mr-5">
+                                        <input className="form-check-input side-disease" type="checkbox" value="Bệnh tiểu đường" id="flexCheckDefault" onClick={handleAddDisease} />
+                                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                                            Bệnh tiểu đường
+                                        </label>
+                                    </div>
+                                    <div className="form-check mr-5">
+                                        <input className="form-check-input side-disease" type="checkbox" value="Bệnh tim mạch" id="flexCheckChecked" onClick={handleAddDisease} />
+                                        <label className="form-check-label" htmlFor="flexCheckChecked">
+                                            Bệnh tim mạch
+                                        </label>
+                                    </div>
+                                    <div className="form-check mr-5">
+                                        <input className="form-check-input side-disease" type="checkbox" value="Các loại dị ứng" id="flexCheckChecked" onClick={handleAddDisease} />
+                                        <label className="form-check-label" htmlFor="flexCheckChecked">
+                                            Các loại dị ứng
+                                        </label>
+                                    </div>
+                                </div>
+                                <div className='d-flex row mt-4'>
+                                    <div className="col-12">
+                                        <label htmlFor="basic-url" className="form-label">Ghi chú :</label>
+                                        <div className="input-group mb-3">
+                                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder='...' name="note" onChange={handleChangePrescription} />
+                                        </div>
+                                    </div>
+                                </div>
+                                <table className="table text-center">
+                                    {medicineStatus && (
+                                        <thead className="thead-dark">
+                                            <tr>
+                                                <th scope="col">STT</th>
+                                                <th scope="col">Tên thuốc</th>
+                                                <th scope="col">Số lượng</th>
+                                                <th scope="col">Cách dùng</th>
+                                            </tr>
+                                        </thead>
+                                    )}
+                                    <tbody>
+                                        {medicineStatus && selectedMedicines.map((selectedMedicine, index) => (
+                                            <tr key={index}>
+                                                <th scope="row">{index + 1}</th>
+                                                <td>{selectedMedicine.nameMedicine}</td>
+                                                <td>{selectedMedicine.quantity}</td>
+                                                <td>{selectedMedicine.usingMedicine}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                <button type="button" className="btn btn-secondary rounded-0 py-3 px-5" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    Chọn thuốc
+                                </button>
+                                <div className='d-flex row mt-4 text-end'>
+                                    <div>
+                                        <button type="button" className="btn btn-primary rounded-0" onClick={handleSubmitPrescription(handleAddPrescription)}>Lưu bệnh án</button>
+                                        <button type="button" className="btn btn-danger ml-2 rounded-0" onClick={() => resetPrescription()}>Hủy thao tác</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div className='col-3'>
+                            <h3>Thông tin bệnh nhân</h3>
+                            <div className='text-center'>
+                                <img src='images/user-icon.png' style={{ width: 150, borderRadius: '50%' }} />
+                                <p style={{ fontWeight: 'bold' }} readOnly>{patientInfo?.customer?.user?.fullName + ', ' + patientInfo?.customer?.age + ' tuổi'}</p>
+                            </div>
+                            <div>
+                                <label htmlFor="basic-url" className="form-label">Số điện thoại:</label>
+                                <div className="input-group mb-3">
+                                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo?.customer?.user?.phoneNumber} />
+                                </div>
+                                <label htmlFor="basic-url" className="form-label">Địa chỉ nhà:</label>
+                                <div className="input-group mb-3">
+                                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo?.customer?.user?.address} />
+                                </div>
+                                <label htmlFor="basic-url" className="form-label">Ngày đến khám:</label>
+                                <div className="input-group mb-3">
+                                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo?.dateBooking} />
+                                </div>
                             </div>
                         </div>
-                        <div className="col-6">
-                            <label htmlFor="basic-url" className="form-label">Mắt phải :</label>
-                            <div className="input-group mb-3">
-                                <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder='.../10' name="rightEye" onChange={handleChangePrescription} />
-                            </div>
-                        </div>
                     </div>
-                    <div className='d-flex row mt-4'>
-                        <div className="col-6">
-                            <label htmlFor="basic-url" className="form-label">Chẩn đoán bệnh :</label>
-                            <div className="input-group mb-3">
-                                <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder='...' name="diagnose" onChange={handleChangePrescription} />
-                            </div>
-                        </div>
-                        <div className="col-6">
-                            <label htmlFor="basic-url" className="form-label">Dịch vụ :</label>
-                            <div className="input-group mb-3">
-                                <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" value={patientInfo?.eyeCategory?.nameCategory} readOnly />
-                            </div>
-                        </div>
-                    </div>
-                    <label htmlFor="basic-url" className="form-label">Bệnh phụ :</label>
-                    <div className='d-flex'>
-                        <div className="form-check mr-5">
-                            <input className="form-check-input side-disease" type="checkbox" value="Bệnh tiểu đường" id="flexCheckDefault" onClick={handleAddDisease} />
-                            <label className="form-check-label" htmlFor="flexCheckDefault">
-                                Bệnh tiểu đường
-                            </label>
-                        </div>
-                        <div className="form-check mr-5">
-                            <input className="form-check-input side-disease" type="checkbox" value="Bệnh tim mạch" id="flexCheckChecked" onClick={handleAddDisease} />
-                            <label className="form-check-label" htmlFor="flexCheckChecked">
-                                Bệnh tim mạch
-                            </label>
-                        </div>
-                        <div className="form-check mr-5">
-                            <input className="form-check-input side-disease" type="checkbox" value="Các loại dị ứng" id="flexCheckChecked" onClick={handleAddDisease} />
-                            <label className="form-check-label" htmlFor="flexCheckChecked">
-                                Các loại dị ứng
-                            </label>
-                        </div>
-                    </div>
-                    <div className='d-flex row mt-4'>
-                        <div className="col-12">
-                            <label htmlFor="basic-url" className="form-label">Ghi chú :</label>
-                            <div className="input-group mb-3">
-                                <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder='...' name="note" onChange={handleChangePrescription} />
-                            </div>
-                        </div>
-                    </div>
-                    <table className="table text-center">
-                        {medicineStatus && (
-                            <thead className="thead-dark">
-                                <tr>
-                                    <th scope="col">STT</th>
-                                    <th scope="col">Tên thuốc</th>
-                                    <th scope="col">Số lượng</th>
-                                    <th scope="col">Cách dùng</th>
-                                </tr>
-                            </thead>
-                        )}
-                        <tbody>
-                            {medicineStatus && selectedMedicines.map((selectedMedicine, index) => (
-                                <tr key={index}>
-                                    <th scope="row">{index + 1}</th>
-                                    <td>{selectedMedicine.nameMedicine}</td>
-                                    <td>{selectedMedicine.quantity}</td>
-                                    <td>{selectedMedicine.usingMedicine}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    <button type="button" className="btn btn-secondary rounded-0 py-3 px-5" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        Chọn thuốc
-                    </button>
-                    <div className='d-flex row mt-4 justify-content-end'>
-                        <div>
-                            <button type="button" className="btn btn-primary rounded-0" onClick={handleAddPrescription}>Lưu bệnh án</button>
-                            <button type="button" className="btn btn-danger ml-2 rounded-0">Hủy thao tác</button>
-                        </div>
-                    </div>
-                </div>
-                <div className='col-3'>
-                    <h3>Thông tin bệnh nhân</h3>
-                    <div className='text-center'>
-                        <img src='images/BSMinh2.jpg' style={{ width: 150, borderRadius: '50%' }} />
-                        <p style={{ fontWeight: 'bold' }} readOnly>{patientInfo?.customer?.user?.fullName + ', ' + patientInfo?.customer?.age + ' tuổi'}</p>
-                    </div>
-                    <div>
-                        <label htmlFor="basic-url" className="form-label">Số điện thoại:</label>
-                        <div className="input-group mb-3">
-                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo?.customer?.user?.phoneNumber} />
-                        </div>
-                        <label htmlFor="basic-url" className="form-label">Địa chỉ:</label>
-                        <div className="input-group mb-3">
-                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo?.customer?.user?.address} />
-                        </div>
-                        <label htmlFor="basic-url" className="form-label">Ngày đến khám:</label>
-                        <div className="input-group mb-3">
-                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo?.dateBooking} />
-                        </div>
-                    </div>
-                </div>
-            </div> 
-
+                    : <div><p style={{ color: 'red' }}>Hiện tại chưa có bệnh nhân vào khám!</p></div>
+                }
+            </div>
 
             {/* <// Modal --> */}
             <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -282,15 +368,21 @@ export default function Doctor() {
                                     </thead>
                                     <tbody className='text-center'>
                                         {
-                                            medicines.map(medicine =>
+                                            medicines?.map((medicine, index) =>
                                                 <tr className="tr-class-2" key={medicine.id}>
                                                     <td><input type="checkbox" onChange={() => handleChangeMedicine(medicine.id, medicine.nameMedicine, medicine.stockQuantity)} /></td>
                                                     <td style={{ width: '33.33%' }}>{medicine.nameMedicine}</td>
-                                                    <td style={{ width: '33.33%' }}><input type="text" className='form-control text-center'
-                                                        onChange={(e) => handleQuantityInputChange(e, medicine.id)} />
+
+                                                    <td style={{ width: '33.33%' }}>
+                                                        <input type="text" className={`form-control text-center ${quantityErrors[index] ? 'is-invalid' : ''}`}
+                                                            onChange={(e) => handleQuantityInputChange(e, medicine.id, index)} />
+                                                        {quantityErrors[index] && <div className="invalid-feedback">{quantityErrors[index]}</div>}
                                                     </td>
-                                                    <td style={{ width: '33.33%' }}><input type="text" className='form-control text-center'
-                                                        onChange={(e) => handleUsingMedicine(e, medicine.id)} />
+
+                                                    <td style={{ width: '33.33%' }}>
+                                                        <input type="text" className={`form-control text-center ${usingMedicineErrors[index] ? 'is-invalid' : ''}`}
+                                                            onChange={(e) => handleUsingMedicine(e, medicine.id, index)} />
+                                                        {usingMedicineErrors[index] && <div className="invalid-feedback">{usingMedicineErrors[index]}</div>}
                                                     </td>
                                                     {/* <td style={{ width: '33.33%' }} className='text-center'>{medicine.stockQuantity}</td> */}
                                                 </tr>
