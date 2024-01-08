@@ -25,7 +25,7 @@ export default function Sidebar() {
                     <ul id="sidebarnav">
                         <li className="nav-small-cap">
                             <i className="ti ti-dots nav-small-cap-icon fs-4" />
-                            <span className="hide-menu">Home</span>
+                            <span className="hide-menu">Trang chủ</span>
                         </li>
                         <li className="sidebar-item">
                             <Link to ='/dashboard'>
@@ -35,14 +35,14 @@ export default function Sidebar() {
                                     <span>
                                         <i className="ti ti-layout-dashboard" />
                                     </span>
-                                    <span className="hide-menu">Dashboard</span>
+                                    <span className="hide-menu">Thống kê</span>
                                 </a>
                             </Link>
                             
                         </li>
                         <li className="nav-small-cap">
                             <i className="ti ti-dots nav-small-cap-icon fs-4" />
-                            <span className="hide-menu">Bệnh nhân</span>
+                            <span className="hide-menu">BỆNH NHÂN</span>
                         </li>
                         <li className="sidebar-item">
                             <Link to='/patient'>
@@ -52,11 +52,11 @@ export default function Sidebar() {
                                     <span>
                                         <i className="ti ti-users" />
                                     </span>
-                                    <span className="hide-menu">Patients</span>
+                                    <span className="hide-menu">Bệnh nhân</span>
                                 </a>
                             </Link>                           
                         </li>
-                        <li className="sidebar-item">
+                        {/* <li className="sidebar-item">
                             <a
                                 className="sidebar-link"
                                 href="./ui-alerts.html"
@@ -79,7 +79,7 @@ export default function Sidebar() {
                                 </span>
                                 <span className="hide-menu">Appoinments</span>
                             </a>
-                        </li>
+                        </li> */}
                     
                         <li className="nav-small-cap">
                             <i className="ti ti-dots nav-small-cap-icon fs-4" />
@@ -128,6 +128,44 @@ export default function Sidebar() {
                             </a>
                             </Link>
                         </li>
+
+                        <li className="nav-small-cap">
+                            <i className="ti ti-dots nav-small-cap-icon fs-4" />
+                            <span className="hide-menu">BÁC SĨ</span>
+                        </li>
+
+                        <li className="sidebar-item">
+                            <Link to='/receptionist/waiting-pay'>
+                            <a
+                                className="sidebar-link"
+                            >
+                                <span>                                   
+                                    <i className="ti ti-stethoscope"></i>
+                                </span>
+                                <span className="hide-menu">Danh sách khám</span>
+                            </a>
+                            </Link>
+                        </li>
+
+                        <li className="nav-small-cap">
+                            <i className="ti ti-dots nav-small-cap-icon fs-4" />
+                            <span className="hide-menu">THUỐC</span>
+                        </li>
+
+                        <li className="sidebar-item">
+                            <Link to='/medicine'>
+                            <a
+                                className="sidebar-link"
+                            >
+                                <span>                                   
+                                    <i className="ti ti-pill"></i>
+                                </span>
+                                <span className="hide-menu">Danh sách thuốc</span>
+                            </a>
+                            </Link>
+                        </li>
+
+
                         
                     </ul>
 
