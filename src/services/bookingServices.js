@@ -22,9 +22,9 @@ const bookingService = {
                 console.log(error);
             });
     },
-    editBooking: async (id, obj) => {
+    editBooking: async (obj, id) => {
         return axios
-            .patch(URL_API + '/' + id, obj)
+            .put(URL_API + '/' + id, obj)
             .then((response) => {
                 return response.data;
             })
@@ -51,8 +51,27 @@ const bookingService = {
             .catch((error) => {
                 console.log(error);
             });
-    }
-
+    },
+    getBookingByStatus: async () => {
+        return axios
+            .get(URL_API + '/examining')
+            .then((response) => {
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    },
+    getBookingByStatusPending: async (obj) => {
+        return axios
+            .post(URL_API + '/pending', obj)
+            .then((response) => {
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    },
 
 }
 

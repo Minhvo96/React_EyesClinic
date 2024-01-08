@@ -10,7 +10,7 @@ export default function WaitingPay() {
   const getAllBookingList = async () => {
     const bookings = await bookingService.getAllBookings();
 
-    const bookingsFilter = bookings.filter((booking) => booking.status == "WAITPAY")
+    const bookingsFilter = bookings.filter((booking) => booking.status == "UNPAID")
 
     setBookingList(bookingsFilter);
 
