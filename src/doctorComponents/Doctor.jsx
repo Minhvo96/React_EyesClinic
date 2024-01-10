@@ -241,12 +241,14 @@ export default function Doctor() {
 
     return (
         <>
-            <Sidebar />
-            <NavbarDoctor />
-
-            <div className='container mt-4 d-flex'>
+            <div className='container d-flex' style={{
+                position: 'fixed',
+                zIndex: '20',
+                marginTop: '97px',
+                paddingRight: '50px'
+            }}>
                 {Object.keys(booking).length ?
-                    <div className='d-flex row' style={{ position: 'absolute', width: '85%' }}>
+                    <div className='d-flex row' style={{ position: 'absolute', width: '120%' }}>
                         <div className='col-9'>
                             <h3>Bệnh án điện tử</h3>
                             <form className="needs-validation">
@@ -255,7 +257,7 @@ export default function Doctor() {
                                         <label htmlFor="basic-url" className="form-label">Mắt trái :</label>
                                         <div className="input-group mb-3">
                                             <input type="text" className='form-control'
-                                                id="basic-url" aria-describedby="basic-addon3" value={leftEye + "/10"} name="leftEye" readOnly/>
+                                                id="basic-url" aria-describedby="basic-addon3" value={leftEye + "/10"} name="leftEye" readOnly />
                                         </div>
                                     </div>
                                     <div className="col-6">

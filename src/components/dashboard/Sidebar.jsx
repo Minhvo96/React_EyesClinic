@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import addStyleDashboard from "../../AddStyleDashboard";
 
 export default function Sidebar() {
     return (
@@ -28,7 +29,7 @@ export default function Sidebar() {
                             <span className="hide-menu">Trang chủ</span>
                         </li>
                         <li className="sidebar-item">
-                            <Link to='/dashboard'>
+                            <Link to ='/dashboard/overview'>
                                 <a
                                     className="sidebar-link"
                                 >
