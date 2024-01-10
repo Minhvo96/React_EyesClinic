@@ -62,7 +62,17 @@ const bookingService = {
                 console.log(error);
             });
     },
-    getBookingByStatusPending: async (obj) => {
+    getBookingByStatusWaitingAndDate: async (obj) => {
+        return axios
+            .post(URL_API + '/waiting', obj)
+            .then((response) => {
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    },
+    getBookingByStatusPendingAndDate: async (obj) => {
         return axios
             .post(URL_API + '/pending', obj)
             .then((response) => {

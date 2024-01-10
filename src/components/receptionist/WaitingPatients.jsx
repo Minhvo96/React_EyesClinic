@@ -9,7 +9,6 @@ export default function WaitingPatients() {
   const [status, setStatus] = useState(false)
   const [bookingList, setBookingList] = useState([])
   const [defaultDate, setDefaultDate] = useState('');
-  const [timeBooking, setTimeBooking] = useState(["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"])
 
   const getAllBookingList = async () => {
     const bookings = await bookingService.getAllBookings();
@@ -68,25 +67,6 @@ export default function WaitingPatients() {
 
   }
 
-  const handleChangeTimeBooking = async (e, id) => {
-    const booking = await bookingService.getBookingById(id);
-    const newBooking = {
-      ...booking,
-      "timeBooking": e.target.value
-    }
-
-    await handleUpdateBookingList(newBooking)
-    Swal.fire({
-      position: 'center',
-      icon: 'success',
-      title: 'Sửa Giờ Khám Thành Công !',
-      showConfirmButton: false,
-      timer: 1500
-    })
-
-
-  }
-
   const handleUpdateBookingList = async (obj) => {
     const newBooking = {
       idEyeCategory: String(obj.eyeCategory.id),
@@ -115,12 +95,14 @@ export default function WaitingPatients() {
   }, [defaultDate])
 
   return (
+
     <div className="container mr-3" style={{
       position: 'fixed',
       zIndex: '20',
       marginTop: '100px',
       paddingRight: '50px'
     }}>
+
       <div className='d-flex mb-5 align-items-center'>
         <h6 className='mr-3'>Chọn ngày: </h6>
         <div className='col-3 '>
@@ -155,18 +137,7 @@ export default function WaitingPatients() {
                         <td>{booking.customer.user.fullName}</td>
                         <td>{booking.customer.user.phoneNumber}</td>
                         <td>{booking.dateBooking}</td>
-                        <td>
-                          <select className='form-control' name="timeBooking" id="" defaultValue={booking.timeBooking} onChange={(e) => handleChangeTimeBooking(e, booking.id)}>
-                            {
-                              timeBooking.map((time, index) => {
-                                return (
-                                  <option key={index} value={time} className='text-center'>{time}</option>
-                                )
-
-                              })
-                            }
-                          </select>
-                        </td>
+                        <td>{booking.timeBooking}</td>
                         <td>
                           <select className='form-control text-center' value={count == 1 && status ? 'true' : 'false'} onChange={(e) => handleChangeStatus(e, booking.id, count)}>
                             <option value="true">Đang khám</option>
