@@ -23,8 +23,6 @@ export default function Header() {
     <header className="app-header">
       <nav className="navbar navbar-expand-lg navbar-light" style={{ marginLeft: "24px" }}>
 
-
-
         <div
           className="navbar-collapse justify-content-center d-flex px-0 "
           id="navbarNav"

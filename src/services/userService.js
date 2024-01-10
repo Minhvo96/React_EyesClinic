@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const URL_API = 'http://localhost:8080/api/customer';
-const customerService = {
-    getAllCustomers: async () => {
+const URL_API = 'http://localhost:8080/api/users';
+const userService = {
+    getAllUsers: async () => {
         return axios
             .get(URL_API)
             .then((response) => {
@@ -12,7 +12,7 @@ const customerService = {
                 console.log(error);
             });
     },
-    createCustomer: async (obj) => {
+    createUser: async (obj) => {
         return axios
             .post(URL_API, obj)
             .then((response) => {
@@ -22,7 +22,7 @@ const customerService = {
                 console.log(error);
             });
     },
-    editCustomer: async (obj, id) => {
+    editUser: async (obj, id) => {
         return axios
             .put(URL_API + '/' + id, obj)
             .then((response) => {
@@ -32,7 +32,7 @@ const customerService = {
                 console.log(error);
             });
     },
-    deleteCustomer: async (id) => {
+    deleteUser: async (id) => {
         return axios
             .delete(URL_API + '/' + id)
             .then((response) => {
@@ -42,7 +42,7 @@ const customerService = {
                 console.log(error);
             });
     },
-    getCustomerById: async (id) => {
+    getUserById: async (id) => {
         return axios
             .get(URL_API + '/' + id)
             .then((response) => {
@@ -51,9 +51,8 @@ const customerService = {
             .catch((error) => {
                 console.log(error);
             });
-    },
-
+    }   
 
 }
 
-export default customerService;
+export default userService;
