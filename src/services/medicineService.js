@@ -12,8 +12,6 @@ const medicineService = {
                 console.log(error);
             });
     }
-
-
 }
 
 export default medicineService;

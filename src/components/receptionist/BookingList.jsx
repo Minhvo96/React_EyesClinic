@@ -290,7 +290,7 @@ export default function BookingList() {
             <div className="container mr-3" style={{
                 position: 'fixed',
                 zIndex: '20',
-                marginTop: '160px',
+                marginTop: '100px',
                 paddingRight: '50px'
             }}>
                 <div className='d-flex mb-5 align-items-center'>

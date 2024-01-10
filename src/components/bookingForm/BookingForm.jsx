@@ -91,9 +91,9 @@ export default function BookingForm() {
         Swal.fire({
             position: 'center',
             icon: 'success',
-            title: 'Thêm Mới Thành Công !',
+            title: 'Đặt lịch hẹn thành công !',
             showConfirmButton: false,
-            timer: 1500
+            timer: 3500
         })
 
         reset()
@@ -104,7 +104,6 @@ export default function BookingForm() {
 
     const handleChangeShowTime = async (e) => {
         const dateBooking = e.target.value;
-
         const newBooking = {
             idEyeCategory: "",
             idCustomer: "",
@@ -128,17 +127,13 @@ export default function BookingForm() {
         const minutes = currentDate.getMinutes();
         const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 
-
-
         if (new Date(dateBooking) > currentDate) {
             const listTimeFreeBooking = times.filter(item => !listTimeBooked.includes(item));;
             setTimeFreeBooking(listTimeFreeBooking)
-
         }
         else {
             const listTimeFreeBooking = times.filter(item => !listTimeBooked.includes(item) && item.localeCompare(formattedTime) > 0);
             setTimeFreeBooking(listTimeFreeBooking)
-
         }
 
         setShowTime(true)
@@ -156,7 +151,7 @@ export default function BookingForm() {
         <section className="ftco-intro">
             <div className="container">
                 <div className="row no-gutters">
-                    <div className="col-md-4 color-1 p-4">
+                    <div className="col-md-3 color-1 p-4">
                         <h3 className="mb-4 font-weight-bold">Liên hệ với chúng tôi</h3>
                         <p>Nếu cần tư vấn và đặt lịch khám, đừng ngại ngần mà hãy liên lạc thông qua:</p>
                         <span ><span className="icon-phone2" /> 0836-902-222</span><br /><br />
@@ -174,7 +169,7 @@ export default function BookingForm() {
                         </div>
                     </div>
 
-                    <div className="col-md-8 color-3 p-4">
+                    <div className="col-md-9 color-3 p-4">
                         <h3 className="mb-2 text-center font-weight-bold">Đặt lịch hẹn ngay</h3>
                         <form onSubmit={handleSubmit(handleSubmitForm)} className="appointment-form">
                             <div className="row">
@@ -255,6 +250,7 @@ export default function BookingForm() {
                                                 className="form-control"
                                                 placeholder="Chọn ngày hẹn:"
                                                 disabled
+
                                             />
 
 
@@ -267,12 +263,14 @@ export default function BookingForm() {
                                                 min={minDate}
                                                 onInput={handleChangeShowTime}
 
+
                                             />
                                         </div>
                                     </div>
 
                                     <span className="text-warning font-weight-bold">{errors?.dateBooking?.message}</span>
                                 </div>
+                               
                                 <div className="col-sm-6">
                                     <div className="form-group">
                                         <div className="select-wrap">

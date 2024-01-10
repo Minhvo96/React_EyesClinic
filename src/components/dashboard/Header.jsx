@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react'
+import { useAuthContext } from '../../context/AuthProvider';
 
 export default function Header() {
   const [showDropdown, setShowDropdown] = useState(false);
+
+  const auth = useAuthContext();
 
   const showDropdownMenu = () => {
     setShowDropdown(!showDropdown)
@@ -20,7 +23,7 @@ export default function Header() {
   }, [showDropdown]);
 
   return (
-    <header className="app-header">
+    <header className="app-header" style={{zIndex: 30}}>
       <nav className="navbar navbar-expand-lg navbar-light" style={{ marginLeft: "24px" }}>
 
         <div
@@ -65,7 +68,7 @@ export default function Header() {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
                 onClick={() => showDropdownMenu()}
-                style={{cursor:'pointer'}}
+                style={{ cursor: 'pointer' }}
               >
                 <img
                   src="../../src/assets/images/profile/user-1.jpg"
@@ -84,6 +87,28 @@ export default function Header() {
                     style={{ display: "block", position: "absolute", right: 0, left: "auto" }}
                   >
                     <div className="message-body">
+                      <div
+                        href="javascript:void(0)"
+                        className="d-flex ml-1 gap-2 dropdown-item"
+                        style={{flexDirection:"column"}}
+                      >
+                        <h5 className='mb-0 fw-bold'>{auth?.user?.fullName.toUpperCase()}</h5>
+                        {auth?.user?.roles === 'ROLE_RECEPTIONIST' && (
+                          <p className="mb-0 fs-3 text-secondary">LỄ TÂN</p>
+                        )}
+                        {auth?.user?.roles === 'ROLE_DOCTOR' && (
+                          <p className="mb-0 fs-3 text-secondary">BÁC SĨ</p>
+                        )}
+                        {auth?.user?.roles === 'ROLE_ADMIN' && (
+                          <p className="mb-0 fs-3 text-secondary">ADMIN</p>
+                        )}
+                        {auth?.user?.roles === 'ROLE_CASHIER' && (
+                          <p className="mb-0 fs-3 text-secondary">PHÁT THUỐC</p>
+                        )}
+                        {auth?.user?.roles === 'ROLE_ASSISTANT' && (
+                          <p className="mb-0 fs-3 text-secondary">PHỤ TÁ</p>
+                        )}
+                      </div>
                       <a
                         href="javascript:void(0)"
                         className="d-flex align-items-center gap-2 dropdown-item"
@@ -106,8 +131,8 @@ export default function Header() {
                         <p className="mb-0 fs-3">My Task</p>
                       </a>
                       <a
-                        href="./authentication-login.html"
                         className="btn btn-outline-primary mx-3 mt-2 d-block"
+                        onClick={auth.logout}
                       >
                         Logout
                       </a>
