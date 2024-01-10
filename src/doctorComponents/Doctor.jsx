@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react'
 import bookingService from '../services/bookingServices';
 import medicineService from '../services/medicineService';
 import NavbarDoctor from './NavbarDoctor';
-import medicinePrescriptionService from '../services/medicinePrescriptionService';
+import prescriptionService from '../services/prescriptionService';
 import addStyleDashboard from '../AddStyleDashboard';
 import Sidebar from '../components/dashboard/Sidebar';
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
+import { useParams } from 'react-router-dom';
 
 const schemaPrescription = yup.object({
     leftEye: yup.number()
@@ -26,6 +27,12 @@ const schemaPrescription = yup.object({
 
 export default function Doctor() {
     addStyleDashboard();
+
+    const { bookingId } = useParams();
+    const [booking, setBooking] = useState({});
+    const [prescriptionById, setPrescriptionById] = useState({});
+    const [leftEye, setLeftEye] = useState('');
+    const [rightEye, setRightEye] = useState('');
 
     const [patientInfo, setPatientInfo] = useState({});
     const [medicines, setMedicines] = useState([]);
@@ -51,13 +58,22 @@ export default function Doctor() {
 
     const getPatientInfo = async () => {
         const data = await bookingService.getBookingByStatus();
-        console.log(data);
         setPatientInfo(data);
     }
 
     const getAllMedicines = async () => {
         const dataMedicine = await medicineService.getAllMedicines();
         setMedicines(dataMedicine);
+    }
+
+    const getBookingById = async () => {
+        const booking = await bookingService.getBookingById(bookingId);
+        setBooking(booking);
+    }
+
+    const getPrescriptionByBookingId = async () => {
+        const prescription = await prescriptionService.getPrescriptionByBookingId(bookingId);
+        setPrescriptionById(prescription);
     }
 
     const handleAddDisease = () => {
@@ -104,9 +120,9 @@ export default function Doctor() {
         const value = e.target.value;
 
         // Tạo một bản sao mới của mảng trạng thái
-        const newQuantityValidates = [...quantityValidates];
-        newQuantityValidates[indexs] = value;
-        setQuantityValidates(newQuantityValidates);
+        // const newQuantityValidates = [...quantityValidates];
+        // newQuantityValidates[indexs] = value;
+        // setQuantityValidates(newQuantityValidates);
 
         // Kiểm tra xem giá trị nhập vào có phải là số nguyên dương không
         const isValidQuantity = /^\d+$/.test(value) && parseInt(value, 10) > 0;
@@ -170,19 +186,21 @@ export default function Doctor() {
         }))
 
         setPrescription({
-            idBooking: String(patientInfo.id),
+            idBooking: String(bookingId),
             idDoctor: "1",
-            eyeSight: diagnoseInputs.leftEye + ', ' + diagnoseInputs.rightEye,
+            eyeSight: leftEye + ', ' + rightEye,
             diagnose: diagnoseInputs.diagnose,
             note: diagnoseInputs.note,
             idsMedicine: idsMedicine
         })
     }
 
+
+
     useEffect(() => {
 
         async function CreatePrescription() {
-            await medicinePrescriptionService.createMedicinePrescription(prescription);
+            await prescriptionService.createPrescription(prescription);
 
             const booking = await bookingService.getBookingById(patientInfo.id);
 
@@ -207,9 +225,19 @@ export default function Doctor() {
     }, [prescription])
 
     useEffect(() => {
+        getBookingById();
+        getPrescriptionByBookingId();
         getPatientInfo();
         getAllMedicines();
     }, [])
+
+    useEffect(() => {
+        if (Object.keys(prescriptionById).length) {
+            const eyeSight = prescriptionById.eyeSight;
+            setLeftEye(eyeSight.split(",")[0]);
+            setRightEye(eyeSight.split(",")[1]);
+        }
+    }, [prescriptionById])
 
     return (
         <>
@@ -217,7 +245,7 @@ export default function Doctor() {
             <NavbarDoctor />
 
             <div className='container mt-4 d-flex'>
-                {Object.keys(patientInfo).length ?
+                {Object.keys(booking).length ?
                     <div className='d-flex row' style={{ position: 'absolute', width: '85%' }}>
                         <div className='col-9'>
                             <h3>Bệnh án điện tử</h3>
@@ -226,19 +254,15 @@ export default function Doctor() {
                                     <div className="col-6">
                                         <label htmlFor="basic-url" className="form-label">Mắt trái :</label>
                                         <div className="input-group mb-3">
-                                            <input type="text" className={`form-control ${errorsPrescription?.leftEye?.message ? 'is-invalid' : ''}`}
-                                                {...registerPrescription('leftEye')}
-                                                id="basic-url" aria-describedby="basic-addon3" placeholder='.../10' name="leftEye" onChange={handleChangePrescription} />
-                                            <span className="invalid-feedback">{errorsPrescription?.leftEye?.message}</span>
+                                            <input type="text" className='form-control'
+                                                id="basic-url" aria-describedby="basic-addon3" value={leftEye + "/10"} name="leftEye" readOnly/>
                                         </div>
                                     </div>
                                     <div className="col-6">
                                         <label htmlFor="basic-url" className="form-label">Mắt phải :</label>
                                         <div className="input-group mb-3">
-                                            <input type="text" className={`form-control ${errorsPrescription?.rightEye?.message ? 'is-invalid' : ''}`}
-                                                {...registerPrescription('rightEye')}
-                                                id="basic-url" aria-describedby="basic-addon3" placeholder='.../10' name="rightEye" onChange={handleChangePrescription} />
-                                            <span className="invalid-feedback">{errorsPrescription?.rightEye?.message}</span>
+                                            <input type="text" className='form-control'
+                                                id="basic-url" aria-describedby="basic-addon3" value={rightEye + "/10"} name="rightEye" readOnly />
                                         </div>
                                     </div>
                                 </div>
@@ -324,21 +348,21 @@ export default function Doctor() {
                         <div className='col-3'>
                             <h3>Thông tin bệnh nhân</h3>
                             <div className='text-center'>
-                                <img src='images/user-icon.png' style={{ width: 150, borderRadius: '50%' }} />
-                                <p style={{ fontWeight: 'bold' }} readOnly>{patientInfo?.customer?.user?.fullName + ', ' + patientInfo?.customer?.age + ' tuổi'}</p>
+                                <img src='../../images/user-icon.png' style={{ width: 150, borderRadius: '50%' }} />
+                                <p style={{ fontWeight: 'bold' }} readOnly>{booking?.customer?.user?.fullName + ', ' + booking?.customer?.age + ' tuổi'}</p>
                             </div>
                             <div>
                                 <label htmlFor="basic-url" className="form-label">Số điện thoại:</label>
                                 <div className="input-group mb-3">
-                                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo?.customer?.user?.phoneNumber} />
+                                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={booking?.customer?.user?.phoneNumber} />
                                 </div>
                                 <label htmlFor="basic-url" className="form-label">Địa chỉ nhà:</label>
                                 <div className="input-group mb-3">
-                                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo?.customer?.user?.address} />
+                                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={booking?.customer?.user?.address} />
                                 </div>
                                 <label htmlFor="basic-url" className="form-label">Ngày đến khám:</label>
                                 <div className="input-group mb-3">
-                                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo?.dateBooking} />
+                                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={booking?.dateBooking} />
                                 </div>
                             </div>
                         </div>
