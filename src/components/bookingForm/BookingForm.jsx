@@ -63,9 +63,9 @@ export default function BookingForm() {
         Swal.fire({
             position: 'center',
             icon: 'success',
-            title: 'Thêm Mới Thành Công !',
+            title: 'Đặt lịch hẹn thành công !',
             showConfirmButton: false,
-            timer: 1500
+            timer: 3500
         })
 
         reset()
@@ -75,7 +75,7 @@ export default function BookingForm() {
 
     const handleChangeShowTime = async (e) => {
         const dateBooking = String(e.target.value);
-
+       
         const newBooking = {
             idEyeCategory: "",
             idCustomer: "",
@@ -93,19 +93,13 @@ export default function BookingForm() {
         const minutes = currentDate.getMinutes();
         const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 
-
-
         if (new Date(dateBooking) > currentDate) {
             const listTimeFreeBooking = times.filter(item => !listTimeBooked.includes(item));
-            console.log(listTimeFreeBooking);
             setTimeFreeBooking(listTimeFreeBooking)
-            
         }
         else {
             const listTimeFreeBooking = times.filter(item => !listTimeBooked.includes(item) && item.localeCompare(formattedTime) > 0);
-            console.log(listTimeFreeBooking);
             setTimeFreeBooking(listTimeFreeBooking)
-            
         }
 
         setShowTime(true)
@@ -208,22 +202,19 @@ export default function BookingForm() {
                                                 type="text"
                                                 className="form-control"
                                                 placeholder="Ngày hẹn:"
-                                                disabled
+                                                readOnly
                                             />
                                         </div>
                                         <div className="form-group">
                                             <input
                                                 type="date"
                                                 className="form-control"
-                                                placeholder="Ngày hẹn:"
                                                 {...register("dateBooking")}
-                                                onChange={handleChangeShowTime}
+                                                onInput={handleChangeShowTime}
                                             />
-
                                         </div>
                                     </div>
                                     <span className="text-warning font-weight-bold">{errors?.dateBooking?.message}</span>
-
                                 </div>
                                 <div className="col-sm-6 d-flex">
                                     <div className="form-group">

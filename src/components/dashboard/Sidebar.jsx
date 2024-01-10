@@ -39,7 +39,7 @@ export default function Sidebar() {
                                     <span className="hide-menu">Thống kê</span>
                                 </a>
                             </Link>
-                            
+
                         </li>
                         <li className="nav-small-cap">
                             <i className="ti ti-dots nav-small-cap-icon fs-4" />
@@ -55,7 +55,7 @@ export default function Sidebar() {
                                     </span>
                                     <span className="hide-menu">Bệnh nhân</span>
                                 </a>
-                            </Link>                           
+                            </Link>
                         </li>
                         {/* <li className="sidebar-item">
                             <a
@@ -81,93 +81,98 @@ export default function Sidebar() {
                                 <span className="hide-menu">Appoinments</span>
                             </a>
                         </li> */}
-                    
+
                         <li className="nav-small-cap">
                             <i className="ti ti-dots nav-small-cap-icon fs-4" />
                             <span className="hide-menu">LỄ TÂN</span>
                         </li>
                         <li className="sidebar-item">
-                            <Link to= '/receptionist'>
+                            <Link to='/receptionist'>
                                 <a
-                                className="sidebar-link"
-                                href="./authentication-login.html"
-                                aria-expanded="false"
-                            >
-                                <span>
-                                <i className="fa-solid fa-list-check fa-md"></i>
-                                </span>
-                                <span className="hide-menu">Danh sách hẹn khám</span>
+                                    className="sidebar-link"
+                                    href="./authentication-login.html"
+                                    aria-expanded="false"
+                                >
+                                    <span>
+                                        <i className="fa-solid fa-list-check fa-md"></i>
+                                    </span>
+                                    <span className="hide-menu">Danh sách hẹn khám</span>
                                 </a>
-                            </Link>
-                        </li>
-                        <li className="sidebar-item">
-                            <Link to='/receptionist/waiting-list'>
-                            <a
-                                className="sidebar-link"
-                                href="./authentication-register.html"
-                                aria-expanded="false"
-                            >
-                                <span>
-                                <i className="fa-regular fa-rectangle-list fa-md" ></i>
-                                </span>
-                                <span className="hide-menu">Danh sách chờ khám</span>
-                            </a>
-                            </Link>
-                        </li>
-                        <li className="sidebar-item">
-                            <Link to='/receptionist/waiting-pay'>
-                            <a
-                                className="sidebar-link"
-                                href="./authentication-register.html"
-                                aria-expanded="false"
-                            >
-                                <span>
-                                    
-                                    <i className="fa-solid fa-money-check-dollar fa-md"></i>
-                                </span>
-                                <span className="hide-menu">Danh sách chờ thanh toán</span>
-                            </a>
                             </Link>
                         </li>
 
                         <li className="nav-small-cap">
                             <i className="ti ti-dots nav-small-cap-icon fs-4" />
-                            <span className="hide-menu">BÁC SĨ</span>
+                            <span className="hide-menu">KHÁM CHỮA BỆNH</span>
                         </li>
-
                         <li className="sidebar-item">
-                            <Link to='/receptionist/waiting-pay'>
-                            <a
-                                className="sidebar-link"
-                            >
-                                <span>                                   
-                                    <i className="ti ti-stethoscope"></i>
-                                </span>
-                                <span className="hide-menu">Danh sách khám</span>
-                            </a>
+                            <Link to='/receptionist/waiting-list'>
+                                <a
+                                    className="sidebar-link"
+                                    href="./authentication-register.html"
+                                    aria-expanded="false"
+                                >
+                                    <span>
+                                        <i className="fa-regular fa-rectangle-list fa-md" ></i>
+                                    </span>
+                                    <span className="hide-menu">Danh sách chờ khám</span>
+                                </a>
                             </Link>
                         </li>
+                        <li className="sidebar-item">
+                            <Link to='/doctor'>
+                                <a
+                                    className="sidebar-link"
+                                >
+                                    <span>
+                                        <i className="ti ti-stethoscope"></i>
+                                    </span>
+                                    <span className="hide-menu">Bệnh án điện tử</span>
+                                </a>
+                            </Link>
+                        </li>
+
+
+                        <li className="nav-small-cap">
+                            <i className="ti ti-dots nav-small-cap-icon fs-4" />
+                            <span className="hide-menu">THANH TOÁN HÓA ĐƠN</span>
+                        </li>
+                        <li className="sidebar-item">
+                            <Link to='/receptionist/waiting-pay'>
+                                <a
+                                    className="sidebar-link"
+                                    href="./authentication-register.html"
+                                    aria-expanded="false"
+                                >
+                                    <span>
+
+                                        <i className="fa-solid fa-money-check-dollar fa-md"></i>
+                                    </span>
+                                    <span className="hide-menu">Danh sách chờ thanh toán</span>
+                                </a>
+                            </Link>
+                        </li>
+
 
                         <li className="nav-small-cap">
                             <i className="ti ti-dots nav-small-cap-icon fs-4" />
                             <span className="hide-menu">THUỐC</span>
                         </li>
-
                         <li className="sidebar-item">
                             <Link to='/medicine'>
-                            <a
-                                className="sidebar-link"
-                            >
-                                <span>                                   
-                                    <i className="ti ti-pill"></i>
-                                </span>
-                                <span className="hide-menu">Danh sách thuốc</span>
-                            </a>
+                                <a
+                                    className="sidebar-link"
+                                >
+                                    <span>
+                                        <i className="ti ti-pill"></i>
+                                    </span>
+                                    <span className="hide-menu">Danh sách thuốc</span>
+                                </a>
                             </Link>
                         </li>
 
 
-                        
+
                     </ul>
 
                 </nav>

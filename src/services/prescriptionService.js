@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const URL_API = 'http://localhost:8080/api/prescription';
-const medicinePrescriptionService = {
-    getMdicinePrescription: async () => {
+const prescriptionService = {
+    getPrescription: async () => {
         return axios
             .get(URL_API)
             .then((response) => {
@@ -12,10 +12,20 @@ const medicinePrescriptionService = {
                 console.log(error);
             });
     },
-    createMedicinePrescription: async (obj) => {
+    createPrescription: async (obj) => {
         console.log("prescription obj: ", JSON.stringify(obj));
         return axios
             .post(URL_API, obj)
+            .then((response) => {
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    },
+    getPrescriptionByBookingId: async (id) => {
+        return axios
+            .get(URL_API + '/booking/' + id)
             .then((response) => {
                 return response.data;
             })
@@ -27,4 +37,4 @@ const medicinePrescriptionService = {
 
 }
 
-export default medicinePrescriptionService;
+export default prescriptionService;
