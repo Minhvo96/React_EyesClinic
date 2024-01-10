@@ -3,6 +3,7 @@ import Sidebar from "./Sidebar";
 import addStyleDashboard from "../../AddStyleDashboard";
 import { useState } from "react";
 import ModalHistoryExam from "./modal/ModalHistoryExam";
+import { ClipLoader } from "react-spinners";
 
 export default function Patient() {
 

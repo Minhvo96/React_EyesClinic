@@ -4,7 +4,7 @@ import { Button, Modal } from "react-bootstrap";
 
 const ModalExamDetail = ({ showModal, closeModal }) => {
     return (
-        <Modal show={showModal} onHide={closeModal} size='xl' centered className="bg-dark bg-opacity-50">
+        <Modal show={showModal} onHide={closeModal} size='lg' centered className="bg-dark bg-opacity-50">
             <Modal.Header closeButton>
                 <Modal.Title className="ms-4">Lịch sử khám bệnh</Modal.Title>
             </Modal.Header>

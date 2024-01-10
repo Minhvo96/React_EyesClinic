@@ -1,27 +1,9 @@
-import { useEffect, useState } from "react";
-import Header from "./Header";
-import Sidebar from "./Sidebar";
-import addStyleDashboard from "../../AddStyleDashboard";
 
-export default function Dashboard() {
 
-    addStyleDashboard();
-
+export default function Overview() {
 
     return (
-        <>
-            <div
-                className='page-wrapper'
-                id="main-wrapper"
-                data-layout="vertical"
-                data-navbarbg="skin6"
-                data-sidebartype="full"
-                data-sidebar-position="fixed"
-                data-header-position="fixed"
-            >
-                <Sidebar />
-                <div className="body-wrapper">
-                    <Header />
+        <>          
                     <div className="container-fluid">
                         {/*  Row 1 */}
                         <div className="row">
@@ -333,9 +315,7 @@ export default function Dashboard() {
                             </div>
                         </div>
 
-                    </div>
-                </div>
-            </div>
+                    </div>           
         </>
     )
 }
