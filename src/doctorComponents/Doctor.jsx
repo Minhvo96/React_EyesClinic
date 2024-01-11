@@ -241,14 +241,10 @@ export default function Doctor() {
 
     return (
         <>
-            <div className='container d-flex' style={{
-                position: 'fixed',
-                zIndex: '20',
-                marginTop: '97px',
-                paddingRight: '50px'
-            }}>
+            <div className='container-fluid d-flex' 
+            >
                 {Object.keys(booking).length ?
-                    <div className='d-flex row' style={{ position: 'absolute', width: '120%' }}>
+                    <div className='d-flex row' style={{ width: '120%' }}>
                         <div className='col-9'>
                             <h3>Bệnh án điện tử</h3>
                             <form className="needs-validation">

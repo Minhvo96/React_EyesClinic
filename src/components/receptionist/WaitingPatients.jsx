@@ -35,7 +35,9 @@ export default function WaitingPatients() {
   const [times, setTimes] = useState(["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"])
 
   const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm({
-    resolver: yupResolver(registerSchema)
+    resolver: yupResolver(registerSchema),
+    mode: "onBlur",
+    criteriaMode: "all"
   })
 
   const handleSubmitForm = async (data) => {
@@ -123,15 +125,17 @@ export default function WaitingPatients() {
         "status": status
       }
 
-      await handleUpdateBookingList(newBooking)
-
-      
       Swal.fire({
-        position: 'center',
-        icon: 'success',
-        title: 'Hủy Thành Công !',
-        showConfirmButton: false,
-        timer: 1500
+        title: 'Bạn chắc chắn muốn hủy lịch hẹn khám này chứ?',
+        showCancelButton: true,
+        confirmButtonText: 'Hủy',
+        cancelButtonText: 'Không'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          await handleUpdateBookingList(newBooking)
+          Swal.fire('Hủy thành công!', '', 'success')
+
+        }
       })
     }
 
@@ -156,8 +160,8 @@ export default function WaitingPatients() {
     };
 
     await bookingService.editBooking(newBooking, obj.id)
+    setBookingList(bookingList => bookingList.filter((booking) => booking.id !== obj.id));
 
-    getAllBookingList()
   }
 
   useEffect(() => {
@@ -181,14 +185,7 @@ export default function WaitingPatients() {
   return (
 
     <>
-      <div className="container mr-3" style={{
-        position: 'fixed',
-        zIndex: '20',
-        marginTop: '100px',
-        paddingRight: '50px',
-        height: '100vh',
-        overflow: 'auto'
-      }}>
+      <div className="container-fluid">
 
         <div className='d-flex mb-5 align-items-center justify-content-between'>
           <div className='d-flex align-items-center'>
@@ -232,10 +229,21 @@ export default function WaitingPatients() {
                           <td>{booking.dateBooking}</td>
                           <td>{booking.timeBooking}</td>
                           <td>
-                            <select className={`form-control text-center ${times.includes(booking.timeBooking) ? 'text-danger' : "" }`} value={times.includes(booking.timeBooking) ? 'true' : 'false'} onChange={(e) => handleChangeStatus(e, booking.id)}>
-                              <option className='text-black' value="false">{booking.status == "WAITING" ? "Không đặt trước" : "Đang khám"}</option>
-                              <option className='text-black' value="true">{booking.status == "WAITING" ? "Chờ khám" : "Đang khám"}</option>
-                              <option className='text-black' value="cancel">Hủy</option>
+                            <select className={`form-control text-center ${times.includes(booking.timeBooking) ? 'text-danger' : ""}`} value={times.includes(booking.timeBooking) ? 'true' : 'false'} onChange={(e) => handleChangeStatus(e, booking.id)}>
+                              {
+                                times.includes(booking.timeBooking) ?
+                                  <>
+                                    <option className='text-black' value="true">{booking.status == "WAITING" ? "Chờ khám" : "Đang khám"}</option>
+                                    <option className='text-black' value="cancel">Hủy</option>
+                                  </>
+                                  :
+                                  <>
+                                    <option className='text-black' value="false">{booking.status == "WAITING" ? "Không đặt trước" : "Đang khám"}</option>
+                                    <option className='text-black' value="cancel">Hủy</option>
+                                  </>
+
+                              }
+
                             </select>
                           </td>
                           <td className="border-bottom-0">
@@ -274,57 +282,57 @@ export default function WaitingPatients() {
               <h5 className="modal-title font-weight-bold" id="exampleModalLabel">Đặt lịch tại quầy</h5>
               <button type="button" className="btn-close" data-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form  className="appointment-form">
+            <form className="appointment-form needs-validation">
               <div className="modal-body">
 
                 <div className="container">
 
                   <div className="row mb-3">
-                    <div className="col-md-6">
+                    <div className="col-md-6 has-validation">
                       <label>Họ và tên</label>
                       <input type="text"
-                        className='form-control'
+                        className={`form-control ${errors?.fullName?.message ? 'is-invalid' : ''}`}
                         {...register("fullName")}
 
                       />
-                      <span className="text-warning font-weight-bold">{errors?.fullName?.message}</span>
+                      <span className="text-danger font-weight-bold invalid-feedback">{errors?.fullName?.message}</span>
                     </div>
-                    <div className="col-md-6">
+                    <div className="col-md-6 has-validation">
                       <label>Số điện thoại</label>
                       <input type="text"
-                        className='form-control'
+                        className={`form-control ${errors?.phoneNumber?.message ? 'is-invalid' : ''}`}
                         {...register("phoneNumber")}
 
                       />
-                      <span className="text-warning font-weight-bold">{errors?.phoneNumber?.message}</span>
+                      <span className="text-danger font-weight-bold invalid-feedback">{errors?.phoneNumber?.message}</span>
                     </div>
                   </div>
                   <div className="row mb-3">
-                    <div className="col-md-6">
+                    <div className="col-md-6 has-validation">
                       <label>Tuổi</label>
                       <input type="number"
-                        className='form-control'
+                        className={`form-control ${errors?.age?.message ? 'is-invalid' : ''}`}
                         {...register("age")}
 
                       />
-                      <span className="text-warning font-weight-bold">{errors?.age?.message}</span>
+                      <span className="text-danger font-weight-bold invalid-feedback">{errors?.age?.message}</span>
                     </div>
-                    <div className="col-md-6">
+                    <div className="col-md-6 has-validation">
                       <label>Địa chỉ</label>
                       <input type="text"
-                        className='form-control'
+                        className={`form-control ${errors?.address?.message ? 'is-invalid' : ''}`}
                         {...register("address")}
 
                       />
-                      <span className="text-warning font-weight-bold">{errors?.address?.message}</span>
+                      <span className="text-danger font-weight-bold invalid-feedback">{errors?.address?.message}</span>
                     </div>
                   </div>
                   <div className="row mb-3">
 
-                    <div className="col-md-6">
+                    <div className="col-md-6 has-validation">
                       <label>Dịch vụ</label>
 
-                      <select className='form-control' {...register("eyeCategory")}>
+                      <select type='text' className={`form-control ${errors?.eyeCategory?.message ? 'is-invalid' : ''}`} {...register("eyeCategory")}>
                         <option value="" style={{ color: 'black' }}>--Chọn dịch vụ--</option>
                         {
                           eyeCategories.map(item => {
@@ -334,7 +342,7 @@ export default function WaitingPatients() {
                           })
                         }
                       </select>
-                      <span className="text-warning font-weight-bold">{errors?.eyeCategory?.message}</span>
+                      <span className="text-danger font-weight-bold invalid-feedback">{errors?.eyeCategory?.message}</span>
                     </div>
                     <div className="col-md-6">
                       <label>Ghi chú</label>
@@ -351,7 +359,7 @@ export default function WaitingPatients() {
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" data-dismiss="modal" >Đóng</button>
-                <button type="button" className="btn btn-primary"  onClick={handleSubmit(handleSubmitForm)}>Đặt lịch</button>
+                <button type="button" className="btn btn-primary" onClick={handleSubmit(handleSubmitForm)}>Đặt lịch</button>
               </div>
             </form>
           </div>
