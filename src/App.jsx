@@ -20,6 +20,7 @@ import DashboardOverview from './pages/DashboardOverview';
 import { AuthProvider } from './context/AuthProvider';
 import { ClipLoader } from 'react-spinners';
 import DashboardDoctor from './pages/DashboardDoctor';
+import Demo from './components/Demo';
 
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
               <Route path='/dashboard/overview' element={<DashboardOverview />} roles={['ROLE_ADMIN']} />
               <Route path='/receptionist' element={<Receptionist />}>
                 <Route path='' element={<BookingList />} />
+                <Route path='demo' element={<Demo />} />
                 <Route path='waiting-list' element={<WaitingPatients />} />
                 <Route path='waiting-pay' element={<WaitingPay />} />
               </Route>

@@ -296,7 +296,7 @@ export default function BookingList() {
                 <div className='d-flex mb-5 align-items-center'>
                     <h6 className='mr-3'>Chọn ngày: </h6>
                     <div className='col-3 '>
-                        <input type="date" className='form-control' onChange={handleChangeListByDate} />
+                        <input type="date" className='form-control' onChange={handleChangeListByDate} min={minDate} />
                     </div>
                 </div>
                 {
