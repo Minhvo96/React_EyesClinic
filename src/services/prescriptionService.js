@@ -32,6 +32,16 @@ const prescriptionService = {
             .catch((error) => {
                 console.log(error);
             });
+    },
+    editPrescription: async (obj, id) => {
+        return axios
+            .put(URL_API + '/' + id, obj)
+            .then((response) => {
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 
 

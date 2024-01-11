@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import addStyleDashboard from "../../AddStyleDashboard";
 
 export default function Sidebar() {
     return (
@@ -7,7 +6,7 @@ export default function Sidebar() {
             {/* Sidebar scroll*/}
             <div>
                 <div className="brand-logo d-flex align-items-center justify-content-between">
-                    <a href="./index.html" className="text-nowrap logo-img">
+                    <a href="/dashboard/overview" className="text-nowrap logo-img">
                         <img
                             src="../../src/assets/images/logos/dark-logo.svg"
                             width={180}
@@ -109,7 +108,7 @@ export default function Sidebar() {
                             <Link to='/receptionist/waiting-list'>
                                 <a
                                     className="sidebar-link"
-                                    href="./authentication-register.html"
+                                    href="/receptionist/waiting-list"
                                     aria-expanded="false"
                                 >
                                     <span>
@@ -119,20 +118,6 @@ export default function Sidebar() {
                                 </a>
                             </Link>
                         </li>
-                        <li className="sidebar-item">
-                            <Link to='/doctor'>
-                                <a
-                                    className="sidebar-link"
-                                >
-                                    <span>
-                                        <i className="ti ti-stethoscope"></i>
-                                    </span>
-                                    <span className="hide-menu">Bệnh án điện tử</span>
-                                </a>
-                            </Link>
-                        </li>
-
-
                         <li className="nav-small-cap">
                             <i className="ti ti-dots nav-small-cap-icon fs-4" />
                             <span className="hide-menu">THANH TOÁN HÓA ĐƠN</span>
@@ -141,7 +126,7 @@ export default function Sidebar() {
                             <Link to='/receptionist/waiting-pay'>
                                 <a
                                     className="sidebar-link"
-                                    href="./authentication-register.html"
+                                    href="/receptionist/waiting-pay"
                                     aria-expanded="false"
                                 >
                                     <span>
@@ -156,7 +141,7 @@ export default function Sidebar() {
 
                         <li className="nav-small-cap">
                             <i className="ti ti-dots nav-small-cap-icon fs-4" />
-                            <span className="hide-menu">THUỐC</span>
+                            <span className="hide-menu">QUẢN LÝ THUỐC</span>
                         </li>
                         <li className="sidebar-item">
                             <Link to='/medicine'>

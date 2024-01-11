@@ -5,7 +5,6 @@ import { BrowserRouter, Route, Router, Routes } from 'react-router-dom';
 import PageServices from './components/services/PageServices';
 import History from './components/history/History';
 import WaitingList from './components/waitingList/WaitingList';
-import Doctor from './doctorComponents/Doctor';
 import Dashboard from './components/dashboard/Overview';
 import Patient from './components/dashboard/Patient';
 import Receptionist from './components/receptionist/Receptionist';

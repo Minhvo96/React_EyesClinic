@@ -55,7 +55,7 @@ export default function Assistant() {
 
     const handleAddEyeSight = () => {
         Swal.fire({
-            title: 'Bạn muốn thêm thông tin thị lực cho bệnh nhân?',
+            title: `Thêm số đo thị lực cho bệnh nhân ${booking.customer.user.fullName}?`,
             showCancelButton: true,
             confirmButtonText: 'Lưu ngay',
             cancelButtonText: 'Hủy'
@@ -71,7 +71,10 @@ export default function Assistant() {
                 }
                 await prescriptionService.createPrescription(prescription);
                 Swal.fire('Thêm thông tin thành công!', '', 'success')
-                navigator('/waiting-list-assistant');
+                setTimeout(() => {
+                    Swal.close();
+                  }, 2000);
+                navigator('/receptionist/waiting-list');
             }
         })
     }
@@ -98,7 +101,7 @@ export default function Assistant() {
                                 <h5 className="card-title fw-semibold mb-4">Đo thị lực</h5>
                             </div>
                             <div style={{ width: '80%', marginLeft: 140 }}>
-                                <StepProgressBar />
+                                <StepProgressBar eyeSightValues={eyeSightValues} />
                             </div>
                         </div>
                         <div className="d-flex mt-5">

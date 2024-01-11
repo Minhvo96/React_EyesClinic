@@ -1,57 +1,74 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "react-step-progress-bar/styles.css";
 import { ProgressBar, Step } from "react-step-progress-bar";
 
-class StepProgressBar extends React.Component {
-  render() {
-    return (
-      <ProgressBar
-        percent={100}
-        filledBackground="linear-gradient(to right, #add8e6, #0079af)"
-      >
-        <Step transition="scale">
-          {({ accomplished }) => (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '30px' }}>
-              <img
-                style={{ filter: `grayscale(${accomplished ? 0 : 80}%)` }}
-                width="30"
-                src="https://vignette.wikia.nocookie.net/pkmnshuffle/images/9/9d/Pichu.png/revision/latest?cb=20170407222851"
-              />
-              <span style={{ fontSize: '12px' }}>Đo thị lực</span>
+const StepProgressBar = ({ eyeSightValues, progressBarPercent, diagnoseInputs, diseases, selectedMedicines }) => {
+  const [percent, setPercent] = useState(0);
+
+  useEffect(() => {
+    if (eyeSightValues) {
+      const leftEyePercent = eyeSightValues.leftEye ? 25 : 0;
+      const rightEyePercent = eyeSightValues.rightEye ? 25 : 0;
+      setPercent(leftEyePercent + rightEyePercent);
+    } else if (progressBarPercent) {
+      setPercent(progressBarPercent);
+      if (diagnoseInputs || diseases.length > 0 || selectedMedicines.length > 0) {
+        let percentValue = 60;
+        if (diagnoseInputs && diseases.length > 0 && selectedMedicines.length > 0) {
+          percentValue = 100;
+        } else if ((diagnoseInputs && diseases.length > 0) || (diagnoseInputs && selectedMedicines.length > 0) || (diseases.length > 0 && selectedMedicines.length > 0)) {
+          percentValue = 70;
+        }
+        setPercent(percentValue);
+      }
+    }
+  }, [diagnoseInputs, progressBarPercent, eyeSightValues, diseases, selectedMedicines]);
+
+  return (
+    <ProgressBar percent={percent} filledBackground="linear-gradient(to right, #add8e6, #0079af)">
+      <Step transition="scale">
+        {({ accomplished }) => (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '30px' }}>
+            <img
+              style={{ filter: `grayscale(${accomplished ? 0 : 80}%)` }}
+              width="30"
+              src="../../images/Eye1.jpg"
+            />
+            <span style={{ fontSize: '12px' }}>Đo thị lực</span>
+          </div>
+        )}
+      </Step>
+      <Step transition="scale">
+        {({ accomplished }) => (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '30px' }}>
+            <img
+              style={{ filter: `grayscale(${accomplished ? 0 : 80}%)` }}
+              width="30"
+              src="../../images/Eye2.png"
+            />
+            <span style={{ fontSize: '12px' }}>Khám mắt</span>
+          </div>
+        )}
+      </Step>
+      <Step transition="scale">
+        {({ accomplished }) => (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '30px' }}>
+            <img
+              style={{ filter: `grayscale(${accomplished ? 0 : 80}%)` }}
+              width="30"
+              src="../../images/Eye3.png"
+            />
+            <div className="d-flex justify-content-center">
+              <span style={{ fontSize: '12px', overflow: 'visible' }}>Thanh&nbsp;</span>
+              <span style={{ fontSize: '12px', overflow: 'visible' }}>toán</span>
             </div>
-          )}
-        </Step>
-        <Step transition="scale">
-          {({ accomplished }) => (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '30px' }}>
-              <img
-                style={{ filter: `grayscale(${accomplished ? 0 : 80}%)` }}
-                width="30"
-                src="https://vignette.wikia.nocookie.net/pkmnshuffle/images/9/97/Pikachu_%28Smiling%29.png/revision/latest?cb=20170410234508"
-              />
-              <span style={{ fontSize: '12px' }}>Khám mắt tổng quát</span>
-            </div>
-          )}
-        </Step>
-        <Step transition="scale">
-          {({ accomplished }) => (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '30px' }}>
-              <img
-                style={{ filter: `grayscale(${accomplished ? 0 : 80}%)` }}
-                width="30"
-                src="https://orig00.deviantart.net/493a/f/2017/095/5/4/raichu_icon_by_pokemonshuffle_icons-db4ryym.png"
-              />
-              <div className="d-flex justify-content-center">
-                <span style={{ fontSize: '12px', overflow: 'visible' }}>Thanh&nbsp;</span>
-                <span style={{ fontSize: '12px', overflow: 'visible' }}>toán</span>
-              </div>
-            </div>
-          )}
-        </Step>
-      </ProgressBar>
-    );
-  }
-}
+          </div>
+        )}
+      </Step>
+    </ProgressBar>
+  );
+};
+
 
 
 export default StepProgressBar;
