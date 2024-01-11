@@ -8,7 +8,7 @@ import Sidebar from '../components/dashboard/Sidebar';
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import StepProgressBar from '../components/progress/Progress';
 import Swal from 'sweetalert2';
 

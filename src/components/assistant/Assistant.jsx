@@ -60,7 +60,7 @@ export default function Assistant() {
             confirmButtonText: 'Lưu ngay',
             cancelButtonText: 'Hủy'
         }).then(async (result) => {
-            if (result.isConfirmed) {  
+            if (result.isConfirmed) {
                 const prescription = {
                     idBooking: String(booking.id),
                     idDoctor: "1",
@@ -73,7 +73,7 @@ export default function Assistant() {
                 Swal.fire('Thêm thông tin thành công!', '', 'success')
                 setTimeout(() => {
                     Swal.close();
-                  }, 2000);
+                }, 2000);
                 navigator('/receptionist/waiting-list');
             }
         })

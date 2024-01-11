@@ -1,8 +1,9 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import bookingService from '../../services/bookingServices';
 import eyeCategoriesService from '../../services/eyeCategoriesServices';
 import Swal from 'sweetalert2'
+import Pagination from '../pagination/pagination';
 
 
 
@@ -18,7 +19,7 @@ export default function BookingList() {
     const [times, setTimes] = useState(["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"])
     const [timesFreeBooking, setTimesFreeBooking] = useState([])
     const [minDate, setMinDate] = useState();
-    
+
 
     const getTodayDate = () => {
         const today = new Date();
@@ -125,7 +126,7 @@ export default function BookingList() {
     }
 
     const handleChangeBooking = async (e) => {
-        
+
         if (Object.keys(bookingUp).length) {
             if (e.target.name == 'dateBooking') {
 
@@ -153,7 +154,7 @@ export default function BookingList() {
 
         }
         else {
-            if(e.target.name == 'dateBooking'){
+            if (e.target.name == 'dateBooking') {
                 const dateBooking = e.target.value;
 
                 setTimesFreeByDate(dateBooking)
@@ -161,7 +162,7 @@ export default function BookingList() {
                     ...booking,
                     [e.target.name]: e.target.value
                 }
-    
+
                 setBookingUp(bookingNew)
             }
             else {
@@ -169,10 +170,10 @@ export default function BookingList() {
                     ...booking,
                     [e.target.name]: e.target.value
                 }
-    
+
                 setBookingUp(bookingNew)
             }
-            
+
         }
 
     }
@@ -287,61 +288,59 @@ export default function BookingList() {
     return (
         <>
 
-            <div className="container mr-3" style={{
-                position: 'fixed',
-                zIndex: '20',
-                marginTop: '100px',
-                paddingRight: '50px'
-            }}>
+            <div className="container-fluid" >
                 <div className='d-flex mb-5 align-items-center'>
                     <h6 className='mr-3'>Chọn ngày: </h6>
                     <div className='col-3 '>
-                        <input type="date" className='form-control' onChange={handleChangeListByDate} />
+                        <input type="date" className='form-control' onChange={handleChangeListByDate} min={minDate} />
                     </div>
                 </div>
                 {
                     bookingList.length ?
-                        <table className="table">
-                            <thead className="thead-primary">
-                                <tr>
-                                    <th>STT</th>
-                                    <th>Họ và tên</th>
-                                    <th>Số điện thoại</th>
-                                    <th>Ngày khám</th>
-                                    <th>Giờ khám</th>
-                                    <th>Dịch vụ</th>
-                                    <th className='col-3 text-center'>Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    bookingList
-                                        .sort((a, b) => {
-                                            return a.timeBooking.localeCompare(b.timeBooking);
-                                        })
-                                        .map((booking, index) => {
-                                            const count = index + 1;
-                                            return (
-                                                <tr key={booking.id}>
-                                                    <td>{count}</td>
-                                                    <td>{booking.customer.user.fullName}</td>
-                                                    <td>{booking.customer.user.phoneNumber}</td>
-                                                    <td>{booking.dateBooking}</td>
-                                                    <td>{booking.timeBooking}</td>
-                                                    <td>{booking.eyeCategory.nameCategory}</td>
-                                                    <td className='text-center'>
-                                                        <button className='btn btn-warning mr-2' type="button" data-toggle="modal" data-target="#exampleModal" onClick={() => getBookingById(booking.id)}>Sửa</button>
-                                                        <button className='btn btn-danger mr-2' onClick={() => deleteBookingById(booking.id)}>Hủy</button>
-                                                        <button className='btn btn-success' onClick={() => handleChangeStatusBooking(booking.id)}>Xác nhận khám</button>
+                        <>
+                            <table className="table">
+                                <thead className="thead-primary">
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Họ và tên</th>
+                                        <th>Số điện thoại</th>
+                                        <th>Ngày khám</th>
+                                        <th>Giờ khám</th>
+                                        <th>Dịch vụ</th>
+                                        <th className='col-4 text-center'>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        bookingList
+                                            .sort((a, b) => {
+                                                return a.timeBooking.localeCompare(b.timeBooking);
+                                            })
+                                            .map((booking, index) => {
+                                                const count = index + 1;
+                                                return (
+                                                    <tr key={booking.id}>
+                                                        <td>{count}</td>
+                                                        <td>{booking.customer.user.fullName}</td>
+                                                        <td>{booking.customer.user.phoneNumber}</td>
+                                                        <td>{booking.dateBooking}</td>
+                                                        <td>{booking.timeBooking}</td>
+                                                        <td>{booking.eyeCategory.nameCategory}</td>
+                                                        <td className='text-center'>
+                                                            <button className='btn btn-warning mr-2' type="button" data-toggle="modal" data-target="#exampleModal" onClick={() => getBookingById(booking.id)}>Sửa</button>
+                                                            <button className='btn btn-danger mr-2' onClick={() => deleteBookingById(booking.id)}>Hủy</button>
+                                                            <button className='btn btn-success' onClick={() => handleChangeStatusBooking(booking.id)}>Xác nhận khám</button>
 
-                                                    </td>
-                                                </tr>
-                                            )
-                                        })
-                                }
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })
+                                    }
 
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                            
+                        </>
                         :
                         <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
                 }
@@ -413,12 +412,12 @@ export default function BookingList() {
                                             <label>Giờ khám</label>
 
                                             <select className='form-control' name="timeBooking" id="" onChange={handleChangeBooking} >
-                                            
+
                                                 {
                                                     timesFreeBooking.map((time, index) => {
-                                                        
+
                                                         return (
-                                                            <option key={index} value={time} selected={time==booking.timeBooking ? true : false}>{time}</option>
+                                                            <option key={index} value={time} selected={time == booking.timeBooking ? true : false}>{time}</option>
                                                         )
 
                                                     })
