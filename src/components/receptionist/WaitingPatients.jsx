@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import bookingService from '../../services/bookingServices';
 import Swal from 'sweetalert2';
 import { NavLink } from 'react-router-dom';
+import ReactPaginate from 'react-paginate';
 import eyeCategoriesService from '../../services/eyeCategoriesServices';
 import * as yup from 'yup'
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -49,7 +50,7 @@ export default function WaitingPatients() {
       password: null,
       age: data.age
     }
-    const idCustomer = await userService.createUser(user)
+    const idCustomer = await userService.createUser(user);
 
     const timeBooking = moment().format('HH:mm');
     const dateBooking = moment().format('YYYY-MM-DD')
@@ -144,11 +145,11 @@ export default function WaitingPatients() {
         ...booking,
         "status": status
       }
-
-      await handleUpdateBookingList(newBooking)
+      await handleUpdateBookingList(newBooking);
     }
-
   }
+
+
 
   const handleUpdateBookingList = async (obj) => {
     const newBooking = {
@@ -163,6 +164,18 @@ export default function WaitingPatients() {
     setBookingList(bookingList => bookingList.filter((booking) => booking.id !== obj.id));
 
   }
+
+  const [currentPage, setCurrentPage] = useState(0);
+  const appointmentsPerPage = 5;
+
+  const handlePageChange = (selectedPage) => {
+    setCurrentPage(selectedPage.selected);
+  };
+
+  const indexOfLastAppointment = (currentPage + 1) * appointmentsPerPage;
+  const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
+  const currentAppointments = bookingList.slice(indexOfFirstAppointment, indexOfLastAppointment);
+
 
   useEffect(() => {
     const now = new Date();
@@ -183,7 +196,6 @@ export default function WaitingPatients() {
   }, [])
 
   return (
-
     <>
       <div className="container-fluid">
 
@@ -201,77 +213,85 @@ export default function WaitingPatients() {
         </div>
         {
           bookingList.length ?
-            <table className="table">
-              <thead className="thead-primary">
-                <tr className='text-center'>
-                  <th>STT</th>
-                  <th>Họ và tên</th>
-                  <th>Số điện thoại</th>
-                  <th>Ngày khám</th>
-                  <th>Giờ khám</th>
-                  <th>Trạng thái</th>
-                  <th>Xem bệnh án</th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  bookingList
-                    .sort((a, b) => {
-                      return a.timeBooking.localeCompare(b.timeBooking);
-                    })
-                    .map((booking, index) => {
-                      const count = index + 1;
-                      return (
-                        <tr key={booking.id} className='text-center'>
-                          <td>{count}</td>
-                          <td>{booking.customer.user.fullName}</td>
-                          <td>{booking.customer.user.phoneNumber}</td>
-                          <td>{booking.dateBooking}</td>
-                          <td>{booking.timeBooking}</td>
-                          <td>
-                            <select className={`form-control text-center ${times.includes(booking.timeBooking) ? 'text-danger' : ""}`} value={times.includes(booking.timeBooking) ? 'true' : 'false'} onChange={(e) => handleChangeStatus(e, booking.id)}>
-                              {
-                                times.includes(booking.timeBooking) ?
-                                  <>
-                                    <option className='text-black' value="true">{booking.status == "WAITING" ? "Chờ khám" : "Đang khám"}</option>
-                                    <option className='text-black' value="cancel">Hủy</option>
-                                  </>
-                                  :
-                                  <>
-                                    <option className='text-black' value="false">{booking.status == "WAITING" ? "Không đặt trước" : "Đang khám"}</option>
-                                    <option className='text-black' value="cancel">Hủy</option>
-                                  </>
-
-                              }
-
-                            </select>
-                          </td>
-                          <td className="border-bottom-0">
-                            <div className="d-flex align-items-center justify-content-center">
-                              <NavLink to={`/assistant/${booking.id}`}>
-                                <button className="btn btn-outline-success d-flex justify-content-center align-items-center"
-                                  style={{ width: "36px", height: "36px" }}
-                                  onClick={() => handleChangeStatusExamining(booking.id)}
-                                >
-                                  <i className="ti ti-report-medical" style={{ fontSize: "18px" }}></i>
-                                </button>
-                              </NavLink>
-                            </div>
-                          </td>
-
-                        </tr>
-
-                      )
-                    })
-
-                }
-
-              </tbody>
-            </table>
+            <>
+              <table className="table">
+                <thead className="thead-primary">
+                  <tr className='text-center'>
+                    <th>STT</th>
+                    <th>Họ và tên</th>
+                    <th>Số điện thoại</th>
+                    <th>Ngày khám</th>
+                    <th>Giờ khám</th>
+                    <th>Trạng thái</th>
+                    <th>Xem bệnh án</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {
+                    currentAppointments
+                      .sort((a, b) => {
+                        return a.timeBooking.localeCompare(b.timeBooking);
+                      })
+                      .map((booking, index) => {
+                        const count = index + 1;
+                        return (
+                          <tr key={booking.id} className='text-center'>
+                            <td>{count}</td>
+                            <td>{booking.customer.user.fullName}</td>
+                            <td>{booking.customer.user.phoneNumber}</td>
+                            <td>{booking.dateBooking}</td>
+                            <td>{booking.timeBooking}</td>
+                            <td>
+                              <select className={`form-control text-center ${times.includes(booking.timeBooking) ? 'text-danger' : ""}`} value={times.includes(booking.timeBooking) ? 'true' : 'false'} onChange={(e) => handleChangeStatus(e, booking.id)}>
+                                {
+                                  times.includes(booking.timeBooking) ?
+                                    <>
+                                      <option className='text-black' value="true">{booking.status == "WAITING" ? "Chờ khám" : "Đang khám"}</option>
+                                      <option className='text-black' value="cancel">Hủy</option>
+                                    </>
+                                    :
+                                    <>
+                                      <option className='text-black' value="false">{booking.status == "WAITING" ? "Không đặt trước" : "Đang khám"}</option>
+                                      <option className='text-black' value="cancel">Hủy</option>
+                                    </>
+                                }
+                              </select>
+                            </td>
+                            <td className="border-bottom-0">
+                              <div className="d-flex align-items-center justify-content-center">
+                                <NavLink to={`/assistant/${booking.id}`}>
+                                  <button className="btn btn-outline-success d-flex justify-content-center align-items-center"
+                                    style={{ width: "36px", height: "36px" }}
+                                    onClick={() => handleChangeStatusExamining(booking.id)}
+                                  >
+                                    <i className="ti ti-report-medical" style={{ fontSize: "18px" }}></i>
+                                  </button>
+                                </NavLink>
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      })
+                  }
+                </tbody>
+              </table>
+              <div className="pagination-container">
+                <ReactPaginate
+                  pageCount={Math.ceil(bookingList.length / appointmentsPerPage)}
+                  pageRangeDisplayed={5} // Số lượng trang hiển thị
+                  marginPagesDisplayed={2} // Số lượng trang được hiển thị ở đầu và cuối
+                  onPageChange={handlePageChange}
+                  containerClassName={'pagination'}
+                  activeClassName={'active'}
+                  previousLabel={'Previous'}
+                  nextLabel={'Next'}
+                  breakLabel={'...'}
+                />
+              </div>
+            </>
             :
             <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
         }
-
       </div>
 
       {/* <// Modal --> */}
@@ -284,16 +304,13 @@ export default function WaitingPatients() {
             </div>
             <form className="appointment-form needs-validation">
               <div className="modal-body">
-
                 <div className="container">
-
                   <div className="row mb-3">
                     <div className="col-md-6 has-validation">
                       <label>Họ và tên</label>
                       <input type="text"
                         className={`form-control ${errors?.fullName?.message ? 'is-invalid' : ''}`}
                         {...register("fullName")}
-
                       />
                       <span className="text-danger font-weight-bold invalid-feedback">{errors?.fullName?.message}</span>
                     </div>
@@ -302,7 +319,6 @@ export default function WaitingPatients() {
                       <input type="text"
                         className={`form-control ${errors?.phoneNumber?.message ? 'is-invalid' : ''}`}
                         {...register("phoneNumber")}
-
                       />
                       <span className="text-danger font-weight-bold invalid-feedback">{errors?.phoneNumber?.message}</span>
                     </div>
@@ -313,7 +329,6 @@ export default function WaitingPatients() {
                       <input type="number"
                         className={`form-control ${errors?.age?.message ? 'is-invalid' : ''}`}
                         {...register("age")}
-
                       />
                       <span className="text-danger font-weight-bold invalid-feedback">{errors?.age?.message}</span>
                     </div>
@@ -322,13 +337,11 @@ export default function WaitingPatients() {
                       <input type="text"
                         className={`form-control ${errors?.address?.message ? 'is-invalid' : ''}`}
                         {...register("address")}
-
                       />
                       <span className="text-danger font-weight-bold invalid-feedback">{errors?.address?.message}</span>
                     </div>
                   </div>
                   <div className="row mb-3">
-
                     <div className="col-md-6 has-validation">
                       <label>Dịch vụ</label>
 
@@ -349,13 +362,10 @@ export default function WaitingPatients() {
                       <input type="text"
                         className='form-control'
                         {...register("message")}
-
                       />
                     </div>
                   </div>
                 </div>
-
-
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" data-dismiss="modal" >Đóng</button>

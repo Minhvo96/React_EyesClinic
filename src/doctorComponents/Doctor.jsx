@@ -8,19 +8,11 @@ import Sidebar from '../components/dashboard/Sidebar';
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import StepProgressBar from '../components/progress/Progress';
+import Swal from 'sweetalert2';
 
 const schemaPrescription = yup.object({
-    leftEye: yup.number()
-        .required("Cần phải nhập thị lực của bệnh nhân")
-        .typeError("Cần phải nhập số")
-        .min(0, "Thị lực không được nhỏ hơn 0")
-        .max(10, "Thị lực không được lớn hơn 10"),
-    rightEye: yup.number()
-        .required("Cần phải nhập thị lực của bệnh nhân")
-        .typeError("Cần phải nhập số")
-        .min(0, "Thị lực không được nhỏ hơn 0")
-        .max(10, "Thị lực không được lớn hơn 10"),
     diagnose: yup.string()
         .required("Không được để trống chẩn đoán")
 });
@@ -34,7 +26,8 @@ export default function Doctor() {
     const [leftEye, setLeftEye] = useState('');
     const [rightEye, setRightEye] = useState('');
 
-    const [patientInfo, setPatientInfo] = useState({});
+    const [progressBarPercent, setProgressBarPercent] = useState(50);
+
     const [medicines, setMedicines] = useState([]);
     const [diseases, setDiseases] = useState([]);
 
@@ -49,17 +42,13 @@ export default function Doctor() {
     const [usingMedicineErrors, setUsingMedicineErrors] = useState(Array(medicines.length).fill(''));
 
     const [prescription, setPrescription] = useState({});
+    const navigator = useNavigate();
 
     const { register: registerPrescription, handleSubmit: handleSubmitPrescription, formState: { errors: errorsPrescription }, reset: resetPrescription } = useForm({
         resolver: yupResolver(schemaPrescription),
         mode: "onBlur",
         criteriaMode: "all"
     });
-
-    const getPatientInfo = async () => {
-        const data = await bookingService.getBookingByStatus();
-        setPatientInfo(data);
-    }
 
     const getAllMedicines = async () => {
         const dataMedicine = await medicineService.getAllMedicines();
@@ -185,24 +174,30 @@ export default function Doctor() {
             usingMedicine: item.usingMedicine
         }))
 
-        setPrescription({
-            idBooking: String(bookingId),
-            idDoctor: "1",
-            eyeSight: leftEye + ', ' + rightEye,
-            diagnose: diagnoseInputs.diagnose,
-            note: diagnoseInputs.note,
-            idsMedicine: idsMedicine
+        Swal.fire({
+            title: `Xác nhận tạo bệnh án cho bệnh nhân ${booking.customer.user.fullName}?`,
+            showCancelButton: true,
+            confirmButtonText: 'Lưu ngay',
+            cancelButtonText: 'Hủy'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                setPrescription({
+                    idBooking: String(bookingId),
+                    idDoctor: "1",
+                    eyeSight: leftEye + ',' + rightEye,
+                    diagnose: diagnoseInputs.diagnose,
+                    note: `${diagnoseInputs.note}, ${diseases.join(", ")}`,
+                    idsMedicine: idsMedicine
+                })
+            }
         })
     }
 
-
-
     useEffect(() => {
-
         async function CreatePrescription() {
-            await prescriptionService.createPrescription(prescription);
+            await prescriptionService.editPrescription(prescription, bookingId);
 
-            const booking = await bookingService.getBookingById(patientInfo.id);
+            const booking = await bookingService.getBookingById(bookingId);
 
             const newBooking = {
                 idEyeCategory: String(booking.eyeCategory.id),
@@ -213,9 +208,12 @@ export default function Doctor() {
             };
 
             await bookingService.editBooking(newBooking, booking.id);
-
             setMedicineStatus(false);
-            setPatientInfo({});
+            Swal.fire('Tạo bệnh án thành công!', '', 'success')
+            setTimeout(() => {
+                Swal.close();
+            }, 2000);
+            navigator('/receptionist/waiting-list');
         }
 
         if (Object.keys(prescription).length) {
@@ -227,7 +225,6 @@ export default function Doctor() {
     useEffect(() => {
         getBookingById();
         getPrescriptionByBookingId();
-        getPatientInfo();
         getAllMedicines();
     }, [])
 
@@ -241,14 +238,16 @@ export default function Doctor() {
 
     return (
         <>
-            <div className='container-fluid d-flex' 
-            >
+            <div className='container-fluid d-flex'>
                 {Object.keys(booking).length ?
-                    <div className='d-flex row' style={{ width: '120%' }}>
+                    <div className='d-flex row' style={{ width: '120%', paddingTop: 14 }}>
                         <div className='col-9'>
                             <h3>Bệnh án điện tử</h3>
+                            <div style={{ width: '80%', marginLeft: 80, marginTop: 20 }}>
+                                <StepProgressBar progressBarPercent={progressBarPercent} diagnoseInputs={diagnoseInputs} diseases={diseases} selectedMedicines={selectedMedicines} />
+                            </div>
                             <form className="needs-validation">
-                                <div className='d-flex row mt-4'>
+                                <div className='d-flex row mt-5'>
                                     <div className="col-6">
                                         <label htmlFor="basic-url" className="form-label">Mắt trái :</label>
                                         <div className="input-group mb-3">
@@ -277,7 +276,7 @@ export default function Doctor() {
                                     <div className="col-6">
                                         <label htmlFor="basic-url" className="form-label">Dịch vụ :</label>
                                         <div className="input-group mb-3">
-                                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" value={patientInfo?.eyeCategory?.nameCategory} readOnly />
+                                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" value={booking?.eyeCategory?.nameCategory} readOnly />
                                         </div>
                                     </div>
                                 </div>
@@ -332,7 +331,7 @@ export default function Doctor() {
                                         ))}
                                     </tbody>
                                 </table>
-                                <button type="button" className="btn btn-secondary rounded-0 py-3 px-5" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                <button type="button" className="btn btn-secondary rounded-0 py-3 px-5" data-toggle="modal" data-target="#exampleModal">
                                     Chọn thuốc
                                 </button>
                                 <div className='d-flex row mt-4 text-end'>
@@ -375,7 +374,7 @@ export default function Doctor() {
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title" id="exampleModalLabel">Chọn thuốc kê đơn</h5>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" className="btn-close" data-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
                             <div className="container">
@@ -415,8 +414,8 @@ export default function Doctor() {
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleAddMedicines}>Thêm thuốc</button>
+                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                            <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={handleAddMedicines}>Thêm thuốc</button>
                         </div>
                     </div>
                 </div>
