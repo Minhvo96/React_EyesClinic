@@ -1,23 +1,84 @@
-import { useState } from "react";
+import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
+
 export default function Overview() {
     const [selectedDate, setSelectedDate] = useState(null);
+    const [month31Day, setMonth31Day] = useState(["01", "03", "05", "07", "08", "10", "12"])
+    const [month30Day, setMonth30Day] = useState(["04", "06", "09", "11"])
+    const [month28Day, setMonth28Day] = useState(["02"])
+    const [dateOfMonth, setDateOfMonth] = useState([])
+    const [status, setStatus] = useState(false)
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
+
     };
+
+    const getDaysByMonth = (month) => {
+        console.log(month);
+        if (month31Day.includes(month)) {
+            const a = [];
+            for (let i = 1; i <= 31; i++) {
+                a.push(String(i));
+            }
+            console.log(a);
+            setDateOfMonth(a)
+        }
+        if (month30Day.includes(month)) {
+            const a = [];
+            for (let i = 1; i <= 30; i++) {
+                a.push(String(i));
+            }
+            setDateOfMonth(a)
+        }
+        if (month28Day.includes(month)) {
+            const a = [];
+            for (let i = 1; i <= 28; i++) {
+                a.push(String(i));
+            }
+            setDateOfMonth(a)
+        }
+    }
 
     const formatDate = (date) => {
         if (date) {
             const year = date.getFullYear();
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
-            console.log();
-            return `${month}.${year}`;
+            return `${month}-${year}`;
         }
         return '';
     };
+
+    const render = () => {
+        var options = {
+            chart: {
+                type: 'line'
+            },
+            series: [{
+                name: 'sales',
+                data: dateOfMonth
+            }],
+            xaxis: {
+                categories: dateOfMonth
+            }
+        }
+
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+
+        chart.render();
+    }
+
+
+    useEffect(() => {
+        const month = formatDate(selectedDate).split("-")[0]
+        getDaysByMonth(month)
+    }, [selectedDate])
+
+    useEffect(() => {
+        render();
+    }, [dateOfMonth])
 
 
     return (
@@ -36,12 +97,12 @@ export default function Overview() {
                                         <DatePicker
                                             selected={selectedDate}
                                             onChange={handleDateChange}
-                                            dateFormat="MM.yyyy"
+                                            dateFormat="MM-yyyy"
                                             showMonthYearPicker
                                             customInput={<input type="text" readOnly />}
                                             value={formatDate(selectedDate)}
-                                            className="form-control"
-                                            placeholderText="Chọn tháng - năm"
+                                            className='form-control text-center'
+                                            placeholderText='Chọn tháng-năm'
                                         />
                                     </div>
                                 </div>

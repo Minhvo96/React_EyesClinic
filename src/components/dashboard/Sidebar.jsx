@@ -108,7 +108,7 @@ export default function Sidebar() {
                             <Link to='/receptionist/waiting-list'>
                                 <p
                                     className="sidebar-link"
-                                    href="/receptionist/waiting-list"
+                                    href="/waiting-list"
                                     aria-expanded="false"
                                 >
                                     <span>
@@ -126,7 +126,7 @@ export default function Sidebar() {
                             <Link to='/receptionist/waiting-pay'>
                                 <p
                                     className="sidebar-link"
-                                    href="/receptionist/waiting-pay"
+                                    href="/waiting-pay"
                                     aria-expanded="false"
                                 >
                                     <span>
@@ -137,8 +137,6 @@ export default function Sidebar() {
                                 </p>
                             </Link>
                         </li>
-
-
                         <li className="nav-small-cap">
                             <i className="ti ti-dots nav-small-cap-icon fs-4" />
                             <span className="hide-menu">QUẢN LÝ THUỐC</span>

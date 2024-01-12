@@ -6,6 +6,7 @@ import Swal from 'sweetalert2'
 import Pagination from '../pagination/pagination';
 import SockJS from 'sockjs-client';
 import UsingWebSocket from '../../Socket';
+import ReactPaginate from 'react-paginate';
 
 
 
@@ -288,6 +289,18 @@ export default function BookingList() {
         setDefaultDate(formattedDate);
     }, []);
 
+
+    const [currentPage, setCurrentPage] = useState(0);
+    const appointmentsPerPage = 5;
+
+    const handlePageChange = (selectedPage) => {
+        setCurrentPage(selectedPage.selected);
+    };
+
+    const indexOfLastAppointment = (currentPage + 1) * appointmentsPerPage;
+    const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
+    const currentAppointments = bookingList.slice(indexOfFirstAppointment, indexOfLastAppointment);
+
     return (
         <>
 
@@ -315,7 +328,7 @@ export default function BookingList() {
                                 </thead>
                                 <tbody>
                                     {
-                                        bookingList
+                                        currentAppointments
                                             .sort((a, b) => {
                                                 return a.timeBooking.localeCompare(b.timeBooking);
                                             })
@@ -342,7 +355,20 @@ export default function BookingList() {
 
                                 </tbody>
                             </table>
-                            
+                            <div className="pagination-container">
+                                <ReactPaginate
+                                    pageCount={Math.ceil(bookingList.length / appointmentsPerPage)}
+                                    pageRangeDisplayed={5} // Số lượng trang hiển thị
+                                    marginPagesDisplayed={2} // Số lượng trang được hiển thị ở đầu và cuối
+                                    onPageChange={handlePageChange}
+                                    containerClassName={'pagination'}
+                                    activeClassName={'active'}
+                                    previousLabel={'Previous'}
+                                    nextLabel={'Next'}
+                                    breakLabel={'...'}
+                                />
+                            </div>
+
                         </>
                         :
                         <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>

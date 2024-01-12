@@ -13,9 +13,9 @@ const StyleDashboard = ({children}) => {
     linkElement.rel = 'stylesheet';
     linkElement.href = '/src/assets/css/styles.min.css';
 
-    const scriptElement = document.createElement('script');
-    scriptElement.src = '/src/assets/js/dashboard.js';
-  
+    // const scriptElement = document.createElement('script');
+    // scriptElement.src = '/src/assets/js/dashboard.js'
+
 
     // Event handler to set isStylesheetLoaded to true when the stylesheet is loaded
     const handleStylesheetLoad = () => {
@@ -23,15 +23,19 @@ const StyleDashboard = ({children}) => {
     };
 
     linkElement.onload = handleStylesheetLoad;
-    scriptElement.onload = handleStylesheetLoad;
+
+    // scriptElement.onload = handleStylesheetLoad;
 
     document.head.appendChild(linkElement);
-    document.body.appendChild(scriptElement);
+    // document.body.appendChild(scriptElement);
+
 
     // Cleanup function để xóa thẻ <link> khi component bị unmount
     return () => {
       document.head.removeChild(linkElement);
-      document.body.removeChild(scriptElement);
+
+      // document.body.removeChild(scriptElement)
+
     };
   }, []);
 
