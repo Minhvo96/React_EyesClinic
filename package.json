@@ -14,6 +14,7 @@
     "@hookform/resolvers": "^3.3.2",
     "@reduxjs/toolkit": "^2.0.1",
     "apexcharts": "^3.45.1",
+    "@stomp/stompjs": "^7.0.0",
     "axios": "^1.6.5",
     "bootstrap": "^5.0.1",
     "js-cookie": "^3.0.5",
@@ -30,6 +31,8 @@
     "react-spinners": "^0.13.8",
     "react-step-progress-bar": "^1.0.3",
     "redux": "^5.0.1",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3",
     "sweetalert2": "^11.0.11",
     "yup": "^1.3.2"
   },
