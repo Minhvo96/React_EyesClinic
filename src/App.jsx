@@ -13,7 +13,6 @@ import BookingList from './components/receptionist/BookingList';
 import WaitingPatients from './components/receptionist/WaitingPatients';
 import Medicine from './components/dashboard/Medicine';
 import Assistant from './components/assistant/Assistant';
-import WaitingListAssistant from './components/assistant/WaitingListAssistant';
 import Login from './components/dashboard/Login';
 import DashboardOverview from './pages/DashboardOverview';
 import { AuthProvider } from './context/AuthProvider';
@@ -22,7 +21,6 @@ import DashboardDoctor from './pages/DashboardDoctor';
 
 
 function App() {
-
   return (
     <>
       <BrowserRouter>
@@ -43,8 +41,7 @@ function App() {
                 <Route path='waiting-pay' element={<WaitingPay />} />
               </Route>
               <Route path='/medicine' element={<Medicine />} />
-              <Route path='/waiting-list-assistant' element={<WaitingListAssistant />} />
-              <Route path='/assistant/:bookingId' element={<Assistant />} />
+              <Route path='/assistant/:bookingId' element={<Assistant roles={['ROLE_ASSISTANT']}/>} />
             </Routes>
           </Suspense>
         </AuthProvider>
