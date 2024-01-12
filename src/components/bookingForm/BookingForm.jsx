@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -8,6 +7,7 @@ import eyeCategoriesService from '../../services/eyeCategoriesServices';
 import moment from 'moment';
 import Swal from 'sweetalert2';
 import userService from '../../services/userService';
+import UsingWebSocket from '../../Socket';
 
 export default function BookingForm() {
 
@@ -95,7 +95,7 @@ export default function BookingForm() {
             showConfirmButton: false,
             timer: 3500
         })
-
+        
         reset()
         setShowTime(false)
         setSelectedButton(null)
@@ -139,12 +139,10 @@ export default function BookingForm() {
         setShowTime(true)
     }
 
-
-
-
     useEffect(() => {
         getAllEyeCategories();
-        getTodayDate()
+        getTodayDate();
+        UsingWebSocket();
     }, [])
 
     return (

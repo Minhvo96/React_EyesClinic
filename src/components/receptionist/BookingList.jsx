@@ -4,6 +4,8 @@ import bookingService from '../../services/bookingServices';
 import eyeCategoriesService from '../../services/eyeCategoriesServices';
 import Swal from 'sweetalert2'
 import Pagination from '../pagination/pagination';
+import SockJS from 'sockjs-client';
+import UsingWebSocket from '../../Socket';
 
 
 
@@ -271,9 +273,10 @@ export default function BookingList() {
     }, [eyeCategory])
 
     useEffect(() => {
-        getAllBookingList()
-        getAllEyeCategories()
-        getTodayDate()
+        getAllBookingList();
+        getAllEyeCategories();
+        getTodayDate();
+        UsingWebSocket();
     }, [])
 
     useEffect(() => {
@@ -390,7 +393,6 @@ export default function BookingList() {
                                         </div>
                                         <div className="col-md-6">
                                             <label>Dịch vụ</label>
-
                                             <select name="eyeCategory" id="categorySelect" className='form-control' onChange={getEyeCategoryById}>
                                                 <option value={booking.eyeCategory.id}>{booking.eyeCategory.nameCategory}</option>
                                                 {
@@ -407,19 +409,14 @@ export default function BookingList() {
                                         </div>
                                     </div>
                                     <div className="row">
-
                                         <div className="col-md-6">
                                             <label>Giờ khám</label>
-
                                             <select className='form-control' name="timeBooking" id="" onChange={handleChangeBooking} >
-
                                                 {
                                                     timesFreeBooking.map((time, index) => {
-
                                                         return (
                                                             <option key={index} value={time} selected={time == booking.timeBooking ? true : false}>{time}</option>
                                                         )
-
                                                     })
                                                 }
                                             </select>
