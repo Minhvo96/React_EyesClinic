@@ -62,8 +62,6 @@ const bookingService = {
                 console.log(error);
             });
     },
-
-
 }
 
 export default bookingService;

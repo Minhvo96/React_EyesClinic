@@ -128,6 +128,12 @@ export default function Sidebar() {
                             </a>
                             </Link>
                         </li>
+                        <li >
+                            <Link to='/receptionist/invoice'>
+                            
+                                <span className="hide-menu">InvoiceForm</span>
+                            </Link>
+                        </li>
                         
                     </ul>
 

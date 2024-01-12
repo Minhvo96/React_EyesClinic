@@ -14,6 +14,8 @@ import Receptionist from './components/receptionist/Receptionist';
 import WaitingPay from './components/receptionist/WaitingPay';
 import BookingList from './components/receptionist/BookingList';
 import WaitingPatients from './components/receptionist/WaitingPatients';
+import InvoiceForm from './components/invoice/InvoiceForm';
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 
 function App() {
@@ -34,6 +36,7 @@ function App() {
             <Route path='' element={<BookingList/>}/>
             <Route path='waiting-list' element={<WaitingPatients/>}/>
             <Route path='waiting-pay' element={<WaitingPay/>}/>
+            <Route path='invoice' element={<InvoiceForm />}/>
           </Route>
         </Routes>
       

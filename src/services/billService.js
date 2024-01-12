@@ -1,9 +1,9 @@
 import axios from "axios";
 
-// const URL_API = 'https://json-server-five-mu.vercel.app/services';
-const URL_API = 'http://localhost:8080/api/eye-category';
-const eyeCategoriesService = {
-    getAllEyeCategories: async () => {
+const URL_API = 'http://localhost:8080/api/bill';
+
+const billService = {
+    getAllBills: async () => {
         return axios
             .get(URL_API)
             .then((response) => {
@@ -13,7 +13,7 @@ const eyeCategoriesService = {
                 console.log(error);
             });
     },
-    createEyeCategory: async (obj) => {
+    createBill: async (obj) => {
         return axios
             .post(URL_API, obj)
             .then((response) => {
@@ -23,9 +23,9 @@ const eyeCategoriesService = {
                 console.log(error);
             });
     },
-    editEyeCategory: async (id, obj) => {
+    editBill: async (obj, id) => {
         return axios
-            .patch(URL_API + '/' + id, obj)
+            .put(URL_API + '/' + id, obj)
             .then((response) => {
                 return response.data;
             })
@@ -33,7 +33,7 @@ const eyeCategoriesService = {
                 console.log(error);
             });
     },
-    deleteEyeCategory: async (id) => {
+    deleteBill: async (id) => {
         return axios
             .delete(URL_API + '/' + id)
             .then((response) => {
@@ -43,7 +43,7 @@ const eyeCategoriesService = {
                 console.log(error);
             });
     },
-    getEyeCategoryById: async (id) => {
+    getBillById: async (id) => {
         return axios
             .get(URL_API + '/' + id)
             .then((response) => {
@@ -52,9 +52,10 @@ const eyeCategoriesService = {
             .catch((error) => {
                 console.log(error);
             });
-    }
-
-
+    },
+    
 }
 
-export default eyeCategoriesService;
+
+
+export default billService;
