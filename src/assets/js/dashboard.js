@@ -100,7 +100,13 @@
 //     ]
 
 
+
+  // };
+  
+  // var chart = new ApexCharts(document.querySelector("#chart"), chart);
+  // chart.render();
 //   };
+
 
 
 //   var chart = new ApexCharts(document.querySelector("#chart"), chart);
@@ -161,8 +167,6 @@
 
 //   var chart = new ApexCharts(document.querySelector("#breakup"), breakup);
 //   chart.render();
-
-
 
 //   // =====================================
 //   // Earning

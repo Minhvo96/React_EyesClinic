@@ -19,6 +19,7 @@ function DashboardOverview() {
 
     stompClient.connect({}, () => {
       console.log("SOCKET Connected");
+
       stompClient.subscribe('/topic/publicChatRoom', onMessage);
     }, (error) => {
       console.error('WebSocket error:', error);
@@ -28,6 +29,7 @@ function DashboardOverview() {
       stompClient.disconnect();
     };
   }, []);
+  
   return <StyleDashboard children={<Overview />} />;
 }
 

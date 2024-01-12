@@ -15,6 +15,7 @@
     "@reduxjs/toolkit": "^2.0.1",
     "apexcharts": "^3.45.1",
     "@stomp/stompjs": "^7.0.0",
+    "apexcharts": "^3.36.2",
     "axios": "^1.6.5",
     "bootstrap": "^5.0.1",
     "js-cookie": "^3.0.5",

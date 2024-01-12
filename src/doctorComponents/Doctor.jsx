@@ -11,6 +11,8 @@ import * as yup from 'yup'
 import { useNavigate, useParams } from 'react-router-dom';
 import StepProgressBar from '../components/progress/Progress';
 import Swal from 'sweetalert2';
+import SockJS from 'sockjs-client';
+import UsingWebSocket from '../Socket';
 
 const schemaPrescription = yup.object({
     diagnose: yup.string()
@@ -226,6 +228,7 @@ export default function Doctor() {
         getBookingById();
         getPrescriptionByBookingId();
         getAllMedicines();
+        UsingWebSocket();
     }, [])
 
     useEffect(() => {
@@ -235,6 +238,7 @@ export default function Doctor() {
             setRightEye(eyeSight.split(",")[1]);
         }
     }, [prescriptionById])
+
 
     return (
         <>

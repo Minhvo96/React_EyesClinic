@@ -13,11 +13,11 @@ const StepProgressBar = ({ eyeSightValues, progressBarPercent, diagnoseInputs, d
     } else if (progressBarPercent) {
       setPercent(progressBarPercent);
       if (diagnoseInputs || diseases.length > 0 || selectedMedicines.length > 0) {
-        let percentValue = 60;
+        let percentValue = 65;
         if (diagnoseInputs && diseases.length > 0 && selectedMedicines.length > 0) {
           percentValue = 100;
         } else if ((diagnoseInputs && diseases.length > 0) || (diagnoseInputs && selectedMedicines.length > 0) || (diseases.length > 0 && selectedMedicines.length > 0)) {
-          percentValue = 70;
+          percentValue = 75;
         }
         setPercent(percentValue);
       }

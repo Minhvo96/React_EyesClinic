@@ -29,14 +29,14 @@ export default function Sidebar() {
                         </li>
                         <li className="sidebar-item">
                             <Link to ='/dashboard/overview'>
-                                <a
+                                <p
                                     className="sidebar-link"
                                 >
                                     <span>
                                         <i className="ti ti-layout-dashboard" />
                                     </span>
                                     <span className="hide-menu">Thống kê</span>
-                                </a>
+                                </p>
                             </Link>
 
                         </li>
@@ -46,14 +46,14 @@ export default function Sidebar() {
                         </li>
                         <li className="sidebar-item">
                             <Link to='/patient'>
-                                <a
+                                <p
                                     className="sidebar-link"
                                 >
                                     <span>
                                         <i className="ti ti-users" />
                                     </span>
                                     <span className="hide-menu">Bệnh nhân</span>
-                                </a>
+                                </p>
                             </Link>
                         </li>
                         {/* <li className="sidebar-item">
@@ -86,8 +86,8 @@ export default function Sidebar() {
                             <span className="hide-menu">LỄ TÂN</span>
                         </li>
                         <li className="sidebar-item">
-                            <Link to='/receptionist/booking-list'>
-                                <a
+                            <Link to='/receptionist'>
+                                <p
                                     className="sidebar-link"
                                     href="./authentication-login.html"
                                     aria-expanded="false"
@@ -96,7 +96,7 @@ export default function Sidebar() {
                                         <i className="fa-solid fa-list-check fa-md"></i>
                                     </span>
                                     <span className="hide-menu">Danh sách hẹn khám</span>
-                                </a>
+                                </p>
                             </Link>
                         </li>
 
@@ -105,8 +105,8 @@ export default function Sidebar() {
                             <span className="hide-menu">KHÁM CHỮA BỆNH</span>
                         </li>
                         <li className="sidebar-item">
-                            <Link to='/waiting-list'>
-                                <a
+                            <Link to='/receptionist/waiting-list'>
+                                <p
                                     className="sidebar-link"
                                     href="/waiting-list"
                                     aria-expanded="false"
@@ -115,7 +115,7 @@ export default function Sidebar() {
                                         <i className="fa-regular fa-rectangle-list fa-md" ></i>
                                     </span>
                                     <span className="hide-menu">Danh sách chờ khám</span>
-                                </a>
+                                </p>
                             </Link>
                         </li>
                         <li className="nav-small-cap">
@@ -123,8 +123,8 @@ export default function Sidebar() {
                             <span className="hide-menu">THANH TOÁN HÓA ĐƠN</span>
                         </li>
                         <li className="sidebar-item">
-                            <Link to='/waiting-pay'>
-                                <a
+                            <Link to='/receptionist/waiting-pay'>
+                                <p
                                     className="sidebar-link"
                                     href="/waiting-pay"
                                     aria-expanded="false"
@@ -134,25 +134,23 @@ export default function Sidebar() {
                                         <i className="fa-solid fa-money-check-dollar fa-md"></i>
                                     </span>
                                     <span className="hide-menu">Danh sách chờ thanh toán</span>
-                                </a>
+                                </p>
                             </Link>
                         </li>
-
-
                         <li className="nav-small-cap">
                             <i className="ti ti-dots nav-small-cap-icon fs-4" />
                             <span className="hide-menu">QUẢN LÝ THUỐC</span>
                         </li>
                         <li className="sidebar-item">
                             <Link to='/medicine'>
-                                <a
+                                <p
                                     className="sidebar-link"
                                 >
                                     <span>
                                         <i className="ti ti-pill"></i>
                                     </span>
                                     <span className="hide-menu">Danh sách thuốc</span>
-                                </a>
+                                </p>
                             </Link>
                         </li>
 

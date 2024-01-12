@@ -10,6 +10,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import prescriptionService from '../../services/prescriptionService';
 import bookingService from '../../services/bookingServices';
+import SockJS from 'sockjs-client';
 
 const schemaPrescription = yup.object({
     leftEye: yup.number()
@@ -82,6 +83,7 @@ export default function Assistant() {
     useEffect(() => {
         getBookingById();
     }, [])
+
 
     return (
         <>

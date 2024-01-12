@@ -8,7 +8,7 @@ import WaitingList from './components/waitingList/WaitingList';
 import Patient from './components/dashboard/Patient';
 import Receptionist from './components/receptionist/Receptionist';
 import Medicine from './components/dashboard/Medicine';
-import WaitingListAssistant from './components/assistant/WaitingListAssistant';
+import Assistant from './components/assistant/Assistant';
 import Login from './components/dashboard/Login';
 import DashboardOverview from './pages/DashboardOverview';
 import { AuthProvider } from './context/AuthProvider';
@@ -21,7 +21,6 @@ import DashboardWaitingPay from './pages/DashboardWaitingPay';
 
 
 function App() {
-
   return (
     <>
       <BrowserRouter>
@@ -42,7 +41,6 @@ function App() {
               <Route path='/waiting-pay' element={<DashboardWaitingPay />} />
               <Route path='/waiting-list' element={<DashboardWaitingPatients />} />
               <Route path='/medicine' element={<Medicine />} />
-              <Route path='/waiting-list-assistant' element={<WaitingListAssistant />} />
               <Route path='/assistant/:bookingId' element={<DashboardAssistant />} />
             </Routes>
           </Suspense>
