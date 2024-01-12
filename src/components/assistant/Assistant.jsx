@@ -13,13 +13,13 @@ import bookingService from '../../services/bookingServices';
 
 const schemaPrescription = yup.object({
     leftEye: yup.number()
-        .required("Cần phải nhập thị lực của bệnh nhân")
-        .typeError("Cần phải nhập số thị lực cho bệnh nhân")
+        .required("Nhập thị lực của bệnh nhân")
+        .typeError("Nhập số thị lực cho bệnh nhân")
         .min(0, "Thị lực không được nhỏ hơn 0")
         .max(10, "Thị lực không được lớn hơn 10"),
     rightEye: yup.number()
-        .required("Cần phải nhập thị lực của bệnh nhân")
-        .typeError("Cần phải nhập số thị lực cho bệnh nhân")
+        .required("Nhập thị lực của bệnh nhân")
+        .typeError("Nhập số thị lực cho bệnh nhân")
         .min(0, "Thị lực không được nhỏ hơn 0")
         .max(10, "Thị lực không được lớn hơn 10")
 });
@@ -85,15 +85,7 @@ export default function Assistant() {
 
     return (
         <>
-            <div className="d-flex row">
-                <div className="col-2">
-                    <Sidebar />
-                </div>
-                <div className="col-10">
-                    <Header />
-                </div>
-            </div>
-            <div className='container mt-4 d-flex'>
+            <div className='container-fluid d-flex'>
                 <div className='d-flex row'>
                     <div className="container">
                         <div>
@@ -118,7 +110,7 @@ export default function Assistant() {
                                                     {...registerPrescription('rightEye')} name="rightEye" style={{ width: '100%' }}
                                                     onInput={handleChangeEyeSight} />
                                                 <span className="invalid-feedback">{errorsPrescription?.rightEye?.message}</span>
-                                                <div style={{ position: 'absolute', top: `${errorsPrescription?.rightEye ? '36%' : '50%'}`, right: '80px', transform: 'translateY(-50%)' }}>
+                                                <div style={{ position: 'absolute', top: `${errorsPrescription?.rightEye ? '36%' : '50%'}`, right: '70px', transform: 'translateY(-50%)' }}>
                                                     /&ensp;10
                                                 </div>
                                             </div>
@@ -133,7 +125,7 @@ export default function Assistant() {
                                                     {...registerPrescription('leftEye')} name="leftEye" style={{ width: '100%' }}
                                                     onInput={handleChangeEyeSight} />
                                                 <span className="invalid-feedback">{errorsPrescription?.leftEye?.message}</span>
-                                                <div style={{ position: 'absolute', top: `${errorsPrescription?.leftEye ? '36%' : '50%'}`, right: '80px', transform: 'translateY(-50%)' }}>
+                                                <div style={{ position: 'absolute', top: `${errorsPrescription?.leftEye ? '36%' : '50%'}`, right: '70px', transform: 'translateY(-50%)' }}>
                                                     /&ensp;10
                                                 </div>
                                             </div>
