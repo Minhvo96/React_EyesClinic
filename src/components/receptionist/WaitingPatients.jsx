@@ -1,19 +1,103 @@
 import React, { useEffect, useState } from 'react'
 import bookingService from '../../services/bookingServices';
 import Swal from 'sweetalert2';
+import { NavLink } from 'react-router-dom';
+import ReactPaginate from 'react-paginate';
+import eyeCategoriesService from '../../services/eyeCategoriesServices';
+import * as yup from 'yup'
+import { yupResolver } from "@hookform/resolvers/yup"
+import { useForm } from 'react-hook-form';
+import moment from 'moment';
+import userService from '../../services/userService';
+import Sidebar from '../dashboard/Sidebar';
+import Header from '../dashboard/Header';
+import addStyleDashboard from '../../AddStyleDashboard';
+
+const registerSchema = yup.object({
+  fullName: yup.string().required("Bạn cần phải cung cấp họ và tên"),
+  age: yup.number()
+    .integer()
+    .min(1, "Tuổi phải lớn hơn hoặc bằng 1")
+    .max(80, "Tuổi phải nhỏ hơn hoặc bằng 80")
+    .required("Bạn cần phải cung cấp tuổi")
+    .typeError("Bạn cần phải cung cấp tuổi"),
+  address: yup.string().required("Bạn cần phải cung cấp địa chỉ"),
+  phoneNumber: yup.string().required("Bạn cần phải cung cấp số điện thoại").matches(/^(0[0-9]{9})$/, "Số điện thoại không hợp lệ"),
+  eyeCategory: yup.string().required('Vui lòng chọn dịch vụ khám'),
+  message: yup.string()
+})
 
 
 export default function WaitingPatients() {
-  
-  const [status, setStatus] = useState(false)
+
+  const [status, setStatus] = useState(true)
   const [bookingList, setBookingList] = useState([])
   const [defaultDate, setDefaultDate] = useState('');
-  const [timeBooking, setTimeBooking] = useState(["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"])
+  const [minDate, setMinDate] = useState();
+  const [eyeCategories, setEyeCategories] = useState([])
+  const [reRender, setReRender] = useState(false)
+  const [times, setTimes] = useState(["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"])
+
+  const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm({
+    resolver: yupResolver(registerSchema),
+    mode: "onBlur",
+    criteriaMode: "all"
+  })
+
+  const handleSubmitForm = async (data) => {
+    const user = {
+      fullName: data.fullName,
+      phoneNumber: data.phoneNumber,
+      address: data.address,
+      role: 'ROLE_CUSTOMER',
+      password: null,
+      age: data.age
+    }
+    const idCustomer = await userService.createUser(user);
+
+    const timeBooking = moment().format('HH:mm');
+    const dateBooking = moment().format('YYYY-MM-DD')
+
+    const bookingNew = {
+      idEyeCategory: String(data.eyeCategory),
+      idCustomer: idCustomer,
+      timeBooking: timeBooking,
+      dateBooking: dateBooking,
+      status: "WAITING"
+    }
+    console.log(bookingNew);
+
+    await bookingService.createBooking(bookingNew)
+    Swal.fire({
+      position: 'center',
+      icon: 'success',
+      title: 'Đặt lịch hẹn thành công !',
+      showConfirmButton: false,
+      timer: 3500
+    })
+
+    reset()
+    setReRender(true)
+  }
+
+  const getAllEyeCategories = async () => {
+    const eyeCategories = await eyeCategoriesService.getAllEyeCategories();
+    setEyeCategories(eyeCategories);
+  }
+
+
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+    setMinDate(`${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
+  };
 
   const getAllBookingList = async () => {
     const bookings = await bookingService.getAllBookings();
 
-    const bookingsFilter = bookings.filter((booking) => booking.status == "WAITING" || booking.status == "EXAMINING" && booking.dateBooking == defaultDate)
+    const bookingsFilter = bookings.filter((booking) => (booking.status == "WAITING" || booking.status == "EXAMINING") && booking.dateBooking == defaultDate)
 
     setBookingList(bookingsFilter);
 
@@ -22,69 +106,53 @@ export default function WaitingPatients() {
 
   const handleChangeListByDate = async (e) => {
     const bookings = await bookingService.getAllBookings();
-    const bookingsFilter = bookings.filter((booking) => booking.status == "WAITING" || booking.status == "EXAMINING" && booking.dateBooking == e.target.value)
+    const bookingsFilter = bookings.filter((booking) => (booking.status == "WAITING" || booking.status == "EXAMINING") && booking.dateBooking == e.target.value)
     setBookingList(bookingsFilter);
   }
 
-  const handleChangeStatus = (e, id, count) => {
+  const handleChangeStatus = (e, id) => {
     if (e.target.value == 'cancel') {
-      handleChangeStatusBooking(id, e.target.value)
+      handleChangeStatusBooking(id, "CANCELLED")
     }
+  }
 
-    if (e.target.value == 'true' && count == 1) {
-        setStatus(true)
-        handleChangeStatusBooking(id, e.target.value)
-    }
+  const handleChangeStatusExamining = (id) => {
+    handleChangeStatusBooking(id, "EXAMINING")
   }
 
   const handleChangeStatusBooking = async (id, status) => {
     const booking = await bookingService.getBookingById(id);
 
-    if(status == 'cancel') {
+    if (status == "CANCELLED") {
       const newBooking = {
         ...booking,
-        "status": "CANCELLED"
+        "status": status
       }
-  
-      await handleUpdateBookingList(newBooking)
+
       Swal.fire({
-        position: 'center',
-        icon: 'success',
-        title: 'Hủy Thành Công !',
-        showConfirmButton: false,
-        timer: 1500
+        title: 'Bạn chắc chắn muốn hủy lịch hẹn khám này chứ?',
+        showCancelButton: true,
+        confirmButtonText: 'Hủy',
+        cancelButtonText: 'Không'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          await handleUpdateBookingList(newBooking)
+          Swal.fire('Hủy thành công!', '', 'success')
+
+        }
       })
     }
-     if(status == 'true') {
+
+    if (status == "EXAMINING") {
       const newBooking = {
         ...booking,
-        "status": "EXAMINING"
+        "status": status
       }
-  
-      await handleUpdateBookingList(newBooking)
-     }
-
-
-  }
-
-  const handleChangeTimeBooking = async (e, id) => {
-    const booking = await bookingService.getBookingById(id);
-    const newBooking = {
-      ...booking,
-      "timeBooking": e.target.value
+      await handleUpdateBookingList(newBooking);
     }
-
-    await handleUpdateBookingList(newBooking)
-    Swal.fire({
-      position: 'center',
-      icon: 'success',
-      title: 'Sửa Giờ Khám Thành Công !',
-      showConfirmButton: false,
-      timer: 1500
-    })
-
-
   }
+
+
 
   const handleUpdateBookingList = async (obj) => {
     const newBooking = {
@@ -93,12 +161,24 @@ export default function WaitingPatients() {
       timeBooking: obj.timeBooking,
       dateBooking: obj.dateBooking,
       status: obj.status
-  };
+    };
 
     await bookingService.editBooking(newBooking, obj.id)
+    setBookingList(bookingList => bookingList.filter((booking) => booking.id !== obj.id));
 
-    getAllBookingList()
   }
+
+  const [currentPage, setCurrentPage] = useState(0);
+  const appointmentsPerPage = 5;
+
+  const handlePageChange = (selectedPage) => {
+    setCurrentPage(selectedPage.selected);
+  };
+
+  const indexOfLastAppointment = (currentPage + 1) * appointmentsPerPage;
+  const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
+  const currentAppointments = bookingList.slice(indexOfFirstAppointment, indexOfLastAppointment);
+
 
   useEffect(() => {
     const now = new Date();
@@ -111,80 +191,194 @@ export default function WaitingPatients() {
 
   useEffect(() => {
     getAllBookingList()
-  }, [defaultDate])
+  }, [defaultDate, reRender])
 
+  useEffect(() => {
+    getTodayDate(),
+      getAllEyeCategories()
+  }, [])
+
+ 
   return (
-    <div className="container mr-3" style={{position: 'fixed',
-    zIndex: '20',
-    marginTop: '100px',
-    paddingRight: '50px'
-                    }}>
-      <div className='d-flex mb-5 align-items-center'>
-        <h6 className='mr-3'>Chọn ngày: </h6>
-        <div className='col-3 '>
-          <input type="date" className='form-control' defaultValue={defaultDate} onChange={handleChangeListByDate} />
-        </div>
-      </div>
-      {
-        bookingList.length ?
-          <table className="table">
-            <thead className="thead-primary">
-              <tr>
-                <th>STT</th>
-                <th>Họ và tên</th>
-                <th>Số điện thoại</th>
-                <th>Ngày khám</th>
-                <th>Giờ khám</th>
-                <th className='text-center'>Trạng thái</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                bookingList
-                  .sort((a, b) => {
-                    return a.timeBooking.localeCompare(b.timeBooking);
-                  })
-                  .map((booking, index) => {
-                    const count = index + 1;
-                    return (
-                      <tr key={booking.id}>
-                        <td>{count}</td>
-                        <td>{booking.customer.user.fullName}</td>
-                        <td>{booking.customer.user.phoneNumber}</td>
-                        <td>{booking.dateBooking}</td>
-                        <td>
-                          <select className='form-control' name="timeBooking" id="" defaultValue={booking.timeBooking} onChange={(e) => handleChangeTimeBooking(e, booking.id)}>
-                            {
-                              timeBooking.map((time, index) => {
-                                return (
-                                  <option key={index} value={time}>{time}</option>
-                                )
+    <> 
+          <div className="container-fluid">
 
+            <div className='d-flex mb-5 align-items-center justify-content-between'>
+              <div className='d-flex align-items-center'>
+                <h6 className='mr-3'>Chọn ngày: </h6>
+                <div >
+                  <input type="date" className='form-control' defaultValue={defaultDate} onChange={handleChangeListByDate} min={minDate} />
+                </div>
+              </div>
+
+              <div className='mr-5'>
+                <button className='btn btn-outline-success' type="button" data-toggle="modal" data-target="#createBookingModal">Đặt lịch</button>
+              </div>
+            </div>
+            {
+              bookingList.length ?
+                <>
+                  <table className="table">
+                    <thead className="thead-primary">
+                      <tr className='text-center'>
+                        <th>STT</th>
+                        <th>Họ và tên</th>
+                        <th>Số điện thoại</th>
+                        <th>Ngày khám</th>
+                        <th>Giờ khám</th>
+                        <th>Trạng thái</th>
+                        <th>Xem bệnh án</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        currentAppointments
+                          .sort((a, b) => {
+                            return a.timeBooking.localeCompare(b.timeBooking);
+                          })
+                          .map((booking, index) => {
+                            const count = index + 1;
+                            return (
+                              <tr key={booking.id} className='text-center'>
+                                <td>{count}</td>
+                                <td>{booking.customer.user.fullName}</td>
+                                <td>{booking.customer.user.phoneNumber}</td>
+                                <td>{booking.dateBooking}</td>
+                                <td>{booking.timeBooking}</td>
+                                <td>
+                                  <select className={`form-control text-center ${times.includes(booking.timeBooking) ? 'text-danger' : ""}`} value={times.includes(booking.timeBooking) ? 'true' : 'false'} onChange={(e) => handleChangeStatus(e, booking.id)}>
+                                    {
+                                      times.includes(booking.timeBooking) ?
+                                        <>
+                                          <option className='text-black' value="true">{booking.status == "WAITING" ? "Chờ khám" : "Đang khám"}</option>
+                                          <option className='text-black' value="cancel">Hủy</option>
+                                        </>
+                                        :
+                                        <>
+                                          <option className='text-black' value="false">{booking.status == "WAITING" ? "Không đặt trước" : "Đang khám"}</option>
+                                          <option className='text-black' value="cancel">Hủy</option>
+                                        </>
+                                    }
+                                  </select>
+                                </td>
+                                <td className="border-bottom-0">
+                                  <div className="d-flex align-items-center justify-content-center">
+                                    <NavLink to={`/assistant/${booking.id}`}>
+                                      <button className="btn btn-outline-success d-flex justify-content-center align-items-center"
+                                        style={{ width: "36px", height: "36px" }}
+                                        onClick={() => handleChangeStatusExamining(booking.id)}
+                                      >
+                                        <i className="ti ti-report-medical" style={{ fontSize: "18px" }}></i>
+                                      </button>
+                                    </NavLink>
+                                  </div>
+                                </td>
+                              </tr>
+                            )
+                          })
+                      }
+                    </tbody>
+                  </table>
+                  <div className="pagination-container">
+                    <ReactPaginate
+                      pageCount={Math.ceil(bookingList.length / appointmentsPerPage)}
+                      pageRangeDisplayed={5} // Số lượng trang hiển thị
+                      marginPagesDisplayed={2} // Số lượng trang được hiển thị ở đầu và cuối
+                      onPageChange={handlePageChange}
+                      containerClassName={'pagination'}
+                      activeClassName={'active'}
+                      previousLabel={'Previous'}
+                      nextLabel={'Next'}
+                      breakLabel={'...'}
+                    />
+                  </div>
+                </>
+                :
+                <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
+            }
+          </div>
+
+          {/* <// Modal --> */}
+          <div className="modal fade" id="createBookingModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog modal-lg modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title font-weight-bold" id="exampleModalLabel">Đặt lịch tại quầy</h5>
+                  <button type="button" className="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form className="appointment-form needs-validation">
+                  <div className="modal-body">
+                    <div className="container">
+                      <div className="row mb-3">
+                        <div className="col-md-6 has-validation">
+                          <label>Họ và tên</label>
+                          <input type="text"
+                            className={`form-control ${errors?.fullName?.message ? 'is-invalid' : ''}`}
+                            {...register("fullName")}
+                          />
+                          <span className="text-danger font-weight-bold invalid-feedback">{errors?.fullName?.message}</span>
+                        </div>
+                        <div className="col-md-6 has-validation">
+                          <label>Số điện thoại</label>
+                          <input type="text"
+                            className={`form-control ${errors?.phoneNumber?.message ? 'is-invalid' : ''}`}
+                            {...register("phoneNumber")}
+                          />
+                          <span className="text-danger font-weight-bold invalid-feedback">{errors?.phoneNumber?.message}</span>
+                        </div>
+                      </div>
+                      <div className="row mb-3">
+                        <div className="col-md-6 has-validation">
+                          <label>Tuổi</label>
+                          <input type="number"
+                            className={`form-control ${errors?.age?.message ? 'is-invalid' : ''}`}
+                            {...register("age")}
+                          />
+                          <span className="text-danger font-weight-bold invalid-feedback">{errors?.age?.message}</span>
+                        </div>
+                        <div className="col-md-6 has-validation">
+                          <label>Địa chỉ</label>
+                          <input type="text"
+                            className={`form-control ${errors?.address?.message ? 'is-invalid' : ''}`}
+                            {...register("address")}
+                          />
+                          <span className="text-danger font-weight-bold invalid-feedback">{errors?.address?.message}</span>
+                        </div>
+                      </div>
+                      <div className="row mb-3">
+                        <div className="col-md-6 has-validation">
+                          <label>Dịch vụ</label>
+
+                          <select type='text' className={`form-control ${errors?.eyeCategory?.message ? 'is-invalid' : ''}`} {...register("eyeCategory")}>
+                            <option value="" style={{ color: 'black' }}>--Chọn dịch vụ--</option>
+                            {
+                              eyeCategories.map(item => {
+                                return (
+                                  <option key={item.id} value={item.id} style={{ color: 'black' }}>{item.nameCategory} </option>
+                                )
                               })
                             }
                           </select>
-
-                        </td>
-                        <td>
-                          <select className='form-control' value={count == 1 && status ? 'true' : 'false'} onChange={(e) => handleChangeStatus(e, booking.id, count)}>
-                            <option value="true">Đang khám</option>
-                            <option value="false">Chờ khám</option>
-                            <option value="cancel">Hủy</option>
-                          </select>
-
-                        </td>
-                      </tr>
-                    )
-                  })
-
-              }
-
-            </tbody>
-          </table>
-          :
-          <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
-      }
-
-    </div>
+                          <span className="text-danger font-weight-bold invalid-feedback">{errors?.eyeCategory?.message}</span>
+                        </div>
+                        <div className="col-md-6">
+                          <label>Ghi chú</label>
+                          <input type="text"
+                            className='form-control'
+                            {...register("message")}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="modal-footer">
+                    <button type="button" className="btn btn-secondary" data-dismiss="modal" >Đóng</button>
+                    <button type="button" className="btn btn-primary" onClick={handleSubmit(handleSubmitForm)}>Đặt lịch</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+    </>
   )
 }

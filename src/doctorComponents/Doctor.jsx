@@ -2,24 +2,19 @@ import React, { useEffect, useState } from 'react'
 import bookingService from '../services/bookingServices';
 import medicineService from '../services/medicineService';
 import NavbarDoctor from './NavbarDoctor';
-import medicinePrescriptionService from '../services/medicinePrescriptionService';
+import prescriptionService from '../services/prescriptionService';
 import addStyleDashboard from '../AddStyleDashboard';
 import Sidebar from '../components/dashboard/Sidebar';
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
+import { useNavigate, useParams } from 'react-router-dom';
+import StepProgressBar from '../components/progress/Progress';
+import Swal from 'sweetalert2';
+import SockJS from 'sockjs-client';
+import UsingWebSocket from '../Socket';
 
 const schemaPrescription = yup.object({
-    leftEye: yup.number()
-        .required("Cần phải nhập thị lực của bệnh nhân")
-        .typeError("Cần phải nhập số")
-        .min(0, "Thị lực không được nhỏ hơn 0")
-        .max(10, "Thị lực không được lớn hơn 10"),
-    rightEye: yup.number()
-        .required("Cần phải nhập thị lực của bệnh nhân")
-        .typeError("Cần phải nhập số")
-        .min(0, "Thị lực không được nhỏ hơn 0")
-        .max(10, "Thị lực không được lớn hơn 10"),
     diagnose: yup.string()
         .required("Không được để trống chẩn đoán")
 });
@@ -27,7 +22,14 @@ const schemaPrescription = yup.object({
 export default function Doctor() {
     addStyleDashboard();
 
-    const [patientInfo, setPatientInfo] = useState({});
+    const { bookingId } = useParams();
+    const [booking, setBooking] = useState({});
+    const [prescriptionById, setPrescriptionById] = useState({});
+    const [leftEye, setLeftEye] = useState('');
+    const [rightEye, setRightEye] = useState('');
+
+    const [progressBarPercent, setProgressBarPercent] = useState(50);
+
     const [medicines, setMedicines] = useState([]);
     const [diseases, setDiseases] = useState([]);
 
@@ -42,6 +44,7 @@ export default function Doctor() {
     const [usingMedicineErrors, setUsingMedicineErrors] = useState(Array(medicines.length).fill(''));
 
     const [prescription, setPrescription] = useState({});
+    const navigator = useNavigate();
 
     const { register: registerPrescription, handleSubmit: handleSubmitPrescription, formState: { errors: errorsPrescription }, reset: resetPrescription } = useForm({
         resolver: yupResolver(schemaPrescription),
@@ -49,15 +52,19 @@ export default function Doctor() {
         criteriaMode: "all"
     });
 
-    const getPatientInfo = async () => {
-        const data = await bookingService.getBookingByStatus();
-        console.log(data);
-        setPatientInfo(data);
-    }
-
     const getAllMedicines = async () => {
         const dataMedicine = await medicineService.getAllMedicines();
         setMedicines(dataMedicine);
+    }
+
+    const getBookingById = async () => {
+        const booking = await bookingService.getBookingById(bookingId);
+        setBooking(booking);
+    }
+
+    const getPrescriptionByBookingId = async () => {
+        const prescription = await prescriptionService.getPrescriptionByBookingId(bookingId);
+        setPrescriptionById(prescription);
     }
 
     const handleAddDisease = () => {
@@ -104,9 +111,9 @@ export default function Doctor() {
         const value = e.target.value;
 
         // Tạo một bản sao mới của mảng trạng thái
-        const newQuantityValidates = [...quantityValidates];
-        newQuantityValidates[indexs] = value;
-        setQuantityValidates(newQuantityValidates);
+        // const newQuantityValidates = [...quantityValidates];
+        // newQuantityValidates[indexs] = value;
+        // setQuantityValidates(newQuantityValidates);
 
         // Kiểm tra xem giá trị nhập vào có phải là số nguyên dương không
         const isValidQuantity = /^\d+$/.test(value) && parseInt(value, 10) > 0;
@@ -169,22 +176,30 @@ export default function Doctor() {
             usingMedicine: item.usingMedicine
         }))
 
-        setPrescription({
-            idBooking: String(patientInfo.id),
-            idDoctor: "1",
-            eyeSight: diagnoseInputs.leftEye + ', ' + diagnoseInputs.rightEye,
-            diagnose: diagnoseInputs.diagnose,
-            note: diagnoseInputs.note,
-            idsMedicine: idsMedicine
+        Swal.fire({
+            title: `Xác nhận tạo bệnh án cho bệnh nhân ${booking.customer.user.fullName}?`,
+            showCancelButton: true,
+            confirmButtonText: 'Lưu ngay',
+            cancelButtonText: 'Hủy'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                setPrescription({
+                    idBooking: String(bookingId),
+                    idDoctor: "1",
+                    eyeSight: leftEye + ',' + rightEye,
+                    diagnose: diagnoseInputs.diagnose,
+                    note: `${diagnoseInputs.note}, ${diseases.join(", ")}`,
+                    idsMedicine: idsMedicine
+                })
+            }
         })
     }
 
     useEffect(() => {
-
         async function CreatePrescription() {
-            await medicinePrescriptionService.createMedicinePrescription(prescription);
+            await prescriptionService.editPrescription(prescription, bookingId);
 
-            const booking = await bookingService.getBookingById(patientInfo.id);
+            const booking = await bookingService.getBookingById(bookingId);
 
             const newBooking = {
                 idEyeCategory: String(booking.eyeCategory.id),
@@ -195,9 +210,12 @@ export default function Doctor() {
             };
 
             await bookingService.editBooking(newBooking, booking.id);
-
             setMedicineStatus(false);
-            setPatientInfo({});
+            Swal.fire('Tạo bệnh án thành công!', '', 'success')
+            setTimeout(() => {
+                Swal.close();
+            }, 2000);
+            navigator('/receptionist/waiting-list');
         }
 
         if (Object.keys(prescription).length) {
@@ -207,38 +225,45 @@ export default function Doctor() {
     }, [prescription])
 
     useEffect(() => {
-        getPatientInfo();
+        getBookingById();
+        getPrescriptionByBookingId();
         getAllMedicines();
+        UsingWebSocket();
     }, [])
+
+    useEffect(() => {
+        if (Object.keys(prescriptionById).length) {
+            const eyeSight = prescriptionById.eyeSight;
+            setLeftEye(eyeSight.split(",")[0]);
+            setRightEye(eyeSight.split(",")[1]);
+        }
+    }, [prescriptionById])
+
 
     return (
         <>
-            <Sidebar />
-            <NavbarDoctor />
-
-            <div className='container mt-4 d-flex'>
-                {Object.keys(patientInfo).length ?
-                    <div className='d-flex row' style={{ position: 'absolute', width: '85%' }}>
+            <div className='container-fluid d-flex'>
+                {Object.keys(booking).length ?
+                    <div className='d-flex row' style={{ width: '120%', paddingTop: 14 }}>
                         <div className='col-9'>
                             <h3>Bệnh án điện tử</h3>
+                            <div style={{ width: '80%', marginLeft: 80, marginTop: 20 }}>
+                                <StepProgressBar progressBarPercent={progressBarPercent} diagnoseInputs={diagnoseInputs} diseases={diseases} selectedMedicines={selectedMedicines} />
+                            </div>
                             <form className="needs-validation">
-                                <div className='d-flex row mt-4'>
+                                <div className='d-flex row mt-5'>
                                     <div className="col-6">
                                         <label htmlFor="basic-url" className="form-label">Mắt trái :</label>
                                         <div className="input-group mb-3">
-                                            <input type="text" className={`form-control ${errorsPrescription?.leftEye?.message ? 'is-invalid' : ''}`}
-                                                {...registerPrescription('leftEye')}
-                                                id="basic-url" aria-describedby="basic-addon3" placeholder='.../10' name="leftEye" onChange={handleChangePrescription} />
-                                            <span className="invalid-feedback">{errorsPrescription?.leftEye?.message}</span>
+                                            <input type="text" className='form-control'
+                                                id="basic-url" aria-describedby="basic-addon3" value={leftEye + "/10"} name="leftEye" readOnly />
                                         </div>
                                     </div>
                                     <div className="col-6">
                                         <label htmlFor="basic-url" className="form-label">Mắt phải :</label>
                                         <div className="input-group mb-3">
-                                            <input type="text" className={`form-control ${errorsPrescription?.rightEye?.message ? 'is-invalid' : ''}`}
-                                                {...registerPrescription('rightEye')}
-                                                id="basic-url" aria-describedby="basic-addon3" placeholder='.../10' name="rightEye" onChange={handleChangePrescription} />
-                                            <span className="invalid-feedback">{errorsPrescription?.rightEye?.message}</span>
+                                            <input type="text" className='form-control'
+                                                id="basic-url" aria-describedby="basic-addon3" value={rightEye + "/10"} name="rightEye" readOnly />
                                         </div>
                                     </div>
                                 </div>
@@ -255,7 +280,7 @@ export default function Doctor() {
                                     <div className="col-6">
                                         <label htmlFor="basic-url" className="form-label">Dịch vụ :</label>
                                         <div className="input-group mb-3">
-                                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" value={patientInfo?.eyeCategory?.nameCategory} readOnly />
+                                            <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" value={booking?.eyeCategory?.nameCategory} readOnly />
                                         </div>
                                     </div>
                                 </div>
@@ -310,7 +335,7 @@ export default function Doctor() {
                                         ))}
                                     </tbody>
                                 </table>
-                                <button type="button" className="btn btn-secondary rounded-0 py-3 px-5" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                <button type="button" className="btn btn-secondary rounded-0 py-3 px-5" data-toggle="modal" data-target="#exampleModal">
                                     Chọn thuốc
                                 </button>
                                 <div className='d-flex row mt-4 text-end'>
@@ -324,21 +349,21 @@ export default function Doctor() {
                         <div className='col-3'>
                             <h3>Thông tin bệnh nhân</h3>
                             <div className='text-center'>
-                                <img src='images/user-icon.png' style={{ width: 150, borderRadius: '50%' }} />
-                                <p style={{ fontWeight: 'bold' }} readOnly>{patientInfo?.customer?.user?.fullName + ', ' + patientInfo?.customer?.age + ' tuổi'}</p>
+                                <img src='../../images/user-icon.png' style={{ width: 150, borderRadius: '50%' }} />
+                                <p style={{ fontWeight: 'bold' }} readOnly>{booking?.customer?.user?.fullName + ', ' + booking?.customer?.age + ' tuổi'}</p>
                             </div>
                             <div>
                                 <label htmlFor="basic-url" className="form-label">Số điện thoại:</label>
                                 <div className="input-group mb-3">
-                                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo?.customer?.user?.phoneNumber} />
+                                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={booking?.customer?.user?.phoneNumber} />
                                 </div>
                                 <label htmlFor="basic-url" className="form-label">Địa chỉ nhà:</label>
                                 <div className="input-group mb-3">
-                                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo?.customer?.user?.address} />
+                                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={booking?.customer?.user?.address} />
                                 </div>
                                 <label htmlFor="basic-url" className="form-label">Ngày đến khám:</label>
                                 <div className="input-group mb-3">
-                                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={patientInfo?.dateBooking} />
+                                    <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" readOnly value={booking?.dateBooking} />
                                 </div>
                             </div>
                         </div>
@@ -353,7 +378,7 @@ export default function Doctor() {
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title" id="exampleModalLabel">Chọn thuốc kê đơn</h5>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" className="btn-close" data-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
                             <div className="container">
@@ -393,8 +418,8 @@ export default function Doctor() {
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleAddMedicines}>Thêm thuốc</button>
+                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                            <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={handleAddMedicines}>Thêm thuốc</button>
                         </div>
                     </div>
                 </div>

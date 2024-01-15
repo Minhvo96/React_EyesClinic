@@ -1,8 +1,13 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import bookingService from '../../services/bookingServices';
 import eyeCategoriesService from '../../services/eyeCategoriesServices';
 import Swal from 'sweetalert2'
+import Pagination from '../pagination/pagination';
+import SockJS from 'sockjs-client';
+import UsingWebSocket from '../../Socket';
+import ReactPaginate from 'react-paginate';
+
 
 
 export default function BookingList() {
@@ -14,8 +19,18 @@ export default function BookingList() {
     const [bookingList, setBookingList] = useState([])
     const [eyeCategories, setEyeCategories] = useState([])
     const [eyeCategory, setEyeCategory] = useState({})
-    const [timeBooking, setTimeBooking] = useState(["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"])
+    const [times, setTimes] = useState(["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"])
+    const [timesFreeBooking, setTimesFreeBooking] = useState([])
+    const [minDate, setMinDate] = useState();
 
+
+    const getTodayDate = () => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = today.getMonth() + 1;
+        const day = today.getDate();
+        setMinDate(`${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
+    };
 
     const getAllBookingList = async () => {
         const bookings = await bookingService.getAllBookings();
@@ -34,7 +49,43 @@ export default function BookingList() {
         const booking = await bookingService.getBookingById(id);
         setBooking(booking)
 
+        setTimesFreeByDate(booking.dateBooking)
+
+
+
+
     }
+
+    const setTimesFreeByDate = async (dateBooking) => {
+
+        const newBooking = {
+            idEyeCategory: "",
+            idCustomer: "",
+            timeBooking: "",
+            dateBooking: String(dateBooking),
+            status: ""
+        };
+
+        const bookingsWaiting = await bookingService.getBookingByStatusWaitingAndDate(newBooking);
+        const listTimeBooked = bookingsWaiting.map(item => item.timeBooking)
+
+        const currentDate = new Date();
+        const hours = currentDate.getHours();
+        const minutes = currentDate.getMinutes();
+        const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+        if (new Date(dateBooking) > currentDate) {
+            const listTimeFreeBooking = times.filter(item => !listTimeBooked.includes(item));;
+            setTimesFreeBooking(listTimeFreeBooking)
+
+        }
+        else {
+            const listTimeFreeBooking = times.filter(item => !listTimeBooked.includes(item) && item.localeCompare(formattedTime) > 0);
+            setTimesFreeBooking(listTimeFreeBooking)
+
+        }
+    }
+
 
     const getAllEyeCategories = async () => {
         const categories = await eyeCategoriesService.getAllEyeCategories()
@@ -77,28 +128,61 @@ export default function BookingList() {
 
     }
 
-    const handleChangeBooking = (e) => {
+    const handleChangeBooking = async (e) => {
+
         if (Object.keys(bookingUp).length) {
-            const bookingNew = {
-                ...bookingUp,
-                [e.target.name]: e.target.value,
+            if (e.target.name == 'dateBooking') {
+
+                const dateBooking = e.target.value;
+
+                setTimesFreeByDate(dateBooking)
+
+                const bookingNew = {
+                    ...bookingUp,
+                    [e.target.name]: e.target.value,
+
+                }
+                setBookingUp(bookingNew)
+
 
             }
-            console.log(bookingNew);
-            setBookingUp(bookingNew)
+            else {
+                const bookingNew = {
+                    ...bookingUp,
+                    [e.target.name]: e.target.value,
+
+                }
+                setBookingUp(bookingNew)
+            }
+
         }
         else {
-            const bookingNew = {
-                ...booking,
-                [e.target.name]: e.target.value
+            if (e.target.name == 'dateBooking') {
+                const dateBooking = e.target.value;
+
+                setTimesFreeByDate(dateBooking)
+                const bookingNew = {
+                    ...booking,
+                    [e.target.name]: e.target.value
+                }
+
+                setBookingUp(bookingNew)
             }
-            console.log(bookingNew);
-            setBookingUp(bookingNew)
+            else {
+                const bookingNew = {
+                    ...booking,
+                    [e.target.name]: e.target.value
+                }
+
+                setBookingUp(bookingNew)
+            }
+
         }
 
     }
 
     const handleUpdateBooking = async () => {
+        console.log(bookingUp);
         await handleUpdateBookingList(bookingUp)
         Swal.fire({
             position: 'center',
@@ -117,7 +201,8 @@ export default function BookingList() {
             idCustomer: String(obj.customer.id),
             timeBooking: obj.timeBooking,
             dateBooking: obj.dateBooking,
-            status: obj.status
+            status: obj.status,
+            message: obj.message
         };
 
         const bookingUp = await bookingService.editBooking(newBooking, obj.id)
@@ -140,9 +225,6 @@ export default function BookingList() {
             cancelButtonText: 'Không'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                // await bookingService.deleteBooking(bookingId)
-                // Swal.fire('Hủy thành công!', '', 'success')
-                // setBookingList((booking) => booking.filter((booking) => booking.id !== bookingId))
                 const booking = await bookingService.getBookingById(bookingId);
                 const newBooking = {
                     ...booking,
@@ -181,7 +263,6 @@ export default function BookingList() {
                 setBookingList((booking) => booking.filter((booking) => booking.id !== id))
             }
         })
-        // getAllBookingList()
     }
 
     const resetBooking = () => {
@@ -193,8 +274,10 @@ export default function BookingList() {
     }, [eyeCategory])
 
     useEffect(() => {
-        getAllBookingList()
-        getAllEyeCategories()
+        getAllBookingList();
+        getAllEyeCategories();
+        getTodayDate();
+        UsingWebSocket();
     }, [])
 
     useEffect(() => {
@@ -206,65 +289,87 @@ export default function BookingList() {
         setDefaultDate(formattedDate);
     }, []);
 
+
+    const [currentPage, setCurrentPage] = useState(0);
+    const appointmentsPerPage = 5;
+
+    const handlePageChange = (selectedPage) => {
+        setCurrentPage(selectedPage.selected);
+    };
+
+    const indexOfLastAppointment = (currentPage + 1) * appointmentsPerPage;
+    const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
+    const currentAppointments = bookingList.slice(indexOfFirstAppointment, indexOfLastAppointment);
+
     return (
         <>
-            <div className="container mr-3" style={{
-                position: 'fixed',
-                zIndex: '20',
-                marginTop: '100px',
-                paddingRight: '50px'
-            }}>
+
+            <div className="container-fluid" >
                 <div className='d-flex mb-5 align-items-center'>
                     <h6 className='mr-3'>Chọn ngày: </h6>
                     <div className='col-3 '>
-                        <input type="date" className='form-control' defaultValue={defaultDate} onChange={handleChangeListByDate} />
+                        <input type="date" className='form-control' onChange={handleChangeListByDate} min={minDate} />
                     </div>
                 </div>
                 {
                     bookingList.length ?
-                        <table className="table">
-                            <thead className="thead-primary">
-                                <tr>
-                                    <th>STT</th>
-                                    <th>Họ và tên</th>
-                                    <th>Số điện thoại</th>
-                                    <th>Ngày khám</th>
-                                    <th>Giờ khám</th>
-                                    <th>Dịch vụ</th>
-                                    <th className='col-3 text-center'>Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    bookingList
-                                        .sort((a, b) => {
+                        <>
+                            <table className="table">
+                                <thead className="thead-primary">
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Họ và tên</th>
+                                        <th>Số điện thoại</th>
+                                        <th>Ngày khám</th>
+                                        <th>Giờ khám</th>
+                                        <th>Dịch vụ</th>
+                                        <th className='col-4 text-center'>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        currentAppointments
+                                            .sort((a, b) => {
+                                                return a.timeBooking.localeCompare(b.timeBooking);
+                                            })
+                                            .map((booking, index) => {
+                                                const count = index + 1;
+                                                return (
+                                                    <tr key={booking.id}>
+                                                        <td>{count}</td>
+                                                        <td>{booking.customer.user.fullName}</td>
+                                                        <td>{booking.customer.user.phoneNumber}</td>
+                                                        <td>{booking.dateBooking}</td>
+                                                        <td>{booking.timeBooking}</td>
+                                                        <td>{booking.eyeCategory.nameCategory}</td>
+                                                        <td className='text-center'>
+                                                            <button className='btn btn-warning mr-2' type="button" data-toggle="modal" data-target="#exampleModal" onClick={() => getBookingById(booking.id)}>Sửa</button>
+                                                            <button className='btn btn-danger mr-2' onClick={() => deleteBookingById(booking.id)}>Hủy</button>
+                                                            <button className='btn btn-success' onClick={() => handleChangeStatusBooking(booking.id)}>Xác nhận khám</button>
 
-                                            console.log('a');
-                                            return a.timeBooking.localeCompare(b.timeBooking);
-                                        })
-                                        .map((booking, index) => {
-                                            const count = index + 1;
-                                            return (
-                                                <tr key={booking.id}>
-                                                    <td>{count}</td>
-                                                    <td>{booking.customer.user.fullName}</td>
-                                                    <td>{booking.customer.user.phoneNumber}</td>
-                                                    <td>{booking.dateBooking}</td>
-                                                    <td>{booking.timeBooking}</td>
-                                                    <td>{booking.eyeCategory.nameCategory}</td>
-                                                    <td className='text-center'>
-                                                        <button className='btn btn-warning mr-2' type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={() => getBookingById(booking.id)}>Sửa</button>
-                                                        <button className='btn btn-danger mr-2' onClick={() => deleteBookingById(booking.id)}>Hủy</button>
-                                                        <button className='btn btn-success' onClick={() => handleChangeStatusBooking(booking.id)}>Xác nhận khám</button>
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })
+                                    }
 
-                                                    </td>
-                                                </tr>
-                                            )
-                                        })
-                                }
+                                </tbody>
+                            </table>
+                            <div className="pagination-container">
+                                <ReactPaginate
+                                    pageCount={Math.ceil(bookingList.length / appointmentsPerPage)}
+                                    pageRangeDisplayed={5} // Số lượng trang hiển thị
+                                    marginPagesDisplayed={2} // Số lượng trang được hiển thị ở đầu và cuối
+                                    onPageChange={handlePageChange}
+                                    containerClassName={'pagination'}
+                                    activeClassName={'active'}
+                                    previousLabel={'Previous'}
+                                    nextLabel={'Next'}
+                                    breakLabel={'...'}
+                                />
+                            </div>
 
-                            </tbody>
-                        </table>
+                        </>
                         :
                         <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
                 }
@@ -273,26 +378,17 @@ export default function BookingList() {
 
             {/* <// Modal --> */}
             <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div className="modal-dialog modal-lg modal-dialog-centered">
+                <div className="modal-dialog modal-xl modal-dialog-centered">
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title font-weight-bold" id="exampleModalLabel">Thay đổi thông tin lịch hẹn</h5>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={resetBooking}></button>
+                            <button type="button" className="btn-close" data-dismiss="modal" aria-label="Close" onClick={resetBooking}></button>
                         </div>
                         <div className="modal-body">
                             {
                                 Object.keys(booking).length &&
                                 <div className="container">
-
-                                    <div className="row">
-                                        <div className="col-md-6">
-                                            <label>ID</label>
-                                            <input type="text"
-                                                className='form-control'
-                                                value={booking.id}
-                                                readOnly
-                                            />
-                                        </div>
+                                    <div className="row mb-3">
                                         <div className="col-md-6">
                                             <label>Họ và tên</label>
                                             <input type="text"
@@ -301,8 +397,6 @@ export default function BookingList() {
                                                 readOnly
                                             />
                                         </div>
-                                    </div>
-                                    <div className="row">
                                         <div className="col-md-6">
                                             <label>Số điện thoại</label>
                                             <input type="text"
@@ -311,9 +405,20 @@ export default function BookingList() {
                                                 readOnly
                                             />
                                         </div>
+                                    </div>
+                                    <div className="row mb-3">
+                                        <div className="col-md-6">
+                                            <label>Ngày khám</label>
+                                            <input type="date"
+                                                className='form-control'
+                                                name='dateBooking'
+                                                defaultValue={booking.dateBooking}
+                                                min={minDate}
+                                                onChange={handleChangeBooking}
+                                            />
+                                        </div>
                                         <div className="col-md-6">
                                             <label>Dịch vụ</label>
-
                                             <select name="eyeCategory" id="categorySelect" className='form-control' onChange={getEyeCategoryById}>
                                                 <option value={booking.eyeCategory.id}>{booking.eyeCategory.nameCategory}</option>
                                                 {
@@ -331,27 +436,24 @@ export default function BookingList() {
                                     </div>
                                     <div className="row">
                                         <div className="col-md-6">
-                                            <label>Ngày khám</label>
-                                            <input type="date"
-                                                className='form-control'
-                                                name='dateBooking'
-                                                defaultValue={booking.dateBooking}
-                                                onChange={handleChangeBooking}
-                                            />
-                                        </div>
-                                        <div className="col-md-6">
                                             <label>Giờ khám</label>
-
-                                            <select className='form-control' name="timeBooking" id="" defaultValue={booking.timeBooking} onChange={handleChangeBooking}>
+                                            <select className='form-control' name="timeBooking" id="" onChange={handleChangeBooking} >
                                                 {
-                                                    timeBooking.map((time, index) => {
+                                                    timesFreeBooking.map((time, index) => {
                                                         return (
-                                                            <option key={index} value={time}>{time}</option>
+                                                            <option key={index} value={time} selected={time == booking.timeBooking ? true : false}>{time}</option>
                                                         )
-
                                                     })
                                                 }
                                             </select>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <label>Lý do thay đổi</label>
+                                            <input type="text"
+                                                className='form-control'
+                                                name='message'
+                                                onChange={handleChangeBooking}
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -360,8 +462,8 @@ export default function BookingList() {
 
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={resetBooking}>Close</button>
-                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleUpdateBooking}>Save changes</button>
+                            <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={resetBooking}>Close</button>
+                            <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={handleUpdateBooking}>Save changes</button>
                         </div>
                     </div>
                 </div>

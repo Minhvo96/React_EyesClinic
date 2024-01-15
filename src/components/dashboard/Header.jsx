@@ -23,10 +23,8 @@ export default function Header() {
   }, [showDropdown]);
 
   return (
-    <header className="app-header">
+    <header className="app-header" style={{zIndex: 30}}>
       <nav className="navbar navbar-expand-lg navbar-light" style={{ marginLeft: "24px" }}>
-
-
 
         <div
           className="navbar-collapse justify-content-center d-flex px-0 "
