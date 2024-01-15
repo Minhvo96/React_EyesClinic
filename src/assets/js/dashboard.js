@@ -1,4 +1,4 @@
-$(function () {
+$(() =>  {
 
 
   // =====================================
@@ -100,9 +100,8 @@ $(function () {
 
 
   };
-
-  var chart = new ApexCharts(document.querySelector("#chart"), chart);
-  chart.render();
+  new ApexCharts(document.querySelector("#chart"), chart).render();
+  
 
 
   // =====================================
@@ -155,9 +154,8 @@ $(function () {
       fillSeriesColor: false,
     },
   };
-
-  var chart = new ApexCharts(document.querySelector("#breakup"), breakup);
-  chart.render();
+  new ApexCharts(document.querySelector("#breakup"), breakup).render();
+  
 
 
 

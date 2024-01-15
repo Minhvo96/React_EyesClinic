@@ -271,7 +271,7 @@ export default function BookingForm() {
                                             <select {...register("eyeCategory")} className="form-control">
                                                 <option value="" style={{ color: 'black' }}>Chọn dịch vụ</option>
                                                 {
-                                                    eyeCategories.map(item => {
+                                                    eyeCategories?.map(item => {
                                                         return (
                                                             <option key={item.id} value={item.id} style={{ color: 'black' }}>{item.nameCategory} </option>
                                                         )
