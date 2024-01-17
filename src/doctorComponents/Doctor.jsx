@@ -39,9 +39,9 @@ export default function Doctor() {
     const [medicineStatus, setMedicineStatus] = useState(false);
     const [diagnoseInputs, setDiagnoseInputs] = useState();
 
-    const [quantityValidates, setQuantityValidates] = useState(Array(medicines.length).fill(''));
-    const [quantityErrors, setQuantityErrors] = useState(Array(medicines.length).fill(''));
-    const [usingMedicineErrors, setUsingMedicineErrors] = useState(Array(medicines.length).fill(''));
+    const [quantityValidates, setQuantityValidates] = useState(Array(medicines?.length).fill(''));
+    const [quantityErrors, setQuantityErrors] = useState(Array(medicines?.length).fill(''));
+    const [usingMedicineErrors, setUsingMedicineErrors] = useState(Array(medicines?.length).fill(''));
 
     const [prescription, setPrescription] = useState({});
     const navigator = useNavigate();
@@ -211,7 +211,7 @@ export default function Doctor() {
             setTimeout(() => {
                 Swal.close();
             }, 2000);
-            navigator('/waiting-list');
+            navigator('/dashboard/waiting-list');
         }
 
         if (Object.keys(prescription).length) {

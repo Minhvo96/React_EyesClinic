@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import bookingService from '../../services/bookingServices';
 import Swal from 'sweetalert2';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import ReactPaginate from 'react-paginate';
 import eyeCategoriesService from '../../services/eyeCategoriesServices';
 import * as yup from 'yup'
@@ -12,6 +12,7 @@ import userService from '../../services/userService';
 import Sidebar from '../dashboard/Sidebar';
 import Header from '../dashboard/Header';
 import addStyleDashboard from '../../AddStyleDashboard';
+import { useAuthContext } from '../../context/AuthProvider';
 
 const registerSchema = yup.object({
   fullName: yup.string().required("Bạn cần phải cung cấp họ và tên"),
@@ -30,6 +31,7 @@ const registerSchema = yup.object({
 
 export default function WaitingPatients() {
 
+  const [hasValidRole,setHasValidRole] = useState();
   const [status, setStatus] = useState(true)
   const [bookingList, setBookingList] = useState([])
   const [defaultDate, setDefaultDate] = useState('');
@@ -43,6 +45,10 @@ export default function WaitingPatients() {
     mode: "onBlur",
     criteriaMode: "all"
   })
+
+  const auth = useAuthContext();
+
+  const navigate = useNavigate();
 
   const handleSubmitForm = async (data) => {
     const user = {
@@ -117,7 +123,17 @@ export default function WaitingPatients() {
   }
 
   const handleChangeStatusExamining = (id) => {
-    handleChangeStatusBooking(id, "EXAMINING")
+    if(auth?.user?.roles === 'ROLE_DOCTOR' || auth?.user?.roles === 'ROLE_ASSISTANT'){
+      handleChangeStatusBooking(id, "EXAMINING")
+      if(auth?.user?.roles === 'ROLE_DOCTOR'){
+        navigate(`/dashboard/doctor/${id}`);
+      }
+      if(auth?.user?.roles === 'ROLE_ASSISTANT'){
+        navigate(`/dashboard/assistant/${id}`);
+      }    
+    } else {
+      navigate('/error-403')
+    }
   }
 
   const handleChangeStatusBooking = async (id, status) => {
@@ -211,6 +227,7 @@ export default function WaitingPatients() {
             <div >
               <input type="date" className='form-control' defaultValue={defaultDate} onChange={handleChangeListByDate} min={minDate} />
             </div>
+
           </div>
           <div className='mr-5'>
             <button className='btn btn-outline-success' type="button" data-toggle="modal" data-target="#createBookingModal">Đặt lịch</button>
@@ -261,14 +278,14 @@ export default function WaitingPatients() {
                             </td>
                             <td className="border-bottom-0">
                               <div className="d-flex align-items-center justify-content-center">
-                                <NavLink to={`/assistant/${booking.id}`}>
+                                
                                   <button className="btn btn-outline-success d-flex justify-content-center align-items-center"
                                     style={{ width: "36px", height: "36px" }}
                                     onClick={() => handleChangeStatusExamining(booking.id)}
                                   >
                                     <i className="ti ti-report-medical" style={{ fontSize: "18px" }}></i>
                                   </button>
-                                </NavLink>
+                           
                               </div>
                             </td>
                           </tr>

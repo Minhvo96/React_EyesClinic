@@ -4,7 +4,6 @@ const Overview = lazy(() => import("../components/dashboard/Overview"));
 const StyleDashboard = lazy(() => import("../layouts/StyleDashboard"));
 
 function DashboardOverview() {
-
   return <StyleDashboard children={<Overview />} />;
   
 }
