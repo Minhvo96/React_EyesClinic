@@ -6,8 +6,8 @@ import History from './components/history/History';
 import WaitingList from './components/waitingList/WaitingList';
 import Patient from './components/dashboard/Patient';
 import Receptionist from './components/receptionist/Receptionist';
+import 'bootstrap/dist/css/bootstrap.min.css'
 import Medicine from './components/dashboard/Medicine';
-import Assistant from './components/assistant/Assistant';
 import Login from './components/dashboard/Login';
 import DashboardOverview from './pages/DashboardOverview';
 import { AuthProvider, useAuthContext } from './context/AuthProvider';
