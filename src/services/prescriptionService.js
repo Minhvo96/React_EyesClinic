@@ -1,10 +1,8 @@
 import axios from "axios";
 
-const URL_API = 'http://localhost:8080/api/eye-category';
-// const URL_API = 'http://localhost:8080/api/eyeCategory';
-
-const eyeCategoriesService = {
-    getAllEyeCategories: async () => {
+const URL_API = 'http://localhost:8080/api/prescription';
+const prescriptionService = {
+    getPrescription: async () => {
         return axios
             .get(URL_API)
             .then((response) => {
@@ -14,7 +12,8 @@ const eyeCategoriesService = {
                 console.log(error);
             });
     },
-    createEyeCategory: async (obj) => {
+    createPrescription: async (obj) => {
+        console.log("prescription obj: ", JSON.stringify(obj));
         return axios
             .post(URL_API, obj)
             .then((response) => {
@@ -24,9 +23,9 @@ const eyeCategoriesService = {
                 console.log(error);
             });
     },
-    editEyeCategory: async (id, obj) => {
+    getPrescriptionByBookingId: async (id) => {
         return axios
-            .patch(URL_API + '/' + id, obj)
+            .get(URL_API + '/booking/' + id)
             .then((response) => {
                 return response.data;
             })
@@ -34,19 +33,9 @@ const eyeCategoriesService = {
                 console.log(error);
             });
     },
-    deleteEyeCategory: async (id) => {
+    editPrescription: async (obj, id) => {
         return axios
-            .delete(URL_API + '/' + id)
-            .then((response) => {
-                return response.data;
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    },
-    getEyeCategoryById: async (id) => {
-        return axios
-            .get(URL_API + '/' + id)
+            .put(URL_API + '/' + id, obj)
             .then((response) => {
                 return response.data;
             })
@@ -58,4 +47,4 @@ const eyeCategoriesService = {
 
 }
 
-export default eyeCategoriesService;
+export default prescriptionService;

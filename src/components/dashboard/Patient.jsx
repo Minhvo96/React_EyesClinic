@@ -3,6 +3,7 @@ import Sidebar from "./Sidebar";
 import addStyleDashboard from "../../AddStyleDashboard";
 import { useState } from "react";
 import ModalHistoryExam from "./modal/ModalHistoryExam";
+import { ClipLoader } from "react-spinners";
 
 export default function Patient() {
 
@@ -36,13 +37,7 @@ export default function Patient() {
                     <div className="container-fluid">
                         <div>
                             <div className="d-flex align-items-center justify-content-between">
-                                <h5 className="card-title fw-semibold mb-4">Patients</h5>
-                                <div className="d-flex align-items-center mb-4" style={{ cursor: "pointer" }}>
-                                    <button className="btn btn-primary d-flex align-items-center justify-content-center" style={{ borderRadius: '50%', width: "32px", height: "32px" }}>
-                                        <i className="ti ti-plus text-center" style={{ fontSize: "16px" }}></i>
-                                    </button>
-                                    <p className="mb-0 fw-normal text-primary" style={{ marginLeft: "10px" }}>Add new patient</p>
-                                </div>
+                                <h5 className="card-title fw-semibold mb-4">Danh sách bệnh nhân</h5>
                             </div>
                         </div>
                         <div className="col-lg-12 d-flex align-items-around" style={{ padding: 0 }}>
