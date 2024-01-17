@@ -1,24 +1,24 @@
 import React, { Suspense, useEffect, useState } from 'react'
 import './App.css'
-import Home from './components/Home'
 import { BrowserRouter, Route, Router, Routes } from 'react-router-dom';
 import PageServices from './components/services/PageServices';
 import History from './components/history/History';
-import WaitingList from './components/waitingList/WaitingList';
-import Patient from './components/dashboard/Patient';
-import Receptionist from './components/receptionist/Receptionist';
 import Medicine from './components/dashboard/Medicine';
-import Assistant from './components/assistant/Assistant';
 import Login from './components/dashboard/Login';
 import DashboardOverview from './pages/DashboardOverview';
-import { AuthProvider } from './context/AuthProvider';
+import { AuthProvider, useAuthContext } from './context/AuthProvider';
 import { ClipLoader } from 'react-spinners';
 import DashboardDoctor from './pages/DashboardDoctor';
 import DashboardAssistant from './pages/DashboardAssistant';
 import DashboardBookingList from './pages/DashboardBookingList';
 import DashboardWaitingPatients from './pages/DashboardWaitingList';
 import DashboardWaitingPay from './pages/DashboardWaitingPay';
+import Page403 from './components/error/Page403';
+import Page401 from './components/error/Page401';
+import Home from './components/Home';
 import { ToastContainer } from 'react-toastify';
+import DashboardPatient from './pages/DashboardPatient';
+
 
 function App() {
   return (
@@ -27,24 +27,24 @@ function App() {
         <AuthProvider>
           <Suspense fallback={<ClipLoader color='#2F89FC' loading cssOverride={{ position: "fixed", top: "50%", right: "50%" }} />}>
             <Routes>
-              <Route path='/' element={<Home />} />
+              <Route path='/' element={<Home/>} />
               <Route path='/services' element={<PageServices />} />
-              <Route path='/history' element={<History />} />
-              <Route path='/waitinglist' element={<WaitingList />} />
-              <Route path='/doctor/:bookingId' element={<DashboardDoctor/>} />
-              <Route path='/patient' element={<Patient />} />
-              <Route path='/login' element={<Login />} />
+              <Route path='/dashboard/history' element={<History />} />
+              <Route path='/dashboard/doctor/:bookingId' element={<DashboardDoctor />} />
+              <Route path='/dashboard/patient' element={<DashboardPatient />} />
               <Route path='/dashboard/overview' element={<DashboardOverview />} roles={['ROLE_ADMIN']} />
-              <Route path='/receptionist' element={<Receptionist />}>
-                <Route path='booking-list' element={<DashboardBookingList />} />
-              </Route>
-              <Route path='/waiting-pay' element={<DashboardWaitingPay />} />
-              <Route path='/waiting-list' element={<DashboardWaitingPatients />} />
-              <Route path='/medicine' element={<Medicine />} />
-              <Route path='/assistant/:bookingId' element={<DashboardAssistant />} />
+              <Route path='/dashboard/booking-list' element={<DashboardBookingList />} />
+              <Route path='/dashboard/waiting-pay' element={<DashboardWaitingPay />} />
+              <Route path='/dashboard/waiting-list' element={<DashboardWaitingPatients />} />
+              <Route path='/dashboard/medicine' element={<Medicine />} />
+              <Route path='/dashboard/assistant/:bookingId' element={<DashboardAssistant />} />
+              <Route path='/login' element={<Login />} />
+              <Route path='/error-401' element={<Page401 />} />
+              <Route path='/error-403' element={<Page403 />} />
             </Routes>
           </Suspense>
         </AuthProvider>
+
       </BrowserRouter >
       <ToastContainer />
     </>

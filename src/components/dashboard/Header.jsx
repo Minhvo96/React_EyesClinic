@@ -15,7 +15,7 @@ export default function Header() {
       var userIcon = document.getElementById('user-profile');
 
       // Kiểm tra xem phần tử được click có nằm ngoài dropdown hay không
-      if (!userIcon.contains(event.target)) {
+      if (!userIcon?.contains(event.target)) {
         setShowDropdown(false);
       }
     });
@@ -62,7 +62,7 @@ export default function Header() {
               </li>
             </ul>
             <li className="nav-item dropdown">
-              <a
+              <div
                 className="nav-link nav-icon-hover"
                 id="user-profile"
                 data-bs-toggle="dropdown"
@@ -77,7 +77,7 @@ export default function Header() {
                   height={35}
                   className="rounded-circle"
                 />
-              </a>
+              </div>
               {
                 showDropdown && (
                   <div
@@ -87,8 +87,7 @@ export default function Header() {
                     style={{ display: "block", position: "absolute", right: 0, left: "auto" }}
                   >
                     <div className="message-body">
-                      <div
-                        href="javascript:void(0)"
+                      <div                       
                         className="d-flex ml-1 gap-2 dropdown-item"
                         style={{flexDirection:"column"}}
                       >
@@ -109,33 +108,31 @@ export default function Header() {
                           <p className="mb-0 fs-3 text-secondary">PHỤ TÁ</p>
                         )}
                       </div>
-                      <a
-                        href="javascript:void(0)"
+                      <button
+                       
                         className="d-flex align-items-center gap-2 dropdown-item"
                       >
                         <i className="ti ti-user fs-6" />
                         <p className="mb-0 fs-3">My Profile</p>
-                      </a>
-                      <a
-                        href="javascript:void(0)"
+                      </button>
+                      <button                      
                         className="d-flex align-items-center gap-2 dropdown-item"
                       >
                         <i className="ti ti-mail fs-6" />
                         <p className="mb-0 fs-3">My Account</p>
-                      </a>
-                      <a
-                        href="javascript:void(0)"
+                      </button>
+                      <button                     
                         className="d-flex align-items-center gap-2 dropdown-item"
                       >
                         <i className="ti ti-list-check fs-6" />
                         <p className="mb-0 fs-3">My Task</p>
-                      </a>
-                      <a
-                        className="btn btn-outline-primary mx-3 mt-2 d-block"
+                      </button>
+                      <button
+                        className="btn btn-outline-primary mb-2 ms-3" style={{width:"83%"}}
                         onClick={auth.logout}
                       >
                         Logout
-                      </a>
+                      </button>
                     </div>
                   </div>
                 )
