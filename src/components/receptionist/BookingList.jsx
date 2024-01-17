@@ -12,14 +12,16 @@ import ReactPaginate from 'react-paginate';
 
 export default function BookingList() {
 
-
     const [defaultDate, setDefaultDate] = useState('');
     const [booking, setBooking] = useState({})
     const [bookingUp, setBookingUp] = useState({})
     const [bookingList, setBookingList] = useState([])
+    const [bookingListByTime, setBookingListByTime] = useState([])
     const [eyeCategories, setEyeCategories] = useState([])
     const [eyeCategory, setEyeCategory] = useState({})
     const [times, setTimes] = useState(["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"])
+    const [timesMorning, setTimeMorning] = useState(["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30"])
+    const [timesAfternoon, setTimesAfternoon] = useState(["14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"])
     const [timesFreeBooking, setTimesFreeBooking] = useState([])
     const [minDate, setMinDate] = useState();
 
@@ -34,7 +36,7 @@ export default function BookingList() {
 
     const getAllBookingList = async () => {
         const bookings = await bookingService.getAllBookings();
-        const bookingsFilter = bookings.filter((booking) => booking.status == "PENDING")
+        const bookingsFilter = bookings.filter((booking) => booking.status == "PENDING" && booking.dateBooking == defaultDate)
         setBookingList(bookingsFilter);
     }
 
@@ -269,16 +271,37 @@ export default function BookingList() {
         setBooking({})
     }
 
+
+    const handleChangeListBookingByTime = (time) => {
+        if(time =='all'){
+            setBookingListByTime(bookingList)
+        }
+        if(time == 'morning'){
+            setBookingListByTime(bookingList.filter(item => timesMorning.includes(item.timeBooking)))
+        }
+        if(time == 'afternoon') {
+            setBookingListByTime(bookingList.filter(item => timesAfternoon.includes(item.timeBooking)))
+        }
+    }
+
+    useEffect(() => {
+        setBookingListByTime(bookingList)
+    }, [bookingList])
+
     useEffect(() => {
         handleChangeCategory()
     }, [eyeCategory])
 
     useEffect(() => {
-        getAllBookingList();
+        // getAllBookingList();
         getAllEyeCategories();
         getTodayDate();
         UsingWebSocket();
     }, [])
+
+    useEffect(() => {
+        getAllBookingList()
+    }, [defaultDate])
 
     useEffect(() => {
         const now = new Date();
@@ -291,7 +314,7 @@ export default function BookingList() {
 
 
     const [currentPage, setCurrentPage] = useState(0);
-    const appointmentsPerPage = 5;
+    const appointmentsPerPage = 8;
 
     const handlePageChange = (selectedPage) => {
         setCurrentPage(selectedPage.selected);
@@ -299,20 +322,38 @@ export default function BookingList() {
 
     const indexOfLastAppointment = (currentPage + 1) * appointmentsPerPage;
     const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
-    const currentAppointments = bookingList.slice(indexOfFirstAppointment, indexOfLastAppointment);
+
+    const currentAppointments = bookingListByTime.sort((a, b) => {
+        return a.timeBooking.localeCompare(b.timeBooking);
+    }).slice(indexOfFirstAppointment, indexOfLastAppointment);
 
     return (
         <>
 
             <div className="container-fluid" >
-                <div className='d-flex mb-5 align-items-center'>
-                    <h6 className='mr-3'>Chọn ngày: </h6>
-                    <div className='col-3 '>
-                        <input type="date" className='form-control' onChange={handleChangeListByDate} min={minDate} />
+                <div className='d-flex mb-5 align-items-center justify-content-between'>
+                    <div className='d-flex align-items-center'>
+                        <h6 className='mr-3'>Chọn ngày: </h6>
+                        <div className='col-7 '>
+                            <input type="date" className='form-control' defaultValue={defaultDate} onChange={handleChangeListByDate} min={minDate} />
+                        </div>
                     </div>
+                    <div className='d-flex align-items-center gap-4'>
+                        <div>
+                            <button className='btn btn-outline-primary' onClick={() => handleChangeListBookingByTime('all')}>Tất cả</button>
+                        </div>
+                        <div>
+                            <button className='btn btn-outline-primary' onClick={() => handleChangeListBookingByTime('morning')}>Sáng</button>
+                        </div>
+                        <div>
+                            <button className='btn btn-outline-primary' onClick={() => handleChangeListBookingByTime('afternoon')}>Chiều</button>
+                        </div>
+                    </div>
+
+
                 </div>
                 {
-                    bookingList.length ?
+                    bookingListByTime.length ?
                         <>
                             <table className="table">
                                 <thead className="thead-primary">
@@ -329,11 +370,8 @@ export default function BookingList() {
                                 <tbody>
                                     {
                                         currentAppointments
-                                            .sort((a, b) => {
-                                                return a.timeBooking.localeCompare(b.timeBooking);
-                                            })
                                             .map((booking, index) => {
-                                                const count = index + 1;
+                                                const count = index + 1 + indexOfFirstAppointment;
                                                 return (
                                                     <tr key={booking.id}>
                                                         <td>{count}</td>
@@ -352,7 +390,6 @@ export default function BookingList() {
                                                 )
                                             })
                                     }
-
                                 </tbody>
                             </table>
                             <div className="pagination-container">

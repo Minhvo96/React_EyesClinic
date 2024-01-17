@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import bookingService from '../services/bookingServices';
 import medicineService from '../services/medicineService';
-import NavbarDoctor from './NavbarDoctor';
 import prescriptionService from '../services/prescriptionService';
 import addStyleDashboard from '../AddStyleDashboard';
 import Sidebar from '../components/dashboard/Sidebar';
@@ -13,6 +12,8 @@ import StepProgressBar from '../components/progress/Progress';
 import Swal from 'sweetalert2';
 import SockJS from 'sockjs-client';
 import UsingWebSocket from '../Socket';
+import { ReactSearchAutocomplete } from 'react-search-autocomplete';
+import { toast } from 'react-toastify';
 
 const schemaPrescription = yup.object({
     diagnose: yup.string()
@@ -27,7 +28,6 @@ export default function Doctor() {
     const [prescriptionById, setPrescriptionById] = useState({});
     const [leftEye, setLeftEye] = useState('');
     const [rightEye, setRightEye] = useState('');
-
     const [progressBarPercent, setProgressBarPercent] = useState(50);
 
     const [medicines, setMedicines] = useState([]);
@@ -39,9 +39,9 @@ export default function Doctor() {
     const [medicineStatus, setMedicineStatus] = useState(false);
     const [diagnoseInputs, setDiagnoseInputs] = useState();
 
-    const [quantityValidates, setQuantityValidates] = useState(Array(medicines.length).fill(''));
-    const [quantityErrors, setQuantityErrors] = useState(Array(medicines.length).fill(''));
-    const [usingMedicineErrors, setUsingMedicineErrors] = useState(Array(medicines.length).fill(''));
+    const [quantityValidates, setQuantityValidates] = useState(Array(medicines?.length).fill(''));
+    const [quantityErrors, setQuantityErrors] = useState(Array(medicines?.length).fill(''));
+    const [usingMedicineErrors, setUsingMedicineErrors] = useState(Array(medicines?.length).fill(''));
 
     const [prescription, setPrescription] = useState({});
     const navigator = useNavigate();
@@ -124,7 +124,6 @@ export default function Doctor() {
         setQuantityErrors(newQuantityErrors);
     }
 
-
     const handleUsingMedicine = (e, id, indexs) => {
 
         validateUsingMedicineInputs(e, indexs);
@@ -152,14 +151,6 @@ export default function Doctor() {
         const newUsingMedicineErrors = [...usingMedicineErrors];
         newUsingMedicineErrors[indexs] = isValidUsingMedicine ? '' : 'Vui lòng nhập HDSD thuốc cho bệnh nhân';
         setUsingMedicineErrors(newUsingMedicineErrors);
-    }
-
-    const handleAddMedicines = () => {
-        if (selectedMedicines.length == 0) {
-            setMedicineStatus(false);
-        } else {
-            setMedicineStatus(true);
-        }
     }
 
     const handleChangePrescription = (e) => {
@@ -195,6 +186,11 @@ export default function Doctor() {
         })
     }
 
+    const handleDeleteErrors = () => {
+        setQuantityErrors(Array(medicines.length).fill(''));
+        setUsingMedicineErrors(Array(medicines.length).fill(''));
+    }
+
     useEffect(() => {
         async function CreatePrescription() {
             await prescriptionService.editPrescription(prescription, bookingId);
@@ -215,7 +211,7 @@ export default function Doctor() {
             setTimeout(() => {
                 Swal.close();
             }, 2000);
-            navigator('/waiting-list');
+            navigator('/dashboard/waiting-list');
         }
 
         if (Object.keys(prescription).length) {
@@ -239,6 +235,94 @@ export default function Doctor() {
         }
     }, [prescriptionById])
 
+
+
+
+
+
+    const [showInputSearchMedicine, setShowInputSearchMedicine] = useState(false);
+    const [searchString, setSearchString] = useState({});
+
+    const handleOnSearch = (string, results) => {
+        medicines.filter(medicine => medicine.nameMedicine.toLowerCase().includes(string.toLowerCase()) || medicine.type.toLowerCase().includes(string.toLowerCase()));
+    }
+
+    const handleAddMedicines = (item) => {
+        setSearchString({});
+        setSelectedMedicines([...selectedMedicines, { id: item.id, nameMedicine: item.nameMedicine, quantity: quantityInput[item.id] || '', usingMedicine: usingMedicine[item.id] || '' }]);
+    }
+
+    const handleOnSelect = (item) => {
+        const isSelected = selectedMedicines.some(medicine => medicine.id === item.id);
+
+        if (isSelected) {
+            toast.warning("Thuốc này đã có trong danh sách!", {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 1500
+            });
+            setSearchString({});
+        } else {
+            setSearchString({ id: item.id, nameMedicine: item.nameMedicine, quantity: quantityInput[item.id] || '', usingMedicine: usingMedicine[item.id] || '' });
+        }
+    };
+
+    const handleChangeQuantity = (id, e) => {
+
+        const updatedInputs = { ...quantityInput, [id]: e.target.value };
+        setQuantityInput(updatedInputs);
+
+        const updatedMedicines = selectedMedicines.filter(medicine => medicine.id == id);
+        const updatedMedicine = updatedMedicines[0];
+
+        const index = selectedMedicines.findIndex(medicine => medicine.id == id);
+
+        const updateNewMedicine = { ...updatedMedicine, quantity: updatedInputs[id] };
+        const newSelectedMedicines = [...selectedMedicines];
+        newSelectedMedicines[index] = updateNewMedicine;
+
+        setSelectedMedicines([...newSelectedMedicines]);
+    }
+
+    const handleChangeUsingMedicine = (id, e) => {
+
+        const updatedInputs = { ...usingMedicine, [id]: e.target.value };
+        setUsingMedicine(updatedInputs);
+
+        const updatedMedicines = selectedMedicines.filter(medicine => medicine.id == id);
+        const updatedMedicine = updatedMedicines[0];
+
+        const index = selectedMedicines.findIndex(medicine => medicine.id == id);
+
+        const updateNewMedicine = { ...updatedMedicine, usingMedicine: updatedInputs[id] };
+        const newSelectedMedicines = [...selectedMedicines];
+        newSelectedMedicines[index] = updateNewMedicine;
+
+        setSelectedMedicines([...newSelectedMedicines]);
+    }
+
+    const handleShowInputSearchMedicine = () => {
+        setShowInputSearchMedicine(!showInputSearchMedicine);
+    }
+
+    const handleDeleteMedicine = (id) => {
+        const index = selectedMedicines.findIndex(medicine => medicine.id == id);
+        const newSelectedMedicines = [...selectedMedicines];
+        newSelectedMedicines.splice(index, 1);
+        setSelectedMedicines(newSelectedMedicines);
+
+        toast.success("Xóa thuốc thành công!", {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: 1500
+        });
+    }
+
+    useEffect(() => {
+        if (selectedMedicines.length == 0) {
+            setMedicineStatus(false);
+        } else {
+            setMedicineStatus(true);
+        } 
+    }, [selectedMedicines])
 
     return (
         <>
@@ -321,6 +405,7 @@ export default function Doctor() {
                                                 <th scope="col">Tên thuốc</th>
                                                 <th scope="col">Số lượng</th>
                                                 <th scope="col">Cách dùng</th>
+                                                <th scope="col">Xóa thuốc</th>
                                             </tr>
                                         </thead>
                                     )}
@@ -331,13 +416,50 @@ export default function Doctor() {
                                                 <td>{selectedMedicine.nameMedicine}</td>
                                                 <td>{selectedMedicine.quantity}</td>
                                                 <td>{selectedMedicine.usingMedicine}</td>
+                                                <td><i className="fa-solid fa-trash icon" onClick={() => handleDeleteMedicine(selectedMedicine.id)}></i></td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
-                                <button type="button" className="btn btn-secondary rounded-0 py-3 px-5" data-toggle="modal" data-target="#exampleModal">
+                                <button type="button" className="btn btn-secondary rounded-0 py-3 px-5" onClick={handleShowInputSearchMedicine}>
                                     Chọn thuốc
                                 </button>
+                                <div>
+                                    {
+                                        showInputSearchMedicine && 
+                                        <ReactSearchAutocomplete
+                                            items={medicines}
+                                            onSearch={handleOnSearch}                                    
+                                            onSelect={handleOnSelect}
+                                            autoFocus
+                                            fuseOptions={{ keys: ["nameMedicine", "type"] }}
+                                            resultStringKeyName="nameMedicine"
+                                            placeholder='Mời nhập tên thuốc...'
+                                            className='mt-2'
+                                        />
+                                    }
+                                    {
+                                        Object.keys(searchString).length > 0 &&
+                                        <div key={searchString.id} className='d-flex'>
+                                            <input className='form-control col-3' defaultValue={searchString.nameMedicine} readOnly/>
+                                            <input
+                                                type="text"
+                                                placeholder="Nhập số lượng thuốc..."
+                                                className='form-control col-3'
+                                                defaultValue={quantityInput[searchString.id] || ''}
+                                                onChange={(e) => handleChangeQuantity(searchString.id, e)}
+                                            />
+                                            <input
+                                                type="text"
+                                                placeholder="Nhập HDSD thuốc..."
+                                                className='form-control col-3'
+                                                defaultValue={usingMedicine[searchString.id] || ''}
+                                                onChange={(e) => handleChangeUsingMedicine(searchString.id, e)}
+                                            />
+                                            <button type='button' className='form-control col-3' onClick={() => handleAddMedicines(searchString)}>Thêm thuốc</button>
+                                        </div>
+                                    }
+                                </div>
                                 <div className='d-flex row mt-4 text-end'>
                                     <div>
                                         <button type="button" className="btn btn-primary rounded-0" onClick={handleSubmitPrescription(handleAddPrescription)}>Lưu bệnh án</button>
@@ -370,59 +492,6 @@ export default function Doctor() {
                     </div>
                     : <div><p style={{ color: 'red' }}>Hiện tại chưa có bệnh nhân vào khám!</p></div>
                 }
-            </div>
-
-            {/* <// Modal --> */}
-            <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div className="modal-dialog modal-lg modal-dialog-centered">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">Chọn thuốc kê đơn</h5>
-                            <button type="button" className="btn-close" data-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div className="modal-body">
-                            <div className="container">
-                                <table data-toggle="table" data-classes="table table-hover table-condensed">
-                                    <thead>
-                                        <tr className='text-center'>
-                                            <th data-field="state" data-checkbox="true"></th>
-                                            <th className="col-xs-4" data-field="Medicine" data-sortable="true">Tên thuốc</th>
-                                            <th className="col-xs-4" data-field="Quantity" data-sortable="true">Số lượng kê đơn</th>
-                                            <th className="col-xs-4" data-field="QuantityStock">Cách dùng</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className='text-center'>
-                                        {
-                                            medicines?.map((medicine, index) =>
-                                                <tr className="tr-class-2" key={medicine.id}>
-                                                    <td><input type="checkbox" onChange={() => handleChangeMedicine(medicine.id, medicine.nameMedicine, medicine.stockQuantity)} /></td>
-                                                    <td style={{ width: '33.33%' }}>{medicine.nameMedicine}</td>
-
-                                                    <td style={{ width: '33.33%' }}>
-                                                        <input type="text" className={`form-control text-center ${quantityErrors[index] ? 'is-invalid' : ''}`}
-                                                            onChange={(e) => handleQuantityInputChange(e, medicine.id, index)} />
-                                                        {quantityErrors[index] && <div className="invalid-feedback">{quantityErrors[index]}</div>}
-                                                    </td>
-
-                                                    <td style={{ width: '33.33%' }}>
-                                                        <input type="text" className={`form-control text-center ${usingMedicineErrors[index] ? 'is-invalid' : ''}`}
-                                                            onChange={(e) => handleUsingMedicine(e, medicine.id, index)} />
-                                                        {usingMedicineErrors[index] && <div className="invalid-feedback">{usingMedicineErrors[index]}</div>}
-                                                    </td>
-                                                    {/* <td style={{ width: '33.33%' }} className='text-center'>{medicine.stockQuantity}</td> */}
-                                                </tr>
-                                            )
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                            <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={handleAddMedicines}>Thêm thuốc</button>
-                        </div>
-                    </div>
-                </div>
             </div>
         </>
     )

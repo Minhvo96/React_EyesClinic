@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import billService from '../../services/billServices';
 
 
 export default function Overview() {
@@ -9,36 +10,52 @@ export default function Overview() {
     const [month30Day, setMonth30Day] = useState(["04", "06", "09", "11"])
     const [month28Day, setMonth28Day] = useState(["02"])
     const [dateOfMonth, setDateOfMonth] = useState([])
-    const [status, setStatus] = useState(false)
+    const [billsByMonth, setBillsByMonth] = useState([])
+    const [totalMonthlyIncome, setTotalMonthlyIncome] = useState()
+    const [totalYearlyIncome, setTotalYearlyIncome] = useState(0)
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
-
     };
 
+    const getRevenuesByMonth = async (date) => {
+        const month = formatDate(date).split("-")[0];
+        const year = formatDate(date).split("-")[1];
+
+        const obj = {
+            month,
+            year
+        }
+        const bills = await billService.getBillsByMonthYear(obj);
+
+        const totalYearlyIncome = await billService.getBillsByYear(obj);
+
+        setBillsByMonth(bills);
+        setTotalYearlyIncome(formatNumber(totalYearlyIncome));
+
+    }
+
     const getDaysByMonth = (month) => {
-        console.log(month);
         if (month31Day.includes(month)) {
             const a = [];
             for (let i = 1; i <= 31; i++) {
                 a.push(String(i));
             }
-            console.log(a);
-            setDateOfMonth(a)
+            setDateOfMonth(a);
         }
         if (month30Day.includes(month)) {
             const a = [];
             for (let i = 1; i <= 30; i++) {
                 a.push(String(i));
             }
-            setDateOfMonth(a)
+            setDateOfMonth(a);
         }
         if (month28Day.includes(month)) {
             const a = [];
             for (let i = 1; i <= 28; i++) {
                 a.push(String(i));
             }
-            setDateOfMonth(a)
+            setDateOfMonth(a);
         }
     }
 
@@ -51,35 +68,64 @@ export default function Overview() {
         return '';
     };
 
-    const render = () => {
+    const chartRef = useRef(null);
+
+
+    const renderChart = (data, categories) => {
+        if (chartRef.current !== null) {
+            chartRef.current.destroy();
+        }
         var options = {
             chart: {
                 type: 'line'
             },
             series: [{
                 name: 'sales',
-                data: dateOfMonth
+                data: data
             }],
             xaxis: {
-                categories: dateOfMonth
+                categories: categories
             }
         }
+        chartRef.current = new ApexCharts(document.querySelector("#chart"), options);
+        chartRef.current.render();
+    }
 
-        var chart = new ApexCharts(document.querySelector("#chart"), options);
+    function formatNumber(number) {
+        const parts = number.toString().split('.');
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
-        chart.render();
+        return parts.join('.');
     }
 
 
     useEffect(() => {
-        const month = formatDate(selectedDate).split("-")[0]
-        getDaysByMonth(month)
+        const month = formatDate(selectedDate).split("-")[0];
+        getDaysByMonth(month);
     }, [selectedDate])
 
     useEffect(() => {
-        render();
+        if(selectedDate){
+            getRevenuesByMonth(selectedDate)
+        }
     }, [dateOfMonth])
 
+    useEffect(() => {
+        const arrayData = new Array(dateOfMonth.length).fill('0');
+
+        const bills = billsByMonth;
+
+        bills.forEach(item => {
+            arrayData[parseInt(item.date) - 1] = item.total.toString();
+        })
+
+        renderChart(arrayData, dateOfMonth);
+
+        let total = 0;
+        arrayData.forEach(item => total += parseInt(item));
+        setTotalMonthlyIncome(formatNumber(total));
+
+    }, [billsByMonth])
 
     return (
         <>
@@ -91,9 +137,9 @@ export default function Overview() {
                             <div className="card-body">
                                 <div className="d-sm-flex d-block align-items-center justify-content-between mb-9">
                                     <div className="mb-3 mb-sm-0">
-                                        <h5 className="card-title fw-semibold">Sales Overview</h5>
+                                        <h5 className="card-title fw-semibold">Thống kê thu nhập</h5>
                                     </div>
-                                    <div>
+                                    <div style={{ zIndex: 50 }}>
                                         <DatePicker
                                             selected={selectedDate}
                                             onChange={handleDateChange}
@@ -114,57 +160,39 @@ export default function Overview() {
                         <div className="row">
                             <div className="col-lg-12">
                                 {/* Yearly Breakup */}
-                                <div className="card overflow-hidden">
-                                    <div className="card-body p-4">
-                                        <h5 className="card-title mb-9 fw-semibold">Yearly Breakup</h5>
-                                        <div className="row align-items-center">
+                                <div className="card">
+                                    <div className="card-body">
+                                        <div className="row align-items-start">
                                             <div className="col-8">
-                                                <h4 className="fw-semibold mb-3">$36,358</h4>
-                                                <div className="d-flex align-items-center mb-3">
-                                                    <span className="me-1 rounded-circle bg-light-success round-20 d-flex align-items-center justify-content-center">
-                                                        <i className="ti ti-arrow-up-left text-success" />
-                                                    </span>
-                                                    <p className="text-dark me-1 fs-3 mb-0">+9%</p>
-                                                    <p className="fs-3 mb-0">last year</p>
-                                                </div>
-                                                <div className="d-flex align-items-center">
-                                                    <div className="me-4">
-                                                        <span className="round-8 bg-primary rounded-circle me-2 d-inline-block" />
-                                                        <span className="fs-2">2023</span>
-                                                    </div>
-                                                    <div>
-                                                        <span className="round-8 bg-light-primary rounded-circle me-2 d-inline-block" />
-                                                        <span className="fs-2">2023</span>
-                                                    </div>
-                                                </div>
+                                                <h5 className="card-title mb-9 fw-semibold">
+                                                    {" "}
+                                                    Tổng thu năm này{" "}
+                                                </h5>
+                                                <h4 className="fw-semibold mb-3">{totalYearlyIncome} VNĐ</h4>
                                             </div>
                                             <div className="col-4">
-                                                <div className="d-flex justify-content-center">
-                                                    <div id="breakup" />
+                                                <div className="d-flex justify-content-end">
+                                                    <div className="text-white bg-secondary rounded-circle p-6 d-flex align-items-center justify-content-center">
+                                                        <i className="ti ti-currency-dollar fs-6" />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <div id="earning" />
                                 </div>
                             </div>
                             <div className="col-lg-12">
                                 {/* Monthly Earnings */}
                                 <div className="card">
                                     <div className="card-body">
-                                        <div className="row alig n-items-start">
+                                        <div className="row align-items-start">
                                             <div className="col-8">
                                                 <h5 className="card-title mb-9 fw-semibold">
                                                     {" "}
-                                                    Monthly Earnings{" "}
+                                                    Tổng thu tháng này{" "}
                                                 </h5>
-                                                <h4 className="fw-semibold mb-3">$6,820</h4>
-                                                <div className="d-flex align-items-center pb-1">
-                                                    <span className="me-2 rounded-circle bg-light-danger round-20 d-flex align-items-center justify-content-center">
-                                                        <i className="ti ti-arrow-down-right text-danger" />
-                                                    </span>
-                                                    <p className="text-dark me-1 fs-3 mb-0">+9%</p>
-                                                    <p className="fs-3 mb-0">last year</p>
-                                                </div>
+                                                <h4 className="fw-semibold mb-3">{totalMonthlyIncome} VNĐ</h4>
                                             </div>
                                             <div className="col-4">
                                                 <div className="d-flex justify-content-end">
@@ -181,7 +209,7 @@ export default function Overview() {
                         </div>
                     </div>
                 </div>
-                <div className="row">
+                {/* <div className="row">
                     <div className="col-lg-4 d-flex align-items-stretch">
                         <div className="card w-100">
                             <div className="card-body p-4">
@@ -396,7 +424,7 @@ export default function Overview() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
             </div>
         </>
