@@ -72,6 +72,7 @@ export default function Sidebar() {
                             )
                         }
 
+
                         {
                             (role === 'ROLE_ADMIN' || role === 'ROLE_RECEPTIONIST') && (
                                 <>

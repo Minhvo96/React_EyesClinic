@@ -1,13 +1,8 @@
-import Header from "./Header";
-import Sidebar from "./Sidebar";
-import addStyleDashboard from "../../AddStyleDashboard";
 import { useState } from "react";
 import ModalHistoryExam from "./modal/ModalHistoryExam";
 import { ClipLoader } from "react-spinners";
 
 export default function Patient() {
-
-    addStyleDashboard();
 
     const[showModal, setShowModal] = useState(false);
 
@@ -22,19 +17,6 @@ export default function Patient() {
     
     return (
         <>
-            <div
-                className="page-wrapper"
-                id="main-wrapper"
-                data-layout="vertical"
-                data-navbarbg="skin6"
-                data-sidebartype="full"
-                data-sidebar-position="fixed"
-                data-header-position="fixed"
-            >
-                <Sidebar />
-                <div className="body-wrapper">
-                    <Header />
-                    <div className="container-fluid">
                         <div>
                             <div className="d-flex align-items-center justify-content-between">
                                 <h5 className="card-title fw-semibold mb-4">Danh sách bệnh nhân</h5>
@@ -103,11 +85,11 @@ export default function Patient() {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    
                     <ModalHistoryExam showModal={showModal} closeModal={handleCloseModal}/>
-                </div>
+            
                 
-            </div>
+         
         </>
     )
 

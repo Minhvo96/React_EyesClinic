@@ -1,0 +1,28 @@
+.row {
+    display: flex;
+  }
+  
+  .col-span-1 {
+    flex-basis: 120px; /* Điều chỉnh độ rộng của cột chứa ảnh */
+  }
+  
+  .text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+  
+  .logo {
+    width: 160px; /* Điều chỉnh kích thước của ảnh */
+    height: auto;
+  }
+  
+  .clinic-name,
+  .clinic-address,
+  .clinic-contact,
+  .invoice-title {
+    margin: 0;
+    text-align: center;
+  }

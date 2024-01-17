@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import * as yup from 'yup'
 import addStyleDashboard from '../../AddStyleDashboard'
@@ -13,13 +13,10 @@ export default function Login() {
     addStyleDashboard();
 
     const [phoneNumber, setPhoneNumber] = useState("");
-
     const [password, setPassword] = useState("");
-
     const [errorLogin, setErrorLogin] = useState("");
 
     const navigate = useNavigate();
-
     const auth = useAuthContext();
 
     const authLogin = async (data) => {
@@ -38,7 +35,6 @@ export default function Login() {
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
         resolver: yupResolver(registerSchema)
     })
-
 
     const handleSubmitForm = async () => {
         const user = {
@@ -116,7 +112,6 @@ export default function Login() {
                                                     onInput={handleChangePhoneNumber}
                                                 />
                                                 <span className="text-danger font-weight-bold">{errors?.phoneNumber?.message}</span>
-
                                             </div>
                                             <div className="mb-4">
                                                 <label htmlFor="exampleInputPassword1" className="form-label">
@@ -133,28 +128,8 @@ export default function Login() {
                                                 />
                                                 <span className="text-danger font-weight-bold">{errors?.password?.message}</span>
                                                 <span className="text-danger font-weight-bold">{errorLogin}</span>
-
                                             </div>
-                                            {/* <div className="d-flex align-items-center justify-content-between mb-4">
-                                                <div className="form-check">
-                                                    <input
-                                                        className="form-check-input primary"
-                                                        type="checkbox"
-                                                        defaultValue=""
-                                                        id="flexCheckChecked"
-                                                        defaultChecked=""
-                                                    />
-                                                    <label
-                                                        className="form-check-label text-dark"
-                                                        htmlFor="flexCheckChecked"
-                                                    >
-                                                        Remember this Device
-                                                    </label>
-                                                </div>
-                                                <a className="text-primary fw-bold" href="./index.html">
-                                                    Forgot Password ?
-                                                </a>
-                                            </div> */}
+                                            
                                             <button
                                                 type='submit'
                                                 className="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2"
@@ -164,7 +139,6 @@ export default function Login() {
 
                                         </form>
                                     </div>
-
                                     <div className='card-body col-8' style={{
                                         backgroundImage: 'url("images/BSMinh3.jpg")',
                                         backgroundPosition: "center",
@@ -174,9 +148,7 @@ export default function Login() {
                                         borderRadius: "0 0.25rem 0.25rem 0"
                                     }}>
                                     </div>
-
                                 </div>
-
                             </div>
                         </div>
                     </div>
