@@ -18,7 +18,7 @@ import DashboardAssistant from './pages/DashboardAssistant';
 import DashboardBookingList from './pages/DashboardBookingList';
 import DashboardWaitingPatients from './pages/DashboardWaitingList';
 import DashboardWaitingPay from './pages/DashboardWaitingPay';
-
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
@@ -46,6 +46,7 @@ function App() {
           </Suspense>
         </AuthProvider>
       </BrowserRouter >
+      <ToastContainer />
     </>
   )
 }

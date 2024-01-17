@@ -52,7 +52,6 @@ export default function BookingForm() {
         message: yup.string()
     })
 
-
     const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm({
         resolver: yupResolver(registerSchema)
     })
@@ -85,8 +84,7 @@ export default function BookingForm() {
             dateBooking: formattedDate,
             status: "PENDING"
         }
-        console.log(bookingNew);
-
+        
         await bookingService.createBooking(bookingNew)
         Swal.fire({
             position: 'center',
@@ -142,7 +140,6 @@ export default function BookingForm() {
     useEffect(() => {
         getAllEyeCategories();
         getTodayDate();
-        UsingWebSocket();
     }, [])
 
     return (
@@ -182,9 +179,7 @@ export default function BookingForm() {
                                             id="appointment_name"
                                             placeholder="Tên khách hàng"
                                             {...register("fullName")}
-
                                         />
-
                                     </div>
                                     <span className="text-warning font-weight-bold">{errors?.fullName?.message}</span>
                                 </div>
@@ -342,10 +337,8 @@ export default function BookingForm() {
                                                     <button className='btn' disabled></button>
                                                     <label className='ml-2'> Thời gian đã có người đặt hoặc quá thời gian hiện tại</label>
                                                 </div>
-
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                             }

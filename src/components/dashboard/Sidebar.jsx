@@ -86,10 +86,10 @@ export default function Sidebar() {
                             <span className="hide-menu">LỄ TÂN</span>
                         </li>
                         <li className="sidebar-item">
-                            <Link to='/receptionist'>
+                            <Link to='/receptionist/booking-list'>
                                 <p
                                     className="sidebar-link"
-                                    href="./authentication-login.html"
+                                    href="/receptionist/booking-list"
                                     aria-expanded="false"
                                 >
                                     <span>
@@ -105,7 +105,7 @@ export default function Sidebar() {
                             <span className="hide-menu">KHÁM CHỮA BỆNH</span>
                         </li>
                         <li className="sidebar-item">
-                            <Link to='/receptionist/waiting-list'>
+                            <Link to='/waiting-list'>
                                 <p
                                     className="sidebar-link"
                                     href="/waiting-list"

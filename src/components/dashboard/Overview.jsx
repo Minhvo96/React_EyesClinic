@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -13,32 +13,29 @@ export default function Overview() {
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
-
     };
 
     const getDaysByMonth = (month) => {
-        console.log(month);
         if (month31Day.includes(month)) {
             const a = [];
             for (let i = 1; i <= 31; i++) {
                 a.push(String(i));
             }
-            console.log(a);
-            setDateOfMonth(a)
+            setDateOfMonth(a);
         }
         if (month30Day.includes(month)) {
             const a = [];
             for (let i = 1; i <= 30; i++) {
                 a.push(String(i));
             }
-            setDateOfMonth(a)
+            setDateOfMonth(a);
         }
         if (month28Day.includes(month)) {
             const a = [];
             for (let i = 1; i <= 28; i++) {
                 a.push(String(i));
             }
-            setDateOfMonth(a)
+            setDateOfMonth(a);
         }
     }
 
@@ -51,8 +48,13 @@ export default function Overview() {
         return '';
     };
 
+    const chartRef = useRef(null);
+
     const render = () => {
-        var options = {
+        if (chartRef.current !== null) {
+            chartRef.current.destroy();
+        }
+        chartRef.current = new ApexCharts(document.querySelector("#chart"), {
             chart: {
                 type: 'line'
             },
@@ -63,21 +65,20 @@ export default function Overview() {
             xaxis: {
                 categories: dateOfMonth
             }
-        }
-
-        var chart = new ApexCharts(document.querySelector("#chart"), options);
-
-        chart.render();
+        });
+        chartRef.current.render();
     }
 
 
     useEffect(() => {
-        const month = formatDate(selectedDate).split("-")[0]
-        getDaysByMonth(month)
+        const month = formatDate(selectedDate).split("-")[0];
+        getDaysByMonth(month);
     }, [selectedDate])
 
     useEffect(() => {
-        render();
+        if (dateOfMonth.length) {
+            render();
+        }
     }, [dateOfMonth])
 
 

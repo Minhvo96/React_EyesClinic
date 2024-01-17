@@ -12,7 +12,6 @@ import ReactPaginate from 'react-paginate';
 
 export default function BookingList() {
 
-
     const [defaultDate, setDefaultDate] = useState('');
     const [booking, setBooking] = useState({})
     const [bookingUp, setBookingUp] = useState({})
@@ -299,7 +298,9 @@ export default function BookingList() {
 
     const indexOfLastAppointment = (currentPage + 1) * appointmentsPerPage;
     const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
-    const currentAppointments = bookingList.slice(indexOfFirstAppointment, indexOfLastAppointment);
+    const currentAppointments = bookingList.sort((a, b) => {
+        return a.timeBooking.localeCompare(b.timeBooking);
+    }).slice(indexOfFirstAppointment, indexOfLastAppointment);
 
     return (
         <>
@@ -329,11 +330,8 @@ export default function BookingList() {
                                 <tbody>
                                     {
                                         currentAppointments
-                                            .sort((a, b) => {
-                                                return a.timeBooking.localeCompare(b.timeBooking);
-                                            })
                                             .map((booking, index) => {
-                                                const count = index + 1;
+                                                const count = index + 1 + indexOfFirstAppointment;
                                                 return (
                                                     <tr key={booking.id}>
                                                         <td>{count}</td>
