@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import * as yup from 'yup'
 import addStyleDashboard from '../../AddStyleDashboard'
@@ -13,11 +13,8 @@ export default function Login() {
     addStyleDashboard();
 
     const [phoneNumber, setPhoneNumber] = useState("");
-
     const [password, setPassword] = useState("");
-
     const navigate = useNavigate();
-
     const auth = useAuthContext();
 
     const authLogin = async (data) => {
@@ -36,7 +33,6 @@ export default function Login() {
     const { register, handleSubmit, formState: { errors }, reset } = useForm({
         resolver: yupResolver(registerSchema)
     })
-
 
     const handleSubmitForm = async () => {
         const user = {
@@ -109,7 +105,6 @@ export default function Login() {
                                                     onInput={handleChangePhoneNumber}
                                                 />
                                                 <span className="text-danger font-weight-bold">{errors?.phoneNumber?.message}</span>
-
                                             </div>
                                             <div className="mb-4">
                                                 <label htmlFor="exampleInputPassword1" className="form-label">
@@ -125,7 +120,6 @@ export default function Login() {
                                                     onInput={handleChangePassword}
                                                 />
                                                 <span className="text-danger font-weight-bold">{errors?.password?.message}</span>
-
                                             </div>
                                             <div className="d-flex align-items-center justify-content-between mb-4">
                                                 <div className="form-check">
@@ -156,7 +150,6 @@ export default function Login() {
 
                                         </form>
                                     </div>
-
                                     <div className='card-body col-8' style={{
                                         backgroundImage: 'url("images/BSMinh3.jpg")',
                                         backgroundPosition: "center",
@@ -166,9 +159,7 @@ export default function Login() {
                                         borderRadius: "0 0.25rem 0.25rem 0"
                                     }}>
                                     </div>
-
                                 </div>
-
                             </div>
                         </div>
                     </div>
