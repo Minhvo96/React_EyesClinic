@@ -301,7 +301,7 @@ export default function WaitingPatients() {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title font-weight-bold" id="exampleModalLabel">Đặt lịch tại quầy</h5>
-              <button type="button" className="btn-close" data-dismiss="modal" aria-label="Close"></button>
+              <button type="button" className="btn-close" data-dismiss="modal" aria-label="Close" onClick={() => reset()}></button>
             </div>
             <form className="appointment-form needs-validation">
               <div className="modal-body">
@@ -326,7 +326,7 @@ export default function WaitingPatients() {
                   </div>
                   <div className="row mb-3">
                     <div className="col-md-6 has-validation">
-                      <label>Tuổi</label>
+                      <label>Năm sinh</label>
                       <input type="number"
                         className={`form-control ${errors?.age?.message ? 'is-invalid' : ''}`}
                         {...register("age")}
@@ -369,7 +369,7 @@ export default function WaitingPatients() {
                 </div>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" data-dismiss="modal" >Đóng</button>
+                <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => reset()} >Đóng</button>
                 <button type="button" className="btn btn-primary" onClick={handleSubmit(handleSubmitForm)}>Đặt lịch</button>
               </div>
             </form>
