@@ -24,7 +24,7 @@ export default function BookingList() {
     const [timesAfternoon, setTimesAfternoon] = useState(["14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"])
     const [timesFreeBooking, setTimesFreeBooking] = useState([])
     const [minDate, setMinDate] = useState();
-
+    const [loading, setLoading] = useState(true);
 
     const getTodayDate = () => {
         const today = new Date();
@@ -95,7 +95,6 @@ export default function BookingList() {
         }
     }
 
-
     const getAllEyeCategories = async () => {
         const categories = await eyeCategoriesService.getAllEyeCategories()
         setEyeCategories(categories)
@@ -138,7 +137,6 @@ export default function BookingList() {
     }
 
     const handleChangeBooking = async (e) => {
-
         if (Object.keys(bookingUp).length) {
             if (e.target.name == 'dateBooking') {
 
@@ -280,19 +278,22 @@ export default function BookingList() {
 
 
     const handleChangeListBookingByTime = (time) => {
-        if(time =='all'){
+        if (time == 'all') {
             setBookingListByTime(bookingList)
         }
-        if(time == 'morning'){
+        if (time == 'morning') {
             setBookingListByTime(bookingList.filter(item => timesMorning.includes(item.timeBooking)))
         }
-        if(time == 'afternoon') {
+        if (time == 'afternoon') {
             setBookingListByTime(bookingList.filter(item => timesAfternoon.includes(item.timeBooking)))
         }
     }
 
     useEffect(() => {
-        setBookingListByTime(bookingList)
+        if (bookingList.length > 0) {
+            setLoading(false);
+        }
+        setBookingListByTime(bookingList);
     }, [bookingList])
 
     useEffect(() => {
@@ -308,18 +309,8 @@ export default function BookingList() {
     useEffect(() => {
         if(defaultDate) {
             getAllBookingList()
-        }      
+        } 
     }, [defaultDate])
-
-    // useEffect(() => {
-    //     const now = new Date();
-    //     const year = now.getFullYear();
-    //     const month = String(now.getMonth() + 1).padStart(2, '0');
-    //     const day = String(now.getDate()).padStart(2, '0');
-    //     const formattedDate = `${year}-${month}-${day}`;
-    //     setDefaultDate(formattedDate);
-    // }, []);
-
 
     const [currentPage, setCurrentPage] = useState(0);
     const appointmentsPerPage = 8;
@@ -337,7 +328,6 @@ export default function BookingList() {
 
     return (
         <>
-
             <div className="container-fluid" >
                 <div className='d-flex mb-5 align-items-center justify-content-between'>
                     <div className='d-flex align-items-center'>
@@ -357,10 +347,8 @@ export default function BookingList() {
                             <button className='btn btn-outline-primary' onClick={() => handleChangeListBookingByTime('afternoon')}>Chiều</button>
                         </div>
                     </div>
-
-
                 </div>
-                {
+                {loading ? (<span class="loader"></span>) :
                     bookingListByTime.length ?
                         <>
                             <table className="table">
@@ -413,14 +401,11 @@ export default function BookingList() {
                                     breakLabel={'...'}
                                 />
                             </div>
-
                         </>
                         :
                         <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
                 }
-
             </div>
-
             {/* <// Modal --> */}
             <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog modal-xl modal-dialog-centered">

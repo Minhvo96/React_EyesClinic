@@ -13,7 +13,16 @@ const medicineService = {
                 console.log(error);
             });
     },
-
+    getAllMedicinesOptions: async () => {
+        return axios
+            .get(URL_API + "/all-medicines")
+            .then((response) => {
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    },
     getMedicineById: async (id) => {
         return axios
             .get(URL_API + '/' + id)
