@@ -83,7 +83,7 @@ export default function Sidebar() {
                             <Link to='/receptionist/booking-list'>
                                 <p
                                     className="sidebar-link"
-                                    href="./authentication-login.html"
+                                    href="/receptionist/booking-list"
                                     aria-expanded="false"
                                 >
                                     <span>

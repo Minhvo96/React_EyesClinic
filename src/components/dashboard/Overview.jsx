@@ -29,7 +29,7 @@ export default function Overview() {
         const bills = await billService.getBillsByMonthYear(obj);
 
         const totalYearlyIncome = await billService.getBillsByYear(obj);
-        
+
         setBillsByMonth(bills);
         setTotalYearlyIncome(formatNumber(totalYearlyIncome));
 
@@ -41,21 +41,21 @@ export default function Overview() {
             for (let i = 1; i <= 31; i++) {
                 a.push(String(i));
             }
-            setDateOfMonth(a)
+            setDateOfMonth(a);
         }
         if (month30Day.includes(month)) {
             const a = [];
             for (let i = 1; i <= 30; i++) {
                 a.push(String(i));
             }
-            setDateOfMonth(a)
+            setDateOfMonth(a);
         }
         if (month28Day.includes(month)) {
             const a = [];
             for (let i = 1; i <= 28; i++) {
                 a.push(String(i));
             }
-            setDateOfMonth(a)
+            setDateOfMonth(a);
         }
     }
 
@@ -69,6 +69,7 @@ export default function Overview() {
     };
 
     const chartRef = useRef(null);
+
 
     const renderChart = (data, categories) => {
         if (chartRef.current !== null) {
@@ -86,7 +87,6 @@ export default function Overview() {
                 categories: categories
             }
         }
-
         chartRef.current = new ApexCharts(document.querySelector("#chart"), options);
         chartRef.current.render();
     }
@@ -94,25 +94,25 @@ export default function Overview() {
     function formatNumber(number) {
         const parts = number.toString().split('.');
         parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-      
+
         return parts.join('.');
-      }
+    }
 
 
     useEffect(() => {
-        const month = formatDate(selectedDate).split("-")[0]
-        getDaysByMonth(month)
+        const month = formatDate(selectedDate).split("-")[0];
+        getDaysByMonth(month);
     }, [selectedDate])
 
     useEffect(() => {
         if(selectedDate){
             getRevenuesByMonth(selectedDate)
-        }       
+        }
     }, [dateOfMonth])
 
     useEffect(() => {
         const arrayData = new Array(dateOfMonth.length).fill('0');
-        
+
         const bills = billsByMonth;
 
         bills.forEach(item => {
@@ -125,7 +125,7 @@ export default function Overview() {
         arrayData.forEach(item => total += parseInt(item));
         setTotalMonthlyIncome(formatNumber(total));
 
-    },[billsByMonth])
+    }, [billsByMonth])
 
     return (
         <>
@@ -139,7 +139,7 @@ export default function Overview() {
                                     <div className="mb-3 mb-sm-0">
                                         <h5 className="card-title fw-semibold">Thống kê thu nhập</h5>
                                     </div>
-                                    <div style={{zIndex: 50}}>
+                                    <div style={{ zIndex: 50 }}>
                                         <DatePicker
                                             selected={selectedDate}
                                             onChange={handleDateChange}
