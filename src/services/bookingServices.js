@@ -82,6 +82,16 @@ const bookingService = {
                 console.log(error);
             });
     },
+    getBookingByStatusWaitingOrExaminingAndDate: async (obj) => {
+        return axios
+            .post(URL_API + '/waiting-examining', obj)
+            .then((response) => {
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    },
 
 }
 
