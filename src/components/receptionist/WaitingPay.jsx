@@ -8,7 +8,6 @@ import './waiting.css'
 
 export default function WaitingPay() {
 
-  addStyleDashboard();
   const [prescriptions, setPrescriptions] = useState([]);
   const [bookingIds, setBookingIds] = useState([]);
   const [selectedPrescription, setSelectedPrescription] = useState(null);

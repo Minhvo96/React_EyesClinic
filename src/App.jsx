@@ -3,10 +3,6 @@ import './App.css'
 import { BrowserRouter, Route, Router, Routes } from 'react-router-dom';
 import PageServices from './components/services/PageServices';
 import History from './components/history/History';
-import WaitingList from './components/waitingList/WaitingList';
-import Patient from './components/dashboard/Patient';
-import Receptionist from './components/receptionist/Receptionist';
-import 'bootstrap/dist/css/bootstrap.min.css'
 import Medicine from './components/dashboard/Medicine';
 import Login from './components/dashboard/Login';
 import DashboardOverview from './pages/DashboardOverview';
@@ -21,6 +17,7 @@ import Page403 from './components/error/Page403';
 import Page401 from './components/error/Page401';
 import Home from './components/Home';
 import { ToastContainer } from 'react-toastify';
+import DashboardPatient from './pages/DashboardPatient';
 
 
 function App() {
@@ -34,7 +31,7 @@ function App() {
               <Route path='/services' element={<PageServices />} />
               <Route path='/dashboard/history' element={<History />} />
               <Route path='/dashboard/doctor/:bookingId' element={<DashboardDoctor />} />
-              <Route path='/dashboard/patient' element={<Patient />} />
+              <Route path='/dashboard/patient' element={<DashboardPatient />} />
               <Route path='/dashboard/overview' element={<DashboardOverview />} roles={['ROLE_ADMIN']} />
               <Route path='/dashboard/booking-list' element={<DashboardBookingList />} />
               <Route path='/dashboard/waiting-pay' element={<DashboardWaitingPay />} />
