@@ -1,6 +1,7 @@
 import SockJS from "sockjs-client";
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from "react-toastify";
+import { Stomp } from '@stomp/stompjs';
 
 function UsingWebSocket () {
     const url = 'http://localhost:8080/ws';

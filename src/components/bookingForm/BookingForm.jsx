@@ -19,6 +19,7 @@ export default function BookingForm() {
     const [showError, setShowError] = useState(true);
     const [bookingsPending, setBookingsPending] = useState([])
     const [selectedButton, setSelectedButton] = useState(null);
+    const [timesPendingLimit, setTimesPendingLimit] = useState([])
 
     const getTodayDate = () => {
         const today = new Date();
@@ -37,10 +38,10 @@ export default function BookingForm() {
         fullName: yup.string().required("Bạn cần phải cung cấp họ và tên"),
         age: yup.number()
             .integer()
-            .min(1, "Tuổi phải lớn hơn hoặc bằng 1")
-            .max(80, "Tuổi phải nhỏ hơn hoặc bằng 80")
-            .required("Bạn cần phải cung cấp tuổi")
-            .typeError("Bạn cần phải cung cấp tuổi"),
+            .min(1934, "Năm sinh phải từ 1934")
+            .max(2024, "Năm sinh không vượt quá 2024")
+            .required("Bạn cần phải cung cấp năm sinh")
+            .typeError("Bạn cần phải cung cấp năm sinh"),
         address: yup.string().required("Bạn cần phải cung cấp địa chỉ"),
         phoneNumber: yup.string().required("Bạn cần phải cung cấp số điện thoại").matches(/^(0[0-9]{9})$/, "Số điện thoại không hợp lệ"),
         dateBooking: yup.date()
@@ -93,7 +94,7 @@ export default function BookingForm() {
             showConfirmButton: false,
             timer: 3500
         })
-        
+
         reset()
         setShowTime(false)
         setSelectedButton(null)
@@ -118,6 +119,22 @@ export default function BookingForm() {
         const listTimesPending = bookingsPending.map(item => item.timeBooking)
 
         setBookingsPending(listTimesPending)
+
+        const targetFrequency = 3;
+
+        const frequencyCount = listTimesPending.reduce((count, num) => {
+            count[num] = (count[num] || 0) + 1;
+            return count;
+        }, {});
+
+        const targetElement = Object.keys(frequencyCount).filter(
+            (num) => frequencyCount[num] === targetFrequency
+        );
+        
+        const timesPendingLimitNew = [... timesPendingLimit, targetElement]
+        console.log(timesPendingLimitNew);
+        setTimesPendingLimit(timesPendingLimitNew)
+        
 
 
         const currentDate = new Date();
@@ -210,7 +227,7 @@ export default function BookingForm() {
                                             type="number"
                                             className="form-control"
                                             id="appointment_name"
-                                            placeholder="Tuổi"
+                                            placeholder="Năm sinh"
                                             {...register("age")}
 
                                         />
@@ -263,7 +280,7 @@ export default function BookingForm() {
 
                                     <span className="text-warning font-weight-bold">{errors?.dateBooking?.message}</span>
                                 </div>
-                               
+
                                 <div className="col-sm-6">
                                     <div className="form-group">
                                         <div className="select-wrap">
@@ -273,7 +290,7 @@ export default function BookingForm() {
                                             <select {...register("eyeCategory")} className="form-control">
                                                 <option value="" style={{ color: 'black' }}>Chọn dịch vụ</option>
                                                 {
-                                                    eyeCategories.map(item => {
+                                                    eyeCategories?.map(item => {
                                                         return (
                                                             <option key={item.id} value={item.id} style={{ color: 'black' }}>{item.nameCategory} </option>
                                                         )
@@ -303,7 +320,7 @@ export default function BookingForm() {
                                             return (
                                                 <div className='col-md-3 mb-3' key={item}>
                                                     <button type='button' className={selectedButton === item ? 'btn btn-warning' : bookingsPending.includes(item) ? 'btn btn-secondary' : 'btn'}
-                                                        disabled={!timeFreeBooking.includes(item)}
+                                                        disabled={!timeFreeBooking.includes(item) || timesPendingLimit.includes(item)}
                                                         onClick={() => handleTimeClick(item)}
 
                                                     >{item}</button>

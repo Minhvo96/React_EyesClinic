@@ -17,10 +17,10 @@ const registerSchema = yup.object({
   fullName: yup.string().required("Bạn cần phải cung cấp họ và tên"),
   age: yup.number()
     .integer()
-    .min(1, "Tuổi phải lớn hơn hoặc bằng 1")
-    .max(80, "Tuổi phải nhỏ hơn hoặc bằng 80")
-    .required("Bạn cần phải cung cấp tuổi")
-    .typeError("Bạn cần phải cung cấp tuổi"),
+    .min(1934, "Năm sinh phải từ 1934")
+    .max(2024, "Năm sinh pkhông vượt quá 2024")
+    .required("Bạn cần phải cung cấp năm sinh")
+    .typeError("Bạn cần phải cung cấp năm sinh"),
   address: yup.string().required("Bạn cần phải cung cấp địa chỉ"),
   phoneNumber: yup.string().required("Bạn cần phải cung cấp số điện thoại").matches(/^(0[0-9]{9})$/, "Số điện thoại không hợp lệ"),
   eyeCategory: yup.string().required('Vui lòng chọn dịch vụ khám'),
@@ -212,7 +212,6 @@ export default function WaitingPatients() {
               <input type="date" className='form-control' defaultValue={defaultDate} onChange={handleChangeListByDate} min={minDate} />
             </div>
           </div>
-
           <div className='mr-5'>
             <button className='btn btn-outline-success' type="button" data-toggle="modal" data-target="#createBookingModal">Đặt lịch</button>
           </div>
@@ -296,7 +295,6 @@ export default function WaitingPatients() {
             <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
         }
       </div>
-
       {/* <// Modal --> */}
       <div className="modal fade" id="createBookingModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
