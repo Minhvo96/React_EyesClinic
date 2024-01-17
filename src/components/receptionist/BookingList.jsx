@@ -31,31 +31,38 @@ export default function BookingList() {
         const year = today.getFullYear();
         const month = today.getMonth() + 1;
         const day = today.getDate();
-        setMinDate(`${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
+        setDefaultDate(`${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
+
     };
 
     const getAllBookingList = async () => {
-        const bookings = await bookingService.getAllBookings();
-        const bookingsFilter = bookings.filter((booking) => booking.status == "PENDING" && booking.dateBooking == defaultDate)
-        setBookingList(bookingsFilter);
+        const newBooking = {
+            idEyeCategory: "",
+            idCustomer: "",
+            timeBooking: "",
+            dateBooking: String(defaultDate),
+            status: ""
+        };
+        const bookingsPending = await bookingService.getBookingByStatusPendingAndDate(newBooking);
+        setBookingList(bookingsPending);
     }
 
     const handleChangeListByDate = async (e) => {
-        const bookings = await bookingService.getAllBookings();
-        const bookingsFilter = bookings.filter((booking) => booking.status == "PENDING" && booking.dateBooking == e.target.value)
-
-        setBookingList(bookingsFilter);
+        const newBooking = {
+            idEyeCategory: "",
+            idCustomer: "",
+            timeBooking: "",
+            dateBooking: String(e.target.value),
+            status: ""
+        };
+        const bookingsPending = await bookingService.getBookingByStatusPendingAndDate(newBooking);
+        setBookingList(bookingsPending);
     }
 
     const getBookingById = async (id) => {
         const booking = await bookingService.getBookingById(id);
         setBooking(booking)
-
         setTimesFreeByDate(booking.dateBooking)
-
-
-
-
     }
 
     const setTimesFreeByDate = async (dateBooking) => {
@@ -293,24 +300,25 @@ export default function BookingList() {
     }, [eyeCategory])
 
     useEffect(() => {
-        // getAllBookingList();
         getAllEyeCategories();
         getTodayDate();
         UsingWebSocket();
     }, [])
 
     useEffect(() => {
-        getAllBookingList()
+        if(defaultDate) {
+            getAllBookingList()
+        }      
     }, [defaultDate])
 
-    useEffect(() => {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const formattedDate = `${year}-${month}-${day}`;
-        setDefaultDate(formattedDate);
-    }, []);
+    // useEffect(() => {
+    //     const now = new Date();
+    //     const year = now.getFullYear();
+    //     const month = String(now.getMonth() + 1).padStart(2, '0');
+    //     const day = String(now.getDate()).padStart(2, '0');
+    //     const formattedDate = `${year}-${month}-${day}`;
+    //     setDefaultDate(formattedDate);
+    // }, []);
 
 
     const [currentPage, setCurrentPage] = useState(0);
@@ -335,7 +343,7 @@ export default function BookingList() {
                     <div className='d-flex align-items-center'>
                         <h6 className='mr-3'>Chọn ngày: </h6>
                         <div className='col-7 '>
-                            <input type="date" className='form-control' defaultValue={defaultDate} onChange={handleChangeListByDate} min={minDate} />
+                            <input type="date" className='form-control' defaultValue={defaultDate} onChange={handleChangeListByDate} min={defaultDate} />
                         </div>
                     </div>
                     <div className='d-flex align-items-center gap-4'>
@@ -450,7 +458,7 @@ export default function BookingList() {
                                                 className='form-control'
                                                 name='dateBooking'
                                                 defaultValue={booking.dateBooking}
-                                                min={minDate}
+                                                min={defaultDate}
                                                 onChange={handleChangeBooking}
                                             />
                                         </div>
