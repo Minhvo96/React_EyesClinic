@@ -125,7 +125,7 @@ export default function Sidebar() {
 
 
                         {
-                            (role === 'ROLE_ADMIN' || role === 'ROLE_DOCTOR' || role === 'ROLE_CASHIER') && (
+                            (role === 'ROLE_ADMIN' || role === 'ROLE_CASHIER') && (
                                 <>
                                     <li className="nav-small-cap">
                                         <i className="ti ti-dots nav-small-cap-icon fs-4" />

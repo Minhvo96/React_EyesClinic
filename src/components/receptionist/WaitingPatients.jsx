@@ -31,7 +31,7 @@ const registerSchema = yup.object({
 
 export default function WaitingPatients() {
 
-  const [hasValidRole,setHasValidRole] = useState();
+  const [hasValidRole, setHasValidRole] = useState();
   const [status, setStatus] = useState(true)
   const [bookingList, setBookingList] = useState([])
   const [defaultDate, setDefaultDate] = useState('');
@@ -123,14 +123,14 @@ export default function WaitingPatients() {
   }
 
   const handleChangeStatusExamining = (id) => {
-    if(auth?.user?.roles === 'ROLE_DOCTOR' || auth?.user?.roles === 'ROLE_ASSISTANT'){
+    if (auth?.user?.roles === 'ROLE_DOCTOR' || auth?.user?.roles === 'ROLE_ASSISTANT') {
       handleChangeStatusBooking(id, "EXAMINING")
-      if(auth?.user?.roles === 'ROLE_DOCTOR'){
+      if (auth?.user?.roles === 'ROLE_DOCTOR') {
         navigate(`/dashboard/doctor/${id}`);
       }
-      if(auth?.user?.roles === 'ROLE_ASSISTANT'){
+      if (auth?.user?.roles === 'ROLE_ASSISTANT') {
         navigate(`/dashboard/assistant/${id}`);
-      }    
+      }
     } else {
       navigate('/error-403')
     }
@@ -278,14 +278,14 @@ export default function WaitingPatients() {
                             </td>
                             <td className="border-bottom-0">
                               <div className="d-flex align-items-center justify-content-center">
-                                
-                                  <button className="btn btn-outline-success d-flex justify-content-center align-items-center"
-                                    style={{ width: "36px", height: "36px" }}
-                                    onClick={() => handleChangeStatusExamining(booking.id)}
-                                  >
-                                    <i className="ti ti-report-medical" style={{ fontSize: "18px" }}></i>
-                                  </button>
-                           
+
+                                <button className="btn btn-outline-success d-flex justify-content-center align-items-center"
+                                  style={{ width: "36px", height: "36px" }}
+                                  onClick={() => handleChangeStatusExamining(booking.id)}
+                                >
+                                  <i className="ti ti-report-medical" style={{ fontSize: "18px" }}></i>
+                                </button>
+
                               </div>
                             </td>
                           </tr>
