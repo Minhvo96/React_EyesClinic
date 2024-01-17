@@ -1,10 +1,7 @@
 import React, { lazy } from "react";
-import StyleDashboard from "../layouts/StyleDashboard";
-import WaitingPatients from "../components/receptionist/WaitingPatients";
 
-
-const Overview = lazy(() => import('../components/dashboard/Overview'))
-const DashboardLayout = lazy(() => import('../layouts/DashboardLayout'))
+const WaitingPatients = lazy(() => import('../components/receptionist/WaitingPatients'))
+const StyleDashboard = lazy(() => import('../layouts/StyleDashboard'))
 function DashboardWaitingPatients() {
     return (
         <StyleDashboard children={<WaitingPatients/>}/>       
