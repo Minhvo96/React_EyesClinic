@@ -14,6 +14,8 @@ export default function Login() {
 
     const [phoneNumber, setPhoneNumber] = useState("");
     const [password, setPassword] = useState("");
+    const [errorLogin, setErrorLogin] = useState("");
+
     const navigate = useNavigate();
     const auth = useAuthContext();
 
@@ -41,8 +43,12 @@ export default function Login() {
         }
         authLogin(user)
             .then((token) => {
-                auth.login(token);
-                navigate('/dashboard/overview');
+                if(typeof token !== "object" && token !== null){
+                    auth.login(token);
+                    navigate('/dashboard/waiting-list');
+                } else {
+                    setErrorLogin(token.password)
+                }           
             })
             .catch((error) => {
                 // Handle errors from authLogin
@@ -53,11 +59,13 @@ export default function Login() {
     const handleChangePhoneNumber = (e) => {
         const phoneNumber = String(e.target.value)
         setPhoneNumber(phoneNumber)
+        setErrorLogin("")
     }
 
     const handleChangePassword = (e) => {
         const password = String(e.target.value)
         setPassword(password)
+        setErrorLogin("")
     }
 
     return (
@@ -78,17 +86,16 @@ export default function Login() {
                                 <div className="card mb-0 row" style={{ flexDirection: 'row' }}>
 
                                     <div className="card-body col-4">
-                                        <a
-                                            href="./index.html"
-                                            className="text-nowrap logo-img text-center d-block py-3 w-100"
+                                        <div                                        
+                                            className="text-nowrap logo-img text-center d-block py-3 w-100 mb-3"
                                         >
                                             <img
-                                                src="../../src/assets/images/logos/dark-logo.svg"
-                                                width={180}
+                                                src="../../images/logo2.png"
+                                                width={280}
                                                 alt=""
                                             />
-                                        </a>
-                                        <p className="text-center">Your Social Campaigns</p>
+                                        </div>
+                                        
                                         <form onSubmit={handleSubmit(handleSubmitForm)}>
                                             <div className="mb-3">
                                                 <label htmlFor="exampleInputEmail1" className="form-label">
@@ -96,7 +103,7 @@ export default function Login() {
                                                 </label>
                                                 <input
                                                     type="text"
-                                                    className="form-control"
+                                                    className="form-control mb-2"
                                                     id="exampleInputEmail1"
                                                     aria-describedby="emailHelp"
                                                     name='phoneNumber'
@@ -112,7 +119,7 @@ export default function Login() {
                                                 </label>
                                                 <input
                                                     type="password"
-                                                    className="form-control"
+                                                    className="form-control mb-2"
                                                     id="exampleInputPassword1"
                                                     name='password'
                                                     value={password}
@@ -120,27 +127,9 @@ export default function Login() {
                                                     onInput={handleChangePassword}
                                                 />
                                                 <span className="text-danger font-weight-bold">{errors?.password?.message}</span>
+                                                <span className="text-danger font-weight-bold">{errorLogin}</span>
                                             </div>
-                                            <div className="d-flex align-items-center justify-content-between mb-4">
-                                                <div className="form-check">
-                                                    <input
-                                                        className="form-check-input primary"
-                                                        type="checkbox"
-                                                        defaultValue=""
-                                                        id="flexCheckChecked"
-                                                        defaultChecked=""
-                                                    />
-                                                    <label
-                                                        className="form-check-label text-dark"
-                                                        htmlFor="flexCheckChecked"
-                                                    >
-                                                        Remember this Device
-                                                    </label>
-                                                </div>
-                                                <a className="text-primary fw-bold" href="./index.html">
-                                                    Forgot Password ?
-                                                </a>
-                                            </div>
+                                            
                                             <button
                                                 type='submit'
                                                 className="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2"
@@ -153,9 +142,9 @@ export default function Login() {
                                     <div className='card-body col-8' style={{
                                         backgroundImage: 'url("images/BSMinh3.jpg")',
                                         backgroundPosition: "center",
-                                        backgroundRepeat: "no-repeat",
+                                        backgroundRepeat: "",
                                         backgroundSize: "cover",
-                                        backgroundPositionX: "-350px",
+                                        backgroundPositionX: "-400px",
                                         borderRadius: "0 0.25rem 0.25rem 0"
                                     }}>
                                     </div>

@@ -26,20 +26,22 @@ const useAuth = () => {
     }
   }, []);
 
-  
+
   const login = (token) => {
-    // Save the token in localStorage or cookies
-    localStorage.setItem('token', token);
+    if (token) {
+      // Save the token in localStorage or cookies
+      localStorage.setItem('token', token);
 
-    // Decode the token and set user data
-    const decodedToken = jwtDecode(token);
+      // Decode the token and set user data
+      const decodedToken = jwtDecode(token);
 
-    const userObj = JSON.parse(decodedToken.sub);
-    // Đặt cookie với tên 'JWT' và giá trị là JWT nhận được từ backend
-    Cookies.set('JWT', token, { expires: 1, path: '/' });
+      const userObj = JSON.parse(decodedToken.sub);
+      // Đặt cookie với tên 'JWT' và giá trị là JWT nhận được từ backend
+      Cookies.set('JWT', token, { expires: 1, path: '/' });
 
-    setUser(userObj);
-    setAuthenticated(true);
+      setUser(userObj);
+      setAuthenticated(true);
+    }
   };
 
   const logout = () => {
