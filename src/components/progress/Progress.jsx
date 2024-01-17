@@ -32,7 +32,7 @@ const StepProgressBar = ({ eyeSightValues, progressBarPercent, diagnoseInputs, d
             <img
               style={{ filter: `grayscale(${accomplished ? 0 : 80}%)` }}
               width="30"
-              src="../../images/Eye1.jpg"
+              src="../../images/Eye4.png"
             />
             <span style={{ fontSize: '12px' }}>Đo thị lực</span>
           </div>
@@ -44,7 +44,7 @@ const StepProgressBar = ({ eyeSightValues, progressBarPercent, diagnoseInputs, d
             <img
               style={{ filter: `grayscale(${accomplished ? 0 : 80}%)` }}
               width="30"
-              src="../../images/Eye2.png"
+              src="../../images/Eye5.png"
             />
             <span style={{ fontSize: '12px' }}>Khám mắt</span>
           </div>
@@ -56,7 +56,7 @@ const StepProgressBar = ({ eyeSightValues, progressBarPercent, diagnoseInputs, d
             <img
               style={{ filter: `grayscale(${accomplished ? 0 : 80}%)` }}
               width="30"
-              src="../../images/Eye3.png"
+              src="../../images/Logo7.png"
             />
             <div className="d-flex justify-content-center">
               <span style={{ fontSize: '12px', overflow: 'visible' }}>Thanh&nbsp;</span>

@@ -5,7 +5,7 @@
     padding: 0;
     margin: 0;
     position: absolute;
-    bottom: 0;
+    bottom: -10px;
 }
 
 .pagination-container {
@@ -43,7 +43,10 @@
     color: #fff;
     border-color: #007bff;
 }
-
-
-
 /*----------------------*/
+
+.icon:hover {
+    color: #ff0000; /* Màu của icon khi hover */
+    cursor: pointer; /* Thay đổi con trỏ chuột khi hover */
+    /* Thêm các kiểu dáng khác khi hover */
+  }

@@ -75,7 +75,7 @@ export default function Assistant() {
                 setTimeout(() => {
                     Swal.close();
                 }, 2000);
-                navigator('/receptionist/waiting-list');
+                navigator('/dashboard/waiting-list');
             }
         })
     }

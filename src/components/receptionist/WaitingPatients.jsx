@@ -18,10 +18,10 @@ const registerSchema = yup.object({
   fullName: yup.string().required("Bạn cần phải cung cấp họ và tên"),
   age: yup.number()
     .integer()
-    .min(1, "Tuổi phải lớn hơn hoặc bằng 1")
-    .max(80, "Tuổi phải nhỏ hơn hoặc bằng 80")
-    .required("Bạn cần phải cung cấp tuổi")
-    .typeError("Bạn cần phải cung cấp tuổi"),
+    .min(1934, "Năm sinh phải từ 1934")
+    .max(2024, "Năm sinh pkhông vượt quá 2024")
+    .required("Bạn cần phải cung cấp năm sinh")
+    .typeError("Bạn cần phải cung cấp năm sinh"),
   address: yup.string().required("Bạn cần phải cung cấp địa chỉ"),
   phoneNumber: yup.string().required("Bạn cần phải cung cấp số điện thoại").matches(/^(0[0-9]{9})$/, "Số điện thoại không hợp lệ"),
   eyeCategory: yup.string().required('Vui lòng chọn dịch vụ khám'),
@@ -126,10 +126,10 @@ export default function WaitingPatients() {
     if(auth?.user?.roles === 'ROLE_DOCTOR' || auth?.user?.roles === 'ROLE_ASSISTANT'){
       handleChangeStatusBooking(id, "EXAMINING")
       if(auth?.user?.roles === 'ROLE_DOCTOR'){
-        navigate(`/doctor/${id}`);
+        navigate(`/dashboard/doctor/${id}`);
       }
       if(auth?.user?.roles === 'ROLE_ASSISTANT'){
-        navigate(`/assistant/${id}`);
+        navigate(`/dashboard/assistant/${id}`);
       }    
     } else {
       navigate('/error-403')
@@ -193,7 +193,9 @@ export default function WaitingPatients() {
 
   const indexOfLastAppointment = (currentPage + 1) * appointmentsPerPage;
   const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
-  const currentAppointments = bookingList.slice(indexOfFirstAppointment, indexOfLastAppointment);
+  const currentAppointments = bookingList.sort((a, b) => {
+    return a.timeBooking.localeCompare(b.timeBooking);
+  }).slice(indexOfFirstAppointment, indexOfLastAppointment);
 
 
   useEffect(() => {
@@ -214,185 +216,183 @@ export default function WaitingPatients() {
       getAllEyeCategories()
   }, [])
 
- 
+
   return (
-    <> 
-          <div className="container-fluid">
+    <>
+      <div className="container-fluid">
 
-            <div className='d-flex mb-5 align-items-center justify-content-between'>
-              <div className='d-flex align-items-center'>
-                <h6 className='mr-3'>Chọn ngày: </h6>
-                <div >
-                  <input type="date" className='form-control' defaultValue={defaultDate} onChange={handleChangeListByDate} min={minDate} />
-                </div>
-              </div>
-
-              <div className='mr-5'>
-                <button className='btn btn-outline-success' type="button" data-toggle="modal" data-target="#createBookingModal">Đặt lịch</button>
-              </div>
+        <div className='d-flex mb-5 align-items-center justify-content-between'>
+          <div className='d-flex align-items-center'>
+            <h6 className='mr-3'>Chọn ngày: </h6>
+            <div >
+              <input type="date" className='form-control' defaultValue={defaultDate} onChange={handleChangeListByDate} min={minDate} />
             </div>
-            {
-              bookingList.length ?
-                <>
-                  <table className="table">
-                    <thead className="thead-primary">
-                      <tr className='text-center'>
-                        <th>STT</th>
-                        <th>Họ và tên</th>
-                        <th>Số điện thoại</th>
-                        <th>Ngày khám</th>
-                        <th>Giờ khám</th>
-                        <th>Trạng thái</th>
-                        <th>Xem bệnh án</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {
-                        currentAppointments
-                          .sort((a, b) => {
-                            return a.timeBooking.localeCompare(b.timeBooking);
-                          })
-                          .map((booking, index) => {
-                            const count = index + 1;
-                            return (
-                              <tr key={booking.id} className='text-center'>
-                                <td>{count}</td>
-                                <td>{booking.customer.user.fullName}</td>
-                                <td>{booking.customer.user.phoneNumber}</td>
-                                <td>{booking.dateBooking}</td>
-                                <td>{booking.timeBooking}</td>
-                                <td>
-                                  <select className={`form-control text-center ${times.includes(booking.timeBooking) ? 'text-danger' : ""}`} value={times.includes(booking.timeBooking) ? 'true' : 'false'} onChange={(e) => handleChangeStatus(e, booking.id)}>
-                                    {
-                                      times.includes(booking.timeBooking) ?
-                                        <>
-                                          <option className='text-black' value="true">{booking.status == "WAITING" ? "Chờ khám" : "Đang khám"}</option>
-                                          <option className='text-black' value="cancel">Hủy</option>
-                                        </>
-                                        :
-                                        <>
-                                          <option className='text-black' value="false">{booking.status == "WAITING" ? "Không đặt trước" : "Đang khám"}</option>
-                                          <option className='text-black' value="cancel">Hủy</option>
-                                        </>
-                                    }
-                                  </select>
-                                </td>
-                                <td className="border-bottom-0">
-                                  <div className="d-flex align-items-center justify-content-center">                                   
-                                      <button className="btn btn-outline-success d-flex justify-content-center align-items-center"
-                                        style={{ width: "36px", height: "36px" }}
-                                        onClick={() => handleChangeStatusExamining(booking.id)}
-                                      >
-                                        <i className="ti ti-report-medical" style={{ fontSize: "18px" }}></i>
-                                      </button>                                   
-                                  </div>
-                                </td>
-                              </tr>
-                            )
-                          })
-                      }
-                    </tbody>
-                  </table>
-                  <div className="pagination-container">
-                    <ReactPaginate
-                      pageCount={Math.ceil(bookingList.length / appointmentsPerPage)}
-                      pageRangeDisplayed={5} // Số lượng trang hiển thị
-                      marginPagesDisplayed={2} // Số lượng trang được hiển thị ở đầu và cuối
-                      onPageChange={handlePageChange}
-                      containerClassName={'pagination'}
-                      activeClassName={'active'}
-                      previousLabel={'Previous'}
-                      nextLabel={'Next'}
-                      breakLabel={'...'}
-                    />
-                  </div>
-                </>
-                :
-                <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
-            }
+
           </div>
-
-          {/* <// Modal --> */}
-          <div className="modal fade" id="createBookingModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div className="modal-dialog modal-lg modal-dialog-centered">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title font-weight-bold" id="exampleModalLabel">Đặt lịch tại quầy</h5>
-                  <button type="button" className="btn-close" data-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form className="appointment-form needs-validation">
-                  <div className="modal-body">
-                    <div className="container">
-                      <div className="row mb-3">
-                        <div className="col-md-6 has-validation">
-                          <label>Họ và tên</label>
-                          <input type="text"
-                            className={`form-control ${errors?.fullName?.message ? 'is-invalid' : ''}`}
-                            {...register("fullName")}
-                          />
-                          <span className="text-danger font-weight-bold invalid-feedback">{errors?.fullName?.message}</span>
-                        </div>
-                        <div className="col-md-6 has-validation">
-                          <label>Số điện thoại</label>
-                          <input type="text"
-                            className={`form-control ${errors?.phoneNumber?.message ? 'is-invalid' : ''}`}
-                            {...register("phoneNumber")}
-                          />
-                          <span className="text-danger font-weight-bold invalid-feedback">{errors?.phoneNumber?.message}</span>
-                        </div>
-                      </div>
-                      <div className="row mb-3">
-                        <div className="col-md-6 has-validation">
-                          <label>Tuổi</label>
-                          <input type="number"
-                            className={`form-control ${errors?.age?.message ? 'is-invalid' : ''}`}
-                            {...register("age")}
-                          />
-                          <span className="text-danger font-weight-bold invalid-feedback">{errors?.age?.message}</span>
-                        </div>
-                        <div className="col-md-6 has-validation">
-                          <label>Địa chỉ</label>
-                          <input type="text"
-                            className={`form-control ${errors?.address?.message ? 'is-invalid' : ''}`}
-                            {...register("address")}
-                          />
-                          <span className="text-danger font-weight-bold invalid-feedback">{errors?.address?.message}</span>
-                        </div>
-                      </div>
-                      <div className="row mb-3">
-                        <div className="col-md-6 has-validation">
-                          <label>Dịch vụ</label>
-
-                          <select type='text' className={`form-control ${errors?.eyeCategory?.message ? 'is-invalid' : ''}`} {...register("eyeCategory")}>
-                            <option value="" style={{ color: 'black' }}>--Chọn dịch vụ--</option>
-                            {
-                              eyeCategories.map(item => {
-                                return (
-                                  <option key={item.id} value={item.id} style={{ color: 'black' }}>{item.nameCategory} </option>
-                                )
-                              })
-                            }
-                          </select>
-                          <span className="text-danger font-weight-bold invalid-feedback">{errors?.eyeCategory?.message}</span>
-                        </div>
-                        <div className="col-md-6">
-                          <label>Ghi chú</label>
-                          <input type="text"
-                            className='form-control'
-                            {...register("message")}
-                          />
-                        </div>
-                      </div>
+          <div className='mr-5'>
+            <button className='btn btn-outline-success' type="button" data-toggle="modal" data-target="#createBookingModal">Đặt lịch</button>
+          </div>
+        </div>
+        {
+          bookingList.length ?
+            <>
+              <table className="table">
+                <thead className="thead-primary">
+                  <tr className='text-center'>
+                    <th>STT</th>
+                    <th>Họ và tên</th>
+                    <th>Số điện thoại</th>
+                    <th>Ngày khám</th>
+                    <th>Giờ khám</th>
+                    <th>Trạng thái</th>
+                    <th>Xem bệnh án</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {
+                    currentAppointments
+                      .map((booking, index) => {
+                        const count = index + 1 + indexOfFirstAppointment;
+                        return (
+                          <tr key={booking.id} className='text-center'>
+                            <td>{count}</td>
+                            <td>{booking.customer.user.fullName}</td>
+                            <td>{booking.customer.user.phoneNumber}</td>
+                            <td>{booking.dateBooking}</td>
+                            <td>{booking.timeBooking}</td>
+                            <td>
+                              <select className={`form-control text-center ${times.includes(booking.timeBooking) ? 'text-danger' : ""}`} value={times.includes(booking.timeBooking) ? 'true' : 'false'} onChange={(e) => handleChangeStatus(e, booking.id)}>
+                                {
+                                  times.includes(booking.timeBooking) ?
+                                    <>
+                                      <option className='text-black' value="true">{booking.status == "WAITING" ? "Chờ khám" : "Đang khám"}</option>
+                                      <option className='text-black' value="cancel">Hủy</option>
+                                    </>
+                                    :
+                                    <>
+                                      <option className='text-black' value="false">{booking.status == "WAITING" ? "Không đặt trước" : "Đang khám"}</option>
+                                      <option className='text-black' value="cancel">Hủy</option>
+                                    </>
+                                }
+                              </select>
+                            </td>
+                            <td className="border-bottom-0">
+                              <div className="d-flex align-items-center justify-content-center">
+                                
+                                  <button className="btn btn-outline-success d-flex justify-content-center align-items-center"
+                                    style={{ width: "36px", height: "36px" }}
+                                    onClick={() => handleChangeStatusExamining(booking.id)}
+                                  >
+                                    <i className="ti ti-report-medical" style={{ fontSize: "18px" }}></i>
+                                  </button>
+                           
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      })
+                  }
+                </tbody>
+              </table>
+              <div className="pagination-container">
+                <ReactPaginate
+                  pageCount={Math.ceil(bookingList.length / appointmentsPerPage)}
+                  pageRangeDisplayed={5} // Số lượng trang hiển thị
+                  marginPagesDisplayed={2} // Số lượng trang được hiển thị ở đầu và cuối
+                  onPageChange={handlePageChange}
+                  containerClassName={'pagination'}
+                  activeClassName={'active'}
+                  previousLabel={'Previous'}
+                  nextLabel={'Next'}
+                  breakLabel={'...'}
+                />
+              </div>
+            </>
+            :
+            <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
+        }
+      </div>
+      {/* <// Modal --> */}
+      <div className="modal fade" id="createBookingModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div className="modal-dialog modal-lg modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title font-weight-bold" id="exampleModalLabel">Đặt lịch tại quầy</h5>
+              <button type="button" className="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form className="appointment-form needs-validation">
+              <div className="modal-body">
+                <div className="container">
+                  <div className="row mb-3">
+                    <div className="col-md-6 has-validation">
+                      <label>Họ và tên</label>
+                      <input type="text"
+                        className={`form-control ${errors?.fullName?.message ? 'is-invalid' : ''}`}
+                        {...register("fullName")}
+                      />
+                      <span className="text-danger font-weight-bold invalid-feedback">{errors?.fullName?.message}</span>
+                    </div>
+                    <div className="col-md-6 has-validation">
+                      <label>Số điện thoại</label>
+                      <input type="text"
+                        className={`form-control ${errors?.phoneNumber?.message ? 'is-invalid' : ''}`}
+                        {...register("phoneNumber")}
+                      />
+                      <span className="text-danger font-weight-bold invalid-feedback">{errors?.phoneNumber?.message}</span>
                     </div>
                   </div>
-                  <div className="modal-footer">
-                    <button type="button" className="btn btn-secondary" data-dismiss="modal" >Đóng</button>
-                    <button type="button" className="btn btn-primary" onClick={handleSubmit(handleSubmitForm)}>Đặt lịch</button>
+                  <div className="row mb-3">
+                    <div className="col-md-6 has-validation">
+                      <label>Tuổi</label>
+                      <input type="number"
+                        className={`form-control ${errors?.age?.message ? 'is-invalid' : ''}`}
+                        {...register("age")}
+                      />
+                      <span className="text-danger font-weight-bold invalid-feedback">{errors?.age?.message}</span>
+                    </div>
+                    <div className="col-md-6 has-validation">
+                      <label>Địa chỉ</label>
+                      <input type="text"
+                        className={`form-control ${errors?.address?.message ? 'is-invalid' : ''}`}
+                        {...register("address")}
+                      />
+                      <span className="text-danger font-weight-bold invalid-feedback">{errors?.address?.message}</span>
+                    </div>
                   </div>
-                </form>
+                  <div className="row mb-3">
+                    <div className="col-md-6 has-validation">
+                      <label>Dịch vụ</label>
+
+                      <select type='text' className={`form-control ${errors?.eyeCategory?.message ? 'is-invalid' : ''}`} {...register("eyeCategory")}>
+                        <option value="" style={{ color: 'black' }}>--Chọn dịch vụ--</option>
+                        {
+                          eyeCategories.map(item => {
+                            return (
+                              <option key={item.id} value={item.id} style={{ color: 'black' }}>{item.nameCategory} </option>
+                            )
+                          })
+                        }
+                      </select>
+                      <span className="text-danger font-weight-bold invalid-feedback">{errors?.eyeCategory?.message}</span>
+                    </div>
+                    <div className="col-md-6">
+                      <label>Ghi chú</label>
+                      <input type="text"
+                        className='form-control'
+                        {...register("message")}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" data-dismiss="modal" >Đóng</button>
+                <button type="button" className="btn btn-primary" onClick={handleSubmit(handleSubmitForm)}>Đặt lịch</button>
+              </div>
+            </form>
           </div>
+        </div>
+      </div>
     </>
   )
 }

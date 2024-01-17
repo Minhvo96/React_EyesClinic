@@ -20,7 +20,7 @@ import DashboardWaitingPay from './pages/DashboardWaitingPay';
 import Page403 from './components/error/Page403';
 import Page401 from './components/error/Page401';
 import Home from './components/Home';
-
+import { ToastContainer } from 'react-toastify';
 
 
 function App() {
@@ -33,7 +33,6 @@ function App() {
               <Route path='/' element={<Home/>} />
               <Route path='/services' element={<PageServices />} />
               <Route path='/dashboard/history' element={<History />} />
-              <Route path='/dashboard/waiting-list' element={<WaitingList />} />
               <Route path='/dashboard/doctor/:bookingId' element={<DashboardDoctor />} />
               <Route path='/dashboard/patient' element={<Patient />} />
               <Route path='/dashboard/overview' element={<DashboardOverview />} roles={['ROLE_ADMIN']} />
@@ -50,6 +49,7 @@ function App() {
         </AuthProvider>
 
       </BrowserRouter >
+      <ToastContainer />
     </>
   )
 }
