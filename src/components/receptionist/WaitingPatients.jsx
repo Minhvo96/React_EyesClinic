@@ -17,10 +17,10 @@ const registerSchema = yup.object({
   fullName: yup.string().required("Bạn cần phải cung cấp họ và tên"),
   age: yup.number()
     .integer()
-    .min(1, "Tuổi phải lớn hơn hoặc bằng 1")
-    .max(80, "Tuổi phải nhỏ hơn hoặc bằng 80")
-    .required("Bạn cần phải cung cấp tuổi")
-    .typeError("Bạn cần phải cung cấp tuổi"),
+    .min(1934, "Năm sinh phải từ 1934")
+    .max(2024, "Năm sinh pkhông vượt quá 2024")
+    .required("Bạn cần phải cung cấp năm sinh")
+    .typeError("Bạn cần phải cung cấp năm sinh"),
   address: yup.string().required("Bạn cần phải cung cấp địa chỉ"),
   phoneNumber: yup.string().required("Bạn cần phải cung cấp số điện thoại").matches(/^(0[0-9]{9})$/, "Số điện thoại không hợp lệ"),
   eyeCategory: yup.string().required('Vui lòng chọn dịch vụ khám'),
@@ -329,7 +329,7 @@ export default function WaitingPatients() {
                       </div>
                       <div className="row mb-3">
                         <div className="col-md-6 has-validation">
-                          <label>Tuổi</label>
+                          <label>Năm sinh</label>
                           <input type="number"
                             className={`form-control ${errors?.age?.message ? 'is-invalid' : ''}`}
                             {...register("age")}
