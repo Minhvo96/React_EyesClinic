@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 
 const addStyleDashboard = () => {
     useEffect(() => {
-
-      console.log('useEffect');
         // Thêm thẻ <link> khi component được tạo
         const linkElement = document.createElement('link');
         linkElement.rel = 'stylesheet';

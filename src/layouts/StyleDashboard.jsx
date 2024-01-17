@@ -1,13 +1,29 @@
 import { lazy, useEffect, useState } from 'react';
+import { useAuthContext } from '../context/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 
 const DashboardLayout = lazy(() => import('./DashboardLayout'))
 
 const StyleDashboard = ({children}) => {
   const [isStylesheetLoaded, setIsStylesheetLoaded] = useState(false);
+  const navigate = useNavigate();
+
+  const URL_SECURE = ["dashboard"]
+  const checkUrlIsSecure = () => {
+    const lowercaseURL = location.href.toLowerCase();
+    // Kiểm tra mỗi từ khóa xem nó có tồn tại trong URL không
+    return URL_SECURE.every(keyword => lowercaseURL.includes(keyword.toLowerCase()));
+  }
 
   useEffect(() => {
-    console.log('useEffect');
+    const token = localStorage.getItem('token');
+    const checkUrl = checkUrlIsSecure();
+    if(!token && checkUrl){
+      navigate('/error-401')
+    } 
+  },[])
 
+  useEffect(() => {
     // Thêm thẻ <link> khi component được tạo
     const linkElement = document.createElement('link');
     linkElement.rel = 'stylesheet';
