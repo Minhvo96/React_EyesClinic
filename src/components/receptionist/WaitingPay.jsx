@@ -11,7 +11,7 @@ export default function WaitingPay() {
   const [prescriptions, setPrescriptions] = useState([]);
   const [bookingIds, setBookingIds] = useState([]);
   const [selectedPrescription, setSelectedPrescription] = useState(null);
-
+  const [loading, setLoading] = useState(true);
   const [selectedBooking, setSelectedBooking] = useState({
     id: '',
     fullName: '',
@@ -33,6 +33,9 @@ export default function WaitingPay() {
     try {
       const response = await medicinePrescriptionService.getMdicinePrescription();
       const prescriptions = response.content;
+      if (!prescriptions.length) {
+        setLoading(false);
+      }
       setPrescriptions(prescriptions);
     } catch (error) {
       console.log(error);
@@ -89,6 +92,7 @@ export default function WaitingPay() {
 
   useEffect(() => {
     const getStatus = async () => {
+
       try {
         const unpaidBookingIds = await Promise.all(
           prescriptions.map(async (prescription) => {
@@ -104,52 +108,57 @@ export default function WaitingPay() {
           return booking !== null && booking.status === 'UNPAID';
         });
         setBookingIds(filteredBookingIds);
+        setLoading(false);
       } catch (error) {
         console.log(error);
       }
     };
-    getStatus();
+    if (prescriptions.length > 0) {
+      getStatus();
+    }
   }, [prescriptions]);
 
-  
+
 
   return (
     <>
       <div className="container mr-5" style={{ position: 'fixed', zIndex: '20', marginTop: '100px' }}>
-        {bookingIds.length ? (
-          <table className="table">
-
-            <thead className="thead-primary">
-              <tr>
-                <th>STT</th>
-                <th>Họ và tên</th>
-                <th>Số điện thoại</th>
-                <th>Ngày khám</th>
-                <th>Chi tiết hóa đơn</th>
-              </tr>
-            </thead>
-            <tbody>
-              {bookingIds.map((item, index) => {
-                const count = index + 1;
-                return (
-                  <tr key={item.id}>
-                    <td>{count}</td>
-                    <td>{item.customer.user.fullName}</td>
-                    <td>{item.customer.user.phoneNumber}</td>
-                    <td>{item.dateBooking}</td>
-                    <td>
-                      <button className="btn btn-warning mr-2" type="button" data-toggle="modal" data-target={`#modal-${item.id}`} onClick={() => showPrescriptionDetails(item)}>View</button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        ) : (
-          <div>
-            <p>Danh sách đang trống</p>
-          </div>
-        )}
+        {loading ? (<span class="loader"></span>) :
+          bookingIds.length ? (
+            <table className="table">
+              <thead className="thead-primary">
+                <tr>
+                  <th>STT</th>
+                  <th>Họ và tên</th>
+                  <th>Số điện thoại</th>
+                  <th>Ngày khám</th>
+                  <th>Chi tiết hóa đơn</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  bookingIds.map((item, index) => {
+                    const count = index + 1;
+                    return (
+                      <tr key={item.id}>
+                        <td>{count}</td>
+                        <td>{item.customer.user.fullName}</td>
+                        <td>{item.customer.user.phoneNumber}</td>
+                        <td>{item.dateBooking}</td>
+                        <td>
+                          <button className="btn btn-warning mr-2" type="button" data-toggle="modal" data-target={`#modal-${item.id}`} onClick={() => showPrescriptionDetails(item)}>View</button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                }
+              </tbody>
+            </table>
+          ) : (
+            <div>
+              <p>Danh sách đang trống</p>
+            </div>
+          )}
       </div>
       {bookingIds.map((item, index) => (
         <div className="modal-frame" key={item.id}>
@@ -271,7 +280,7 @@ export default function WaitingPay() {
                   </div>
                   <div class="modal-footer">
                     <button id="close-save" class="btn btn-primary mr-2" type="button" onClick={() => saveBill(selectedPrescription)}>Save Bill</button>
-                    <button id="close-button" type="button"  class="btn btn-primary mr-2" data-dismiss="modal">Đóng</button>
+                    <button id="close-button" type="button" class="btn btn-primary mr-2" data-dismiss="modal">Đóng</button>
                   </div>
                 </div>
               </div>
