@@ -125,7 +125,7 @@ export default function Sidebar() {
 
 
                         {
-                            (role === 'ROLE_ADMIN' || role === 'ROLE_DOCTOR' || role === 'ROLE_CASHIER') && (
+                            (role === 'ROLE_ADMIN' || role === 'ROLE_CASHIER') && (
                                 <>
                                     <li className="nav-small-cap">
                                         <i className="ti ti-dots nav-small-cap-icon fs-4" />
@@ -172,6 +172,30 @@ export default function Sidebar() {
                                 </>
                             )
                         }
+
+                        {
+                            (role === 'ROLE_ADMIN') && (
+                                <>
+                                    <li className="nav-small-cap">
+                                        <i className="ti ti-dots nav-small-cap-icon fs-4" />
+                                        <span className="hide-menu">NHÂN VIÊN</span>
+                                    </li>
+                                    <li className="sidebar-item">
+                                        <Link to='/dashboard/staff'>
+                                            <p
+                                                className="sidebar-link"
+                                            >
+                                                <span>
+                                                    <i className="fa-regular fa-address-card"></i>
+                                                </span>
+                                                <span className="hide-menu">Danh sách nhân viên</span>
+                                            </p>
+                                        </Link>
+                                    </li>
+                                </>
+                            )
+                        }
+
 
                     </ul>
 

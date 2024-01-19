@@ -49,13 +49,13 @@ export default function Header() {
                 <a
                   className="nav-link sidebartoggler nav-icon-hover"
                   id="headerCollapse"
-                  href="javascript:void(0)"
+                  
                 >
                   <i className="ti ti-menu-2" />
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link nav-icon-hover" href="javascript:void(0)">
+                <a className="nav-link nav-icon-hover" >
                   <i className="ti ti-bell-ringing" />
                   <div className="notification bg-primary rounded-circle" />
                 </a>
@@ -71,7 +71,7 @@ export default function Header() {
                 style={{ cursor: 'pointer' }}
               >
                 <img
-                  src="../../src/assets/images/profile/user-1.jpg"
+                  src={auth.user.image}
                   alt=""
                   width={35}
                   height={35}
@@ -113,25 +113,20 @@ export default function Header() {
                         className="d-flex align-items-center gap-2 dropdown-item"
                       >
                         <i className="ti ti-user fs-6" />
-                        <p className="mb-0 fs-3">My Profile</p>
+                        <p className="mb-0 fs-3">Tài khoản</p>
                       </button>
                       <button                      
-                        className="d-flex align-items-center gap-2 dropdown-item"
+                        className="d-flex align-items-center gap-2 dropdown-item mb-2"
                       >
                         <i className="ti ti-mail fs-6" />
-                        <p className="mb-0 fs-3">My Account</p>
+                        <p className="mb-0 fs-3">Hộp thư</p>
                       </button>
-                      <button                     
-                        className="d-flex align-items-center gap-2 dropdown-item"
-                      >
-                        <i className="ti ti-list-check fs-6" />
-                        <p className="mb-0 fs-3">My Task</p>
-                      </button>
+                      
                       <button
                         className="btn btn-outline-primary mb-2 ms-3" style={{width:"83%"}}
                         onClick={auth.logout}
                       >
-                        Logout
+                        Đăng xuất
                       </button>
                     </div>
                   </div>

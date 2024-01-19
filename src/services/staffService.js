@@ -1,21 +1,18 @@
 import axios from "axios";
 
-const URL_API = 'http://localhost:8080/api/auth/';
-const authService = {
-    login: async (data) => {
+const URL_API = 'http://localhost:8080/api/staffs';
+const staffService = {
+    getAllStaffs: async () => {
         return axios
-            .post(URL_API + "login",data)
+            .get(URL_API)
             .then((response) => {
                 return response.data;
             })
             .catch((error) => {
-                if (error.response && error.response.status === 400) {             
-                    console.log(error.response.data);
-                    return error.response.data
-                  }
+                console.log(error);
             });
     },
-    register: async (obj) => {
+    createStaff: async (obj) => {
         return axios
             .post(URL_API, obj)
             .then((response) => {
@@ -25,7 +22,7 @@ const authService = {
                 console.log(error);
             });
     },
-    editCustomer: async (obj, id) => {
+    editStaff: async (obj, id) => {
         return axios
             .put(URL_API + '/' + id, obj)
             .then((response) => {
@@ -35,7 +32,7 @@ const authService = {
                 console.log(error);
             });
     },
-    deleteCustomer: async (id) => {
+    deleteStaff: async (id) => {
         return axios
             .delete(URL_API + '/' + id)
             .then((response) => {
@@ -45,7 +42,7 @@ const authService = {
                 console.log(error);
             });
     },
-    getCustomerById: async (id) => {
+    getStaffById: async (id) => {
         return axios
             .get(URL_API + '/' + id)
             .then((response) => {
@@ -58,4 +55,4 @@ const authService = {
 
 }
 
-export default authService;
+export default staffService;

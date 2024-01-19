@@ -9,9 +9,6 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import { useForm } from 'react-hook-form';
 import moment from 'moment';
 import userService from '../../services/userService';
-import Sidebar from '../dashboard/Sidebar';
-import Header from '../dashboard/Header';
-import addStyleDashboard from '../../AddStyleDashboard';
 import { useAuthContext } from '../../context/AuthProvider';
 
 const registerSchema = yup.object({
@@ -30,12 +27,8 @@ const registerSchema = yup.object({
 
 
 export default function WaitingPatients() {
-
-  const [hasValidRole,setHasValidRole] = useState();
-  const [status, setStatus] = useState(true)
   const [bookingList, setBookingList] = useState([])
   const [defaultDate, setDefaultDate] = useState('');
-  const [minDate, setMinDate] = useState();
   const [eyeCategories, setEyeCategories] = useState([])
   const [reRender, setReRender] = useState(false)
   const [times, setTimes] = useState(["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"])
@@ -47,7 +40,6 @@ export default function WaitingPatients() {
   })
 
   const auth = useAuthContext();
-
   const navigate = useNavigate();
 
   const handleSubmitForm = async (data) => {
@@ -91,29 +83,38 @@ export default function WaitingPatients() {
     setEyeCategories(eyeCategories);
   }
 
-
   const getTodayDate = () => {
     const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth() + 1;
     const day = today.getDate();
-    setMinDate(`${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
+    setDefaultDate(`${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`);
   };
 
   const getAllBookingList = async () => {
-    const bookings = await bookingService.getAllBookings();
-
-    const bookingsFilter = bookings.filter((booking) => (booking.status == "WAITING" || booking.status == "EXAMINING") && booking.dateBooking == defaultDate)
-
-    setBookingList(bookingsFilter);
+    const newBooking = {
+      idEyeCategory: "",
+      idCustomer: "",
+      timeBooking: "",
+      dateBooking: String(defaultDate),
+      status: ""
+    };
+    const bookingsPending = await bookingService.getBookingByStatusWaitingOrExaminingAndDate(newBooking);
+    setBookingList(bookingsPending);
 
 
   }
 
   const handleChangeListByDate = async (e) => {
-    const bookings = await bookingService.getAllBookings();
-    const bookingsFilter = bookings.filter((booking) => (booking.status == "WAITING" || booking.status == "EXAMINING") && booking.dateBooking == e.target.value)
-    setBookingList(bookingsFilter);
+    const newBooking = {
+      idEyeCategory: "",
+      idCustomer: "",
+      timeBooking: "",
+      dateBooking: String(e.target.value),
+      status: ""
+    };
+    const bookingsPending = await bookingService.getBookingByStatusWaitingOrExaminingAndDate(newBooking);
+    setBookingList(bookingsPending);
   }
 
   const handleChangeStatus = (e, id) => {
@@ -123,14 +124,14 @@ export default function WaitingPatients() {
   }
 
   const handleChangeStatusExamining = (id) => {
-    if(auth?.user?.roles === 'ROLE_DOCTOR' || auth?.user?.roles === 'ROLE_ASSISTANT'){
+    if (auth?.user?.roles === 'ROLE_DOCTOR' || auth?.user?.roles === 'ROLE_ASSISTANT') {
       handleChangeStatusBooking(id, "EXAMINING")
-      if(auth?.user?.roles === 'ROLE_DOCTOR'){
+      if (auth?.user?.roles === 'ROLE_DOCTOR') {
         navigate(`/dashboard/doctor/${id}`);
       }
-      if(auth?.user?.roles === 'ROLE_ASSISTANT'){
+      if (auth?.user?.roles === 'ROLE_ASSISTANT') {
         navigate(`/dashboard/assistant/${id}`);
-      }    
+      }
     } else {
       navigate('/error-403')
     }
@@ -168,8 +169,6 @@ export default function WaitingPatients() {
     }
   }
 
-
-
   const handleUpdateBookingList = async (obj) => {
     const newBooking = {
       idEyeCategory: String(obj.eyeCategory.id),
@@ -197,18 +196,10 @@ export default function WaitingPatients() {
     return a.timeBooking.localeCompare(b.timeBooking);
   }).slice(indexOfFirstAppointment, indexOfLastAppointment);
 
-
   useEffect(() => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
-    setDefaultDate(formattedDate);
-  }, []);
-
-  useEffect(() => {
-    getAllBookingList()
+    if(defaultDate){
+      getAllBookingList()
+    } 
   }, [defaultDate, reRender])
 
   useEffect(() => {
@@ -225,7 +216,7 @@ export default function WaitingPatients() {
           <div className='d-flex align-items-center'>
             <h6 className='mr-3'>Chọn ngày: </h6>
             <div >
-              <input type="date" className='form-control' defaultValue={defaultDate} onChange={handleChangeListByDate} min={minDate} />
+              <input type="date" className='form-control' defaultValue={defaultDate} onChange={handleChangeListByDate} min={defaultDate} />
             </div>
 
           </div>
@@ -278,14 +269,14 @@ export default function WaitingPatients() {
                             </td>
                             <td className="border-bottom-0">
                               <div className="d-flex align-items-center justify-content-center">
-                                
-                                  <button className="btn btn-outline-success d-flex justify-content-center align-items-center"
-                                    style={{ width: "36px", height: "36px" }}
-                                    onClick={() => handleChangeStatusExamining(booking.id)}
-                                  >
-                                    <i className="ti ti-report-medical" style={{ fontSize: "18px" }}></i>
-                                  </button>
-                           
+
+                                <button className="btn btn-outline-success d-flex justify-content-center align-items-center"
+                                  style={{ width: "36px", height: "36px" }}
+                                  onClick={() => handleChangeStatusExamining(booking.id)}
+                                >
+                                  <i className="ti ti-report-medical" style={{ fontSize: "18px" }}></i>
+                                </button>
+
                               </div>
                             </td>
                           </tr>
@@ -318,7 +309,7 @@ export default function WaitingPatients() {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title font-weight-bold" id="exampleModalLabel">Đặt lịch tại quầy</h5>
-              <button type="button" className="btn-close" data-dismiss="modal" aria-label="Close"></button>
+              <button type="button" className="btn-close" data-dismiss="modal" aria-label="Close" onClick={() => reset()}></button>
             </div>
             <form className="appointment-form needs-validation">
               <div className="modal-body">
@@ -343,7 +334,7 @@ export default function WaitingPatients() {
                   </div>
                   <div className="row mb-3">
                     <div className="col-md-6 has-validation">
-                      <label>Tuổi</label>
+                      <label>Năm sinh</label>
                       <input type="number"
                         className={`form-control ${errors?.age?.message ? 'is-invalid' : ''}`}
                         {...register("age")}
@@ -386,7 +377,7 @@ export default function WaitingPatients() {
                 </div>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" data-dismiss="modal" >Đóng</button>
+                <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => reset()} >Đóng</button>
                 <button type="button" className="btn btn-primary" onClick={handleSubmit(handleSubmitForm)}>Đặt lịch</button>
               </div>
             </form>

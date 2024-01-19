@@ -8,6 +8,7 @@ import moment from 'moment';
 import Swal from 'sweetalert2';
 import userService from '../../services/userService';
 import UsingWebSocket from '../../Socket';
+import { toast } from 'react-toastify';
 
 export default function BookingForm() {
 
@@ -54,7 +55,9 @@ export default function BookingForm() {
     })
 
     const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm({
-        resolver: yupResolver(registerSchema)
+        resolver: yupResolver(registerSchema),
+        mode: "onBlur",
+        criteriaMode: "all"
     })
 
 
@@ -74,6 +77,12 @@ export default function BookingForm() {
             age: data.age
         }
         const idCustomer = await userService.createUser(user)
+        if(!Number(idCustomer)){
+            toast.error("Hãy kiểm tra lại số điện thoại!", {
+                position: toast.POSITION.TOP_RIGHT
+            });
+            return;
+        }
 
         const dateBooking = String(data.dateBooking);
         const formattedDate = moment(dateBooking).format('YYYY-MM-DD');
@@ -85,7 +94,7 @@ export default function BookingForm() {
             dateBooking: formattedDate,
             status: "PENDING"
         }
-        
+
         await bookingService.createBooking(bookingNew)
         Swal.fire({
             position: 'center',
@@ -130,11 +139,11 @@ export default function BookingForm() {
         const targetElement = Object.keys(frequencyCount).filter(
             (num) => frequencyCount[num] === targetFrequency
         );
-        
-        const timesPendingLimitNew = [... timesPendingLimit, targetElement]
+
+        const timesPendingLimitNew = [...timesPendingLimit, targetElement]
         console.log(timesPendingLimitNew);
         setTimesPendingLimit(timesPendingLimitNew)
-        
+
 
 
         const currentDate = new Date();
@@ -185,14 +194,14 @@ export default function BookingForm() {
                         <h3 className="mb-2 text-center font-weight-bold">Đặt lịch hẹn ngay</h3>
                         <form onSubmit={handleSubmit(handleSubmitForm)} className="appointment-form">
                             <div className="row">
-                                <div className="col-sm-6">
+                                <div className="col-sm-6 ">
                                     <div className="form-group">
                                         <div className="icon">
                                             <span className="icon-user" />
                                         </div>
                                         <input
                                             type="text"
-                                            className='form-control'
+                                            className="form-control"
                                             id="appointment_name"
                                             placeholder="Tên khách hàng"
                                             {...register("fullName")}
