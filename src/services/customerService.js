@@ -53,6 +53,19 @@ const customerService = {
             });
     },
 
+    getCustomerBookingStats: async (customerId) => {
+           
+        return axios
+            .get(URL_API + '/' + customerId + '/booking-stats')
+            .then((response) => {
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
+
 
 }
 
