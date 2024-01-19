@@ -31,7 +31,9 @@ const billService = {
             .catch((error) => {
                 console.log(error);
             });
-    }
+    },
+
+   
 }
 
 export default billService;

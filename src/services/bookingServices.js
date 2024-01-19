@@ -83,6 +83,26 @@ const bookingService = {
             });
     },
 
+    getShowDetailBooking: async (id) => {
+
+        console.log("URL_API", URL_API);
+        const response = await axios
+            .get(URL_API + '/detail/' + id);
+        return response.data
+    },
+
+    getBookingByPhone: async (phone) => {
+
+        return axios
+            .get(URL_API + '/user' + '/' + phone)
+            .then((response) => {
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    },
+
 }
 
 export default bookingService;
