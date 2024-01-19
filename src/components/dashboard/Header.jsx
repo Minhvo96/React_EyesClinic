@@ -49,13 +49,13 @@ export default function Header() {
                 <a
                   className="nav-link sidebartoggler nav-icon-hover"
                   id="headerCollapse"
-                  href="javascript:void(0)"
+                  
                 >
                   <i className="ti ti-menu-2" />
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link nav-icon-hover" href="javascript:void(0)">
+                <a className="nav-link nav-icon-hover" >
                   <i className="ti ti-bell-ringing" />
                   <div className="notification bg-primary rounded-circle" />
                 </a>
@@ -71,7 +71,7 @@ export default function Header() {
                 style={{ cursor: 'pointer' }}
               >
                 <img
-                  src="../../src/assets/images/profile/user-1.jpg"
+                  src={auth.user.image}
                   alt=""
                   width={35}
                   height={35}

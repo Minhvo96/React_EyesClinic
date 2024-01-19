@@ -186,7 +186,7 @@ export default function Sidebar() {
                                                 className="sidebar-link"
                                             >
                                                 <span>
-                                                    <i class="fa-regular fa-address-card"></i>
+                                                    <i className="fa-regular fa-address-card"></i>
                                                 </span>
                                                 <span className="hide-menu">Danh sách nhân viên</span>
                                             </p>

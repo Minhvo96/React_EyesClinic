@@ -27,7 +27,6 @@ const registerSchema = yup.object({
 
 
 export default function WaitingPatients() {
-
   const [bookingList, setBookingList] = useState([])
   const [defaultDate, setDefaultDate] = useState('');
   const [eyeCategories, setEyeCategories] = useState([])
@@ -41,7 +40,6 @@ export default function WaitingPatients() {
   })
 
   const auth = useAuthContext();
-
   const navigate = useNavigate();
 
   const handleSubmitForm = async (data) => {
@@ -84,7 +82,6 @@ export default function WaitingPatients() {
     const eyeCategories = await eyeCategoriesService.getAllEyeCategories();
     setEyeCategories(eyeCategories);
   }
-
 
   const getTodayDate = () => {
     const today = new Date();
@@ -171,8 +168,6 @@ export default function WaitingPatients() {
       await handleUpdateBookingList(newBooking);
     }
   }
-
-
 
   const handleUpdateBookingList = async (obj) => {
     const newBooking = {
