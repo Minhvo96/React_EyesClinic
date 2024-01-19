@@ -1,8 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
+import billService from "../../../services/billServices";
+import medicinePrescriptionService from "../../../services/medicinePrescriptionService";
 
 
-const ModalExamDetail = ({ showModal, closeModal }) => {
+
+const ModalExamDetail = ({ showModal, closeModal, booking }) => {
+    const [prescriptionDetail, setPrescriptionDetail] = useState({})
+
+    const getPrescriptionByIdBooking = async (id) => {
+        const idPrescription = await medicinePrescriptionService.getPrescriptionByIdBooking(id);
+        const prescriptionDetail = await medicinePrescriptionService.getShowDetailPrescription(idPrescription);
+
+        setPrescriptionDetail(prescriptionDetail)
+        console.log(prescriptionDetail);
+    }
+
+    useEffect(() => {
+        if (Object.keys(booking).length) {
+            getPrescriptionByIdBooking(booking.id);
+        }
+
+    }, [booking]);
+
+
     return (
         <Modal show={showModal} onHide={closeModal} size='lg' centered className="bg-dark bg-opacity-50">
             <Modal.Header closeButton>
@@ -11,6 +32,7 @@ const ModalExamDetail = ({ showModal, closeModal }) => {
             <Modal.Body>
                 <div className="container-fluid">
                     <div className="container-fluid">
+
                         <div className="card mb-0">
                             <div className="card-body pb-0">
                                 <div className="row">
@@ -21,32 +43,32 @@ const ModalExamDetail = ({ showModal, closeModal }) => {
                                                 <div className="row d-flex">
                                                     <p className="card-subtitle fw-bolder mb-2 text-muted col-6">Ngày giờ khám:</p>
                                                     <div className="col-6 mb-2">
-                                                        <h6 className="fw-semibold mb-1">03/01/2024
+                                                        <h6 className="fw-semibold mb-1">{booking.dateBooking}
                                                         </h6>
-                                                        <span className="fw-normal">10:00</span>
+                                                        <span className="fw-normal">{booking.timeBooking}</span>
                                                     </div>
                                                 </div>
                                                 <div className="row d-flex mb-2 align-items-center">
                                                     <p className="card-subtitle fw-bolder mb-2 text-muted col-6">Dịch vụ:</p>
-                                                    <p className="card-text col-6">Khám mắt tổng quát</p>
+                                                    <p className="card-text col-6">{booking?.eyeCategory?.nameCategory}</p>
                                                 </div>
                                                 <div className="row d-flex mb-2 align-items-center">
                                                     <p className="card-subtitle fw-bolder mb-2 text-muted col-6">Bác sĩ:</p>
-                                                    <p className="card-text col-6">Trần Văn Minh</p>
+                                                    <p className="card-text col-6">{booking?.customer?.user?.fullName}</p>
                                                 </div>
                                                 <div className="row d-flex mb-2 align-items-start">
                                                     <p className="card-subtitle fw-bolder mb-2 text-muted col-6">Chẩn đoán:</p>
-                                                    <p className="card-text col-6">Viêm mắt</p>
+                                                    <p className="card-text col-6">{prescriptionDetail?.diagnose}</p>
                                                 </div>
                                                 <div className="row d-flex mb-2 align-items-start">
                                                     <p className="card-subtitle fw-bolder mb-2 text-muted col-6">Ghi chú:</p>
-                                                    <p className="card-text col-6">Đái tháo đường, Tim mạch</p>
+                                                    <p className="card-text col-6">{prescriptionDetail?.diagnose}</p>
                                                 </div>
                                                 <div className="row d-flex align-items-center">
                                                     <p className="card-subtitle fw-bolder mb-2 text-muted col-6">Trạng thái:</p>
                                                     <div className="d-flex align-items-center gap-2 col-6">
                                                         <span className="badge bg-success rounded-3 fw-semibold">
-                                                            Đã khám
+                                                            {booking?.status}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -65,7 +87,7 @@ const ModalExamDetail = ({ showModal, closeModal }) => {
                                                     <p className="card-subtitle fw-bolder text-muted">Mắt trái</p>
                                                 </div>
                                                 <div className="col-6 text-center">
-                                                    <p className="card-subtitle fw-bolder text-muted">9/10</p>
+                                                    <p className="card-subtitle fw-bolder text-muted">{`${prescriptionDetail?.eyeSight?.split(", ")[0]}/10`}</p>
                                                 </div>
                                             </div>
                                             <div className="row d-flex align-items-center mt-4 mb-4">
@@ -74,7 +96,7 @@ const ModalExamDetail = ({ showModal, closeModal }) => {
                                                     <p className="card-subtitle fw-bolder text-muted">Mắt phải</p>
                                                 </div>
                                                 <div className="col-6 text-center">
-                                                    <p className="card-subtitle fw-bolder text-muted">8/10</p>
+                                                    <p className="card-subtitle fw-bolder text-muted">{`${prescriptionDetail?.eyeSight?.split(", ")[1]}/10`}</p>
                                                 </div>
                                             </div>
 
@@ -87,9 +109,10 @@ const ModalExamDetail = ({ showModal, closeModal }) => {
 
                             <div className="card-body pb-0 pt-0">
                                 <div className="table-responsive">
+
                                     <table className="table text-nowrap mb-0 align-middle">
                                         <thead className="text-dark fs-4">
-                                            <tr>
+                                            <tr >
                                                 <th className="border-bottom-0">
                                                     <h6 className="fw-semibold mb-0">Tên thuốc</h6>
                                                 </th>
@@ -111,53 +134,40 @@ const ModalExamDetail = ({ showModal, closeModal }) => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td className="border-bottom-0">
-                                                    <h6 className="fw-semibold mb-1">Paracetamol</h6>
-                                                </td>
-                                                <td className="border-bottom-0">
-                                                    <h6 className="fw-semibold mb-0">Viên</h6>
-                                                </td>
-                                                <td className="border-bottom-0">
-                                                    <p className="mb-0 fw-semibold">30 viên</p>
-                                                </td>
-                                                <td className="border-bottom-0">
-                                                    <p className="mb-0 fw-semibold">2.000đ</p>
-                                                </td>
-                                                <td className="border-bottom-0 text-center">
-                                                    <p className="mb-0 fw-semibold">60.000đ</p>
-                                                </td>
-                                                <td className="border-bottom-0 text-center">
-                                                    <p className="mb-0 fw-semibold">Sáng 1v, Túi 1v, sau khi ăn</p>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td className="border-bottom-0">
-                                                    <h6 className="fw-semibold mb-1">Paracetamol</h6>
-                                                </td>
-                                                <td className="border-bottom-0">
-                                                    <h6 className="fw-semibold mb-0">Viên</h6>
-                                                </td>
-                                                <td className="border-bottom-0">
-                                                    <p className="mb-0 fw-semibold">30 viên</p>
-                                                </td>
-                                                <td className="border-bottom-0">
-                                                    <p className="mb-0 fw-semibold">2.000đ</p>
-                                                </td>
-                                                <td className="border-bottom-0 text-center">
-                                                    <p className="mb-0 fw-semibold">60.000đ</p>
-                                                </td>
-                                                <td className="border-bottom-0 text-center">
-                                                    <p className="mb-0 fw-semibold">Sáng 1v, Túi 1v, sau khi ăn</p>
-                                                </td>
-                                            </tr>
+
+                                            {prescriptionDetail?.idsMedicine && prescriptionDetail.idsMedicine.length > 0 ? (
+                                                prescriptionDetail.idsMedicine.map((medicine, index) => (
+                                                    <tr key={index + 1}>
+                                                        {/* <td class="border p-2">{index + (selectedBooking?.eyeCategories ? selectedBooking.eyeCategories.length : 0) + (selectedBooking?.eyeCategory ? 2 : 1)}</td> */}
+                                                        <td className="border-bottom-0">
+                                                            <h6 className="fw-semibold mb-1">{`${medicine.split(",")[0]}`}</h6>
+                                                        </td>
+                                                        <td className="border-bottom-0">
+                                                            <h6 className="fw-semibold mb-1">{`${medicine.split(",")[3]}`}</h6>
+                                                        </td>
+                                                        <td className="border-bottom-0">
+                                                            <h6 className="fw-semibold mb-1">{`${medicine.split(",")[1]}`}</h6>
+                                                        </td>
+                                                        <td className="border-bottom-0">
+                                                            <h6 className="fw-semibold mb-1">{`${medicine.split(",")[2]}`}</h6>
+                                                        </td>
+                                                        <td class="border-bottom-0">
+                                                            <h6 className="fw-semibold mb-1">{parseFloat(medicine.split(",")[1]) * parseFloat(medicine.split(",")[2])} đ</h6>
+                                                        </td>
+                                                        <td className="border-bottom-0 text-center">
+                                                            <h6 className="mb-0 fw-semibold">{`${medicine.split(",")[4]}`}</h6>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            ) : null}
+
                                             <tr>
                                                 <td colSpan={3} className="border-bottom-0"></td>
                                                 <td className="border-bottom-0">
                                                     <h6 className="fw-semibold mb-1">Tổng tiền:</h6>
                                                 </td>
                                                 <td className="border-bottom-0 text-center">
-                                                    <h6 className="fw-semibold mb-1">120.000đ</h6>
+                                                    <h6 className="fw-semibold mb-1">{prescriptionDetail?.totalAmount} đ</h6>
                                                 </td>
                                                 <td className="border-bottom-0 text-center">
                                                     <h6 className="fw-semibold mb-1">Người thu tiền</h6>
@@ -171,6 +181,8 @@ const ModalExamDetail = ({ showModal, closeModal }) => {
                                             </tr>
                                         </tbody>
                                     </table>
+
+
                                 </div>
                             </div>
                         </div>
