@@ -149,7 +149,7 @@ export default function Doctor() {
     }, [])
 
     useEffect(() => {
-        if (Object.keys(prescriptionById).length) {
+        if (Object?.keys(prescriptionById)?.length) {
             const eyeSight = prescriptionById.eyeSight;
             setLeftEye(eyeSight.split(",")[0]);
             setRightEye(eyeSight.split(",")[1]);
@@ -286,13 +286,14 @@ export default function Doctor() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className='d-flex row mt-4'>
+                                        <div className='d-flex row mt-2'>
                                             <div className="col-6">
                                                 <label htmlFor="basic-url" className="form-label">Chẩn đoán bệnh :</label>
                                                 <div className="input-group mb-3">
                                                     <input type="text" className={`form-control ${errorsPrescription?.diagnose?.message ? 'is-invalid' : ''}`}
                                                         {...registerPrescription('diagnose')}
-                                                        id="basic-url" aria-describedby="basic-addon3" placeholder='...' name="diagnose" onChange={handleChangePrescription} />
+                                                        id="basic-url" aria-describedby="basic-addon3" placeholder='...' name="diagnose" onChange={handleChangePrescription}
+                                                        style={{ borderRadius: "0.5rem" }} />
                                                     <span className="invalid-feedback">{errorsPrescription?.diagnose?.message}</span>
                                                 </div>
                                             </div>
@@ -324,10 +325,10 @@ export default function Doctor() {
                                                 </label>
                                             </div>
                                         </div>
-                                        <div className='d-flex row mt-4'>
+                                        <div className='d-flex row mt-4 mb-2'>
                                             <div className="col-12">
                                                 <label htmlFor="basic-url" className="form-label">Ghi chú :</label>
-                                                <div className="input-group mb-3">
+                                                <div className="input-group mb-0">
                                                     <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder='...' name="note" onChange={handleChangePrescription} />
                                                 </div>
                                             </div>
@@ -358,7 +359,7 @@ export default function Doctor() {
                                                 ))}
                                             </tbody>
                                         </table>
-                                        <button type="button" className="btn btn-secondary rounded-0 py-3 px-5" onClick={handleShowInputSearchMedicine}>
+                                        <button type="button" className="btn btn-secondary p-2 mb-2" onClick={handleShowInputSearchMedicine} style={{ borderRadius: "0.5rem" }}>
                                             Chọn thuốc
                                         </button>
                                         <div>
@@ -406,8 +407,8 @@ export default function Doctor() {
                                         </div>
                                         <div className='d-flex row mt-4 text-end'>
                                             <div>
-                                                <button type="button" className="btn btn-primary rounded-0" onClick={handleSubmitPrescription(handleAddPrescription)}>Lưu bệnh án</button>
-                                                <button type="button" className="btn btn-danger ml-2 rounded-0" onClick={() => resetPrescription()}>Hủy thao tác</button>
+                                                <button type="button" className="btn btn-primary" onClick={handleSubmitPrescription(handleAddPrescription)}>Lưu bệnh án</button>
+                                                <button type="button" className="btn btn-danger ml-2" onClick={() => resetPrescription()}>Hủy thao tác</button>
                                             </div>
                                         </div>
                                     </form>
