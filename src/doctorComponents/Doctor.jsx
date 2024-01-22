@@ -52,7 +52,6 @@ export default function Doctor() {
     const getBookingById = async () => {
         const booking = await bookingService.getBookingById(bookingId);
         setBooking(booking);
-
     }
 
     const getPrescriptionByBookingId = async () => {

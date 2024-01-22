@@ -50,7 +50,7 @@ export default function Sidebar() {
                                         <span className="hide-menu">Trang chủ</span>
                                     </li>
                                     {sideBarItem === "overview" ? 
-                                    (<li className="sidebar-item active" id="overview">
+                                    (<li className="sidebar-item active-dashboard" id="overview">
                                         <Link to='/dashboard/overview'>
                                             <p className="sidebar-link">
                                                 <span>
@@ -82,7 +82,7 @@ export default function Sidebar() {
                                         <span className="hide-menu">BỆNH NHÂN</span>
                                     </li>
                                     {sideBarItem === "patient" ? 
-                                    (<li className="sidebar-item active" id="patient">
+                                    (<li className="sidebar-item active-dashboard" id="patient">
                                         <Link to='/dashboard/patient'>
                                             <p
                                                 className="sidebar-link"
@@ -110,7 +110,6 @@ export default function Sidebar() {
                             )
                         }
 
-
                         {
                             (role === 'ROLE_ADMIN' || role === 'ROLE_RECEPTIONIST') && (
                                 <>
@@ -119,7 +118,7 @@ export default function Sidebar() {
                                         <span className="hide-menu">LỄ TÂN</span>
                                     </li>
                                     {sideBarItem === "booking-list" ? 
-                                    (<li className="sidebar-item active" id="booking-list">
+                                    (<li className="sidebar-item active-dashboard" id="booking-list">
                                         <Link to='/dashboard/booking-list'>
                                             <p
                                                 className="sidebar-link"
@@ -160,7 +159,7 @@ export default function Sidebar() {
                                         <span className="hide-menu">KHÁM CHỮA BỆNH</span>
                                     </li>
                                     {sideBarItem === "waiting-list" ? 
-                                    ( <li className="sidebar-item active" id="waiting-list">
+                                    ( <li className="sidebar-item active-dashboard" id="waiting-list">
                                         <Link to='/dashboard/waiting-list'>
                                             <p
                                                 className="sidebar-link"
@@ -191,8 +190,6 @@ export default function Sidebar() {
                             )
                         }
 
-
-
                         {
                             (role === 'ROLE_ADMIN' || role === 'ROLE_CASHIER') && (
                                 <>
@@ -201,7 +198,7 @@ export default function Sidebar() {
                                         <span className="hide-menu">THANH TOÁN HÓA ĐƠN</span>
                                     </li>
                                     {sideBarItem === "waiting-pay" ? 
-                                    ( <li className="sidebar-item active" id="waiting-pay">
+                                    ( <li className="sidebar-item active-dashboard" id="waiting-pay">
                                         <Link to='/dashboard/waiting-pay'>
                                             <p
                                                 className="sidebar-link"
@@ -209,7 +206,6 @@ export default function Sidebar() {
                                                 aria-expanded="false"
                                             >
                                                 <span>
-
                                                     <i className="fa-solid fa-money-check-dollar fa-md"></i>
                                                 </span>
                                                 <span className="hide-menu">Danh sách chờ thanh toán</span>
@@ -236,7 +232,7 @@ export default function Sidebar() {
                             )
                         }
 
-                        {
+                        {/* {
                             (role === 'ROLE_ADMIN') && (
                                 <>
                                     <li className="nav-small-cap">
@@ -244,7 +240,7 @@ export default function Sidebar() {
                                         <span className="hide-menu">QUẢN LÝ THUỐC</span>
                                     </li>
                                     {sideBarItem === "medicine" ? 
-                                    ( <li className="sidebar-item active" id="medicine">
+                                    ( <li className="sidebar-item active-dashboard" id="medicine">
                                         <Link to='/dashboard/medicine'>
                                             <p
                                                 className="sidebar-link"
@@ -271,7 +267,7 @@ export default function Sidebar() {
                                    
                                 </>
                             )
-                        }
+                        } */}
 
                         {
                             (role === 'ROLE_ADMIN') && (
@@ -281,7 +277,7 @@ export default function Sidebar() {
                                         <span className="hide-menu">NHÂN VIÊN</span>
                                     </li>
                                     {sideBarItem === "staff" ? 
-                                    (<li className="sidebar-item active" id="staff">
+                                    (<li className="sidebar-item active-dashboard" id="staff">
                                         <Link to='/dashboard/staff'>
                                             <p
                                                 className="sidebar-link"

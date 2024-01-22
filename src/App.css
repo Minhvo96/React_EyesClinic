@@ -81,7 +81,7 @@
   animation-duration: 1.1s;
 }
 
-.active {
+.active-dashboard {
   background-color: #5D87FF;
   display: flex;
   font-size: 14px;
@@ -97,7 +97,7 @@
   font-weight: 400;
   cursor: pointer;
 }
-.active p{
+.active-dashboard p{
   color: #fff !important;
 }
 

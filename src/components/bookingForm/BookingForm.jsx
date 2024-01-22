@@ -8,6 +8,7 @@ import moment from 'moment';
 import Swal from 'sweetalert2';
 import userService from '../../services/userService';
 import UsingWebSocket from '../../Socket';
+import { toast } from 'react-toastify';
 
 export default function BookingForm() {
 
@@ -76,6 +77,12 @@ export default function BookingForm() {
             age: data.age
         }
         const idCustomer = await userService.createUser(user)
+        if(!Number(idCustomer)){
+            toast.error("Hãy kiểm tra lại số điện thoại!", {
+                position: toast.POSITION.TOP_RIGHT
+            });
+            return;
+        }
 
         const dateBooking = String(data.dateBooking);
         const formattedDate = moment(dateBooking).format('YYYY-MM-DD');
