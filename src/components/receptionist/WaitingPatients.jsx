@@ -27,11 +27,11 @@ const registerSchema = yup.object({
 
 
 export default function WaitingPatients() {
-
-  const [bookingList, setBookingList] = useState([])
+  const [bookingList, setBookingList] = useState([]);
   const [defaultDate, setDefaultDate] = useState('');
-  const [eyeCategories, setEyeCategories] = useState([])
-  const [reRender, setReRender] = useState(false)
+  const [eyeCategories, setEyeCategories] = useState([]);
+  const [reRender, setReRender] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [times, setTimes] = useState(["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"])
 
   const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm({
@@ -41,7 +41,6 @@ export default function WaitingPatients() {
   })
 
   const auth = useAuthContext();
-
   const navigate = useNavigate();
 
   const handleSubmitForm = async (data) => {
@@ -85,7 +84,6 @@ export default function WaitingPatients() {
     setEyeCategories(eyeCategories);
   }
 
-
   const getTodayDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -105,7 +103,7 @@ export default function WaitingPatients() {
     const bookingsPending = await bookingService.getBookingByStatusWaitingOrExaminingAndDate(newBooking);
     setBookingList(bookingsPending);
 
-
+    setLoading(false);
   }
 
   const handleChangeListByDate = async (e) => {
@@ -172,8 +170,6 @@ export default function WaitingPatients() {
     }
   }
 
-
-
   const handleUpdateBookingList = async (obj) => {
     const newBooking = {
       idEyeCategory: String(obj.eyeCategory.id),
@@ -202,9 +198,9 @@ export default function WaitingPatients() {
   }).slice(indexOfFirstAppointment, indexOfLastAppointment);
 
   useEffect(() => {
-    if(defaultDate){
+    if (defaultDate) {
       getAllBookingList()
-    } 
+    }
   }, [defaultDate, reRender])
 
   useEffect(() => {
@@ -230,82 +226,83 @@ export default function WaitingPatients() {
           </div>
         </div>
         {
-          bookingList.length ?
-            <>
-              <table className="table">
-                <thead className="thead-primary">
-                  <tr className='text-center'>
-                    <th>STT</th>
-                    <th>Họ và tên</th>
-                    <th>Số điện thoại</th>
-                    <th>Ngày khám</th>
-                    <th>Giờ khám</th>
-                    <th>Trạng thái</th>
-                    <th>Xem bệnh án</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {
-                    currentAppointments
-                      .map((booking, index) => {
-                        const count = index + 1 + indexOfFirstAppointment;
-                        return (
-                          <tr key={booking.id} className='text-center'>
-                            <td>{count}</td>
-                            <td>{booking.customer.user.fullName}</td>
-                            <td>{booking.customer.user.phoneNumber}</td>
-                            <td>{booking.dateBooking}</td>
-                            <td>{booking.timeBooking}</td>
-                            <td>
-                              <select className={`form-control text-center ${times.includes(booking.timeBooking) ? 'text-danger' : ""}`} value={times.includes(booking.timeBooking) ? 'true' : 'false'} onChange={(e) => handleChangeStatus(e, booking.id)}>
-                                {
-                                  times.includes(booking.timeBooking) ?
-                                    <>
-                                      <option className='text-black' value="true">{booking.status == "WAITING" ? "Chờ khám" : "Đang khám"}</option>
-                                      <option className='text-black' value="cancel">Hủy</option>
-                                    </>
-                                    :
-                                    <>
-                                      <option className='text-black' value="false">{booking.status == "WAITING" ? "Không đặt trước" : "Đang khám"}</option>
-                                      <option className='text-black' value="cancel">Hủy</option>
-                                    </>
-                                }
-                              </select>
-                            </td>
-                            <td className="border-bottom-0">
-                              <div className="d-flex align-items-center justify-content-center">
+          loading ? (<span class="loader"></span>) :
+            bookingList.length ?
+              <>
+                <table className="table">
+                  <thead className="thead-primary">
+                    <tr className='text-center'>
+                      <th>STT</th>
+                      <th>Họ và tên</th>
+                      <th>Số điện thoại</th>
+                      <th>Ngày khám</th>
+                      <th>Giờ khám</th>
+                      <th>Trạng thái</th>
+                      <th>Xem bệnh án</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      currentAppointments
+                        .map((booking, index) => {
+                          const count = index + 1 + indexOfFirstAppointment;
+                          return (
+                            <tr key={booking.id} className='text-center'>
+                              <td>{count}</td>
+                              <td>{booking.customer.user.fullName}</td>
+                              <td>{booking.customer.user.phoneNumber}</td>
+                              <td>{booking.dateBooking}</td>
+                              <td>{booking.timeBooking}</td>
+                              <td>
+                                <select className={`form-control text-center ${times.includes(booking.timeBooking) ? 'text-danger' : ""}`} value={times.includes(booking.timeBooking) ? 'true' : 'false'} onChange={(e) => handleChangeStatus(e, booking.id)}>
+                                  {
+                                    times.includes(booking.timeBooking) ?
+                                      <>
+                                        <option className='text-black' value="true">{booking.status == "WAITING" ? "Chờ khám" : "Đang khám"}</option>
+                                        <option className='text-black' value="cancel">Hủy</option>
+                                      </>
+                                      :
+                                      <>
+                                        <option className='text-black' value="false">{booking.status == "WAITING" ? "Không đặt trước" : "Đang khám"}</option>
+                                        <option className='text-black' value="cancel">Hủy</option>
+                                      </>
+                                  }
+                                </select>
+                              </td>
+                              <td className="border-bottom-0">
+                                <div className="d-flex align-items-center justify-content-center">
 
-                                <button className="btn btn-outline-success d-flex justify-content-center align-items-center"
-                                  style={{ width: "36px", height: "36px" }}
-                                  onClick={() => handleChangeStatusExamining(booking.id)}
-                                >
-                                  <i className="ti ti-report-medical" style={{ fontSize: "18px" }}></i>
-                                </button>
+                                  <button className="btn btn-outline-success d-flex justify-content-center align-items-center"
+                                    style={{ width: "36px", height: "36px" }}
+                                    onClick={() => handleChangeStatusExamining(booking.id)}
+                                  >
+                                    <i className="ti ti-report-medical" style={{ fontSize: "18px" }}></i>
+                                  </button>
 
-                              </div>
-                            </td>
-                          </tr>
-                        )
-                      })
-                  }
-                </tbody>
-              </table>
-              <div className="pagination-container">
-                <ReactPaginate
-                  pageCount={Math.ceil(bookingList.length / appointmentsPerPage)}
-                  pageRangeDisplayed={5} // Số lượng trang hiển thị
-                  marginPagesDisplayed={2} // Số lượng trang được hiển thị ở đầu và cuối
-                  onPageChange={handlePageChange}
-                  containerClassName={'pagination'}
-                  activeClassName={'active'}
-                  previousLabel={'Previous'}
-                  nextLabel={'Next'}
-                  breakLabel={'...'}
-                />
-              </div>
-            </>
-            :
-            <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
+                                </div>
+                              </td>
+                            </tr>
+                          )
+                        })
+                    }
+                  </tbody>
+                </table>
+                <div className="pagination-container">
+                  <ReactPaginate
+                    pageCount={Math.ceil(bookingList.length / appointmentsPerPage)}
+                    pageRangeDisplayed={5} // Số lượng trang hiển thị
+                    marginPagesDisplayed={2} // Số lượng trang được hiển thị ở đầu và cuối
+                    onPageChange={handlePageChange}
+                    containerClassName={'pagination'}
+                    activeClassName={'active'}
+                    previousLabel={'Previous'}
+                    nextLabel={'Next'}
+                    breakLabel={'...'}
+                  />
+                </div>
+              </>
+              :
+              <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
         }
       </div>
       {/* <// Modal --> */}
