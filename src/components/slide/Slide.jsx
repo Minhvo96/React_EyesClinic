@@ -29,11 +29,9 @@ export default function Slide() {
                             >
                                 Bác sĩ Minh là chuyên gia nhãn khoa với nền tảng chuyên môn vững chắc, giàu kinh nghiệm và y đức.
                             </p>
-                            <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">
-                                <a href="#" className="btn btn-primary px-4 py-3">
-                                    Make an Appointment
-                                </a>
-                            </p>
+
+
+
                         </div>
                     </div>
                 </div>
@@ -59,17 +57,12 @@ export default function Slide() {
                                 Với 15 năm kinh nghiệm trong lĩnh vực Nhãn khoa
                             </h1>
                             <p className="mb-4">
-                            Cùng hệ thống trang thiết bị y tế hiện đại bậc nhất được nhập khẩu từ các nước Anh, Mỹ, Đức, Úc...
-                            </p>
-                            <p>
-                                <a href="#" className="btn btn-primary px-4 py-3">
-                                    Make an Appointment
-                                </a>
+                                Cùng hệ thống trang thiết bị y tế hiện đại bậc nhất được nhập khẩu từ các nước Anh, Mỹ, Đức, Úc...
                             </p>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>          
         </section>
     )
 }
