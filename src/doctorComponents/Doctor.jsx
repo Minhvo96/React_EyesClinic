@@ -29,8 +29,11 @@ export default function Doctor() {
     const [medicines, setMedicines] = useState([]);
     const [diseases, setDiseases] = useState([]);
     const [selectedMedicines, setSelectedMedicines] = useState([]);
+
     const [quantityInput, setQuantityInput] = useState({});
     const [usingMedicine, setUsingMedicine] = useState({});
+    const [noteMedicine, setNoteMedicine] = useState({});
+
     const [medicineStatus, setMedicineStatus] = useState(false);
     const [diagnoseInputs, setDiagnoseInputs] = useState();
     const [prescription, setPrescription] = useState({});
@@ -56,8 +59,12 @@ export default function Doctor() {
 
     const getPrescriptionByBookingId = async () => {
         const prescription = await prescriptionService.getPrescriptionByBookingId(bookingId);
-        setPrescriptionById(prescription);
-        setLoading(false);
+        if (prescription.eyeSight == null) {
+            setLoading(false);
+        } else {
+            setPrescriptionById(prescription);
+            setLoading(false);
+        }
     }
 
     const handleAddDisease = () => {
@@ -81,7 +88,8 @@ export default function Doctor() {
         const idsMedicine = selectedMedicines.map(item => ({
             id: String(item.id),
             quantity: item.quantity,
-            usingMedicine: item.usingMedicine
+            usingMedicine: item.usingMedicine,
+            noteMedicine: item.noteMedicine
         }))
 
         Swal.fire({
@@ -158,7 +166,7 @@ export default function Doctor() {
 
     const handleAddMedicines = (item) => {
         setSearchString({});
-        setSelectedMedicines([...selectedMedicines, { id: item.id, nameMedicine: item.nameMedicine, quantity: quantityInput[item.id] || '', usingMedicine: usingMedicine[item.id] || '' }]);
+        setSelectedMedicines([...selectedMedicines, { id: item.id, nameMedicine: item.nameMedicine, quantity: quantityInput[item.id] || '', usingMedicine: usingMedicine[item.id] || '', noteMedicine: noteMedicine[item.id] || '' }]);
     }
 
     const handleOnSelect = (item) => {
@@ -203,6 +211,22 @@ export default function Doctor() {
         const index = selectedMedicines.findIndex(medicine => medicine.id == id);
 
         const updateNewMedicine = { ...updatedMedicine, usingMedicine: updatedInputs[id] };
+        const newSelectedMedicines = [...selectedMedicines];
+        newSelectedMedicines[index] = updateNewMedicine;
+
+        setSelectedMedicines([...newSelectedMedicines]);
+    }
+
+    const handleChangeNoteMedicine = (id, e) => {
+        const updatedInputs = { ...noteMedicine, [id]: e.target.value };
+        setNoteMedicine(updatedInputs);
+
+        const updatedMedicines = selectedMedicines.filter(medicine => medicine.id == id);
+        const updatedMedicine = updatedMedicines[0];
+
+        const index = selectedMedicines.findIndex(medicine => medicine.id == id);
+
+        const updateNewMedicine = { ...updatedMedicine, noteMedicine: updatedInputs[id] };
         const newSelectedMedicines = [...selectedMedicines];
         newSelectedMedicines[index] = updateNewMedicine;
 
@@ -316,6 +340,7 @@ export default function Doctor() {
                                                         <th scope="col">Tên thuốc</th>
                                                         <th scope="col">Số lượng</th>
                                                         <th scope="col">Cách dùng</th>
+                                                        <th scope="col">Ghi chú</th>
                                                         <th scope="col">Xóa thuốc</th>
                                                     </tr>
                                                 </thead>
@@ -327,6 +352,7 @@ export default function Doctor() {
                                                         <td>{selectedMedicine.nameMedicine}</td>
                                                         <td>{selectedMedicine.quantity}</td>
                                                         <td>{selectedMedicine.usingMedicine}</td>
+                                                        <td>{selectedMedicine.noteMedicine}</td>
                                                         <td><i className="fa-solid fa-trash icon" onClick={() => handleDeleteMedicine(selectedMedicine.id)}></i></td>
                                                     </tr>
                                                 ))}
@@ -355,19 +381,26 @@ export default function Doctor() {
                                                     <input className='form-control col-3' defaultValue={searchString.nameMedicine} readOnly />
                                                     <input
                                                         type="text"
-                                                        placeholder="Nhập số lượng thuốc..."
-                                                        className='form-control col-3'
+                                                        placeholder="Số lượng"
+                                                        className='form-control col-2'
                                                         defaultValue={quantityInput[searchString.id] || ''}
                                                         onChange={(e) => handleChangeQuantity(searchString.id, e)}
                                                     />
                                                     <input
                                                         type="text"
-                                                        placeholder="Nhập HDSD thuốc..."
+                                                        placeholder="HDSD thuốc..."
                                                         className='form-control col-3'
                                                         defaultValue={usingMedicine[searchString.id] || ''}
                                                         onChange={(e) => handleChangeUsingMedicine(searchString.id, e)}
                                                     />
-                                                    <button type='button' className='form-control col-3' onClick={() => handleAddMedicines(searchString)}>Thêm thuốc</button>
+                                                     <input
+                                                        type="text"
+                                                        placeholder="Ghi chú..."
+                                                        className='form-control col-3'
+                                                        defaultValue={noteMedicine[searchString.id] || ''}
+                                                        onChange={(e) => handleChangeNoteMedicine(searchString.id, e)}
+                                                    />
+                                                    <button type='button' className='form-control col-1' onClick={() => handleAddMedicines(searchString)}>Thêm</button>
                                                 </div>
                                             }
                                         </div>

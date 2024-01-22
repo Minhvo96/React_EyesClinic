@@ -45,6 +45,7 @@ export default function BookingList() {
         };
         const bookingsPending = await bookingService.getBookingByStatusPendingAndDate(newBooking);
         setBookingList(bookingsPending);
+        setLoading(false);
     }
 
     const handleChangeListByDate = async (e) => {
@@ -290,9 +291,9 @@ export default function BookingList() {
     }
 
     useEffect(() => {
-        if (bookingList.length > 0) {
-            setLoading(false);
-        }
+        // if (bookingList.length > 0) {
+        //     setLoading(false);
+        // }
         setBookingListByTime(bookingList);
     }, [bookingList])
 
@@ -348,7 +349,8 @@ export default function BookingList() {
                         </div>
                     </div>
                 </div>
-                {loading ? (<span class="loader"></span>) :
+                {
+                loading ? (<span className="loader"></span>) :
                     bookingListByTime.length ?
                         <>
                             <table className="table">

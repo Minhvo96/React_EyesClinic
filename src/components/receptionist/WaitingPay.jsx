@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react'
 import bookingService from '../../services/bookingServices';
 import medicinePrescriptionService from '../../services/medicinePrescriptionService';
 import billService from '../../services/billService';
-
-import addStyleDashboard from '../../AddStyleDashboard';
 import './waiting.css'
 
 export default function WaitingPay() {

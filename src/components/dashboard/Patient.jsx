@@ -52,7 +52,6 @@ export default function Patient() {
                     <div className="card-body p-4">
                         <div className="table-responsive">
                             {customerIds.length ? (
-
                                 <table className="table text-nowrap mb-0 align-middle">
                                     <thead className="text-dark fs-4">
                                         <tr>
@@ -75,7 +74,6 @@ export default function Patient() {
                                     </thead>
                                     <tbody>
                                         {customerIds.map((item, index) => {
-
                                             const count = index + 1;
                                             return (
                                                 <tr key={item.id}>
@@ -108,8 +106,6 @@ export default function Patient() {
                                                 </tr>
                                             );
                                         })}
-
-
                                     </tbody>
                                 </table>
                             ) : (
@@ -117,16 +113,11 @@ export default function Patient() {
                                     <p>Danh sách đang trống</p>
                                 </div>
                             )}
-
                         </div>
                     </div>
                 </div>
             </div>
-
             <ModalHistoryExam showModal={showModal} closeModal={handleCloseModal} idCustomer={idCustomer}  />
-
-
-
         </>
     )
 

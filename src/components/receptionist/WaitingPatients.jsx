@@ -125,12 +125,12 @@ export default function WaitingPatients() {
   }
 
   const handleChangeStatusExamining = (id) => {
-    if (auth?.user?.roles === 'ROLE_DOCTOR' || auth?.user?.roles === 'ROLE_ASSISTANT') {
+    if (auth?.user?.roles === 'ROLE_DOCTOR' || auth?.user?.roles === 'ROLE_ASSISTANT' || auth?.user?.roles === 'ROLE_ADMIN') {
       handleChangeStatusBooking(id, "EXAMINING")
-      if (auth?.user?.roles === 'ROLE_DOCTOR') {
+      if (auth?.user?.roles === 'ROLE_DOCTOR' || auth?.user?.roles === 'ROLE_ADMIN') {
         navigate(`/dashboard/doctor/${id}`);
       }
-      if (auth?.user?.roles === 'ROLE_ASSISTANT') {
+      if (auth?.user?.roles === 'ROLE_ASSISTANT' || auth?.user?.roles === 'ROLE_ADMIN') {
         navigate(`/dashboard/assistant/${id}`);
       }
     } else {
@@ -226,7 +226,7 @@ export default function WaitingPatients() {
           </div>
         </div>
         {
-          loading ? (<span class="loader"></span>) :
+          loading ? (<span className="loader"></span>) :
             bookingList.length ?
               <>
                 <table className="table">
