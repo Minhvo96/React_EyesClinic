@@ -336,7 +336,7 @@ export default function BookingList() {
                 <div className="col-lg-12 d-flex align-items-around" style={{ padding: 0 }}>
                     <div className="card w-100">
                         <div className="card-body p-4">
-                            <div className='d-flex mb-5 align-items-center justify-content-between'>
+                            <div className='d-flex align-items-center justify-content-between'>
                                 <div className='d-flex align-items-center'>
                                     <h6 className='mr-3'>Chọn ngày: </h6>
                                     <div className='col-7 '>
@@ -355,55 +355,55 @@ export default function BookingList() {
                                     </div>
                                 </div>
                             </div>
-                            {loading ? (<span class="loader"></span>) :
-                                bookingListByTime.length ?
-                                    <>
-                                        <table className="table text-nowrap mb-0 align-middle">
-                                            <thead className="thead-primary">
-                                                <tr className='text-center text-dark fs-3'>
-                                                    <th>STT</th>
-                                                    <th>Họ và tên</th>
-                                                    <th>Số điện thoại</th>
-                                                    <th className='col-2'>Ngày khám</th>
-                                                    <th>Giờ khám</th>
-                                                    <th>Dịch vụ</th>
-                                                    <th className='col-3 text-center'>Hành động</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {
-                                                    currentAppointments
-                                                        .map((booking, index) => {
-                                                            const count = index + 1 + indexOfFirstAppointment;
-                                                            return (
-                                                                <tr key={booking.id} className='text-center'>
-                                                                    <td>{count}</td>
-                                                                    <td>{booking.customer.user.fullName}</td>
-                                                                    <td>{booking.customer.user.phoneNumber}</td>
-                                                                    <td>{booking.dateBooking}</td>
-                                                                    <td>{booking.timeBooking}</td>
-                                                                    <td>{booking.eyeCategory.nameCategory}</td>
-                                                                    <td className='text-center'>
-                                                                        <button className='btn btn-warning mr-2' type="button" data-toggle="modal" data-target="#exampleModal" onClick={() => getBookingById(booking.id)}>Sửa</button>
-                                                                        <button className='btn btn-danger mr-2' onClick={() => deleteBookingById(booking.id)}>Hủy</button>
-                                                                        <button className='btn btn-success' onClick={() => handleChangeStatusBooking(booking.id)}>Xác nhận</button>
-
-                                                                    </td>
-                                                                </tr>
-                                                            )
-                                                        })
-                                                }
-                                            </tbody>
-                                        </table>
-
-                                    </>
-                                    :
-                                    <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
-                            }
                         </div>
                     </div>
                 </div>
-                <div className="pagination-container" style={{ margin: 0,  display: 'flex', justifyContent: 'flex-end'}}>
+                {
+                loading ? (<span className="loader"></span>) :
+                    bookingListByTime.length ?
+                        <>
+                            <table className="table">
+                                <thead className="thead-primary">
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Họ và tên</th>
+                                        <th>Số điện thoại</th>
+                                        <th>Ngày khám</th>
+                                        <th>Giờ khám</th>
+                                        <th>Dịch vụ</th>
+                                        <th className='col-4 text-center'>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        currentAppointments
+                                            .map((booking, index) => {
+                                                const count = index + 1 + indexOfFirstAppointment;
+                                                return (
+                                                    <tr key={booking.id}>
+                                                        <td>{count}</td>
+                                                        <td>{booking.customer.user.fullName}</td>
+                                                        <td>{booking.customer.user.phoneNumber}</td>
+                                                        <td>{booking.dateBooking}</td>
+                                                        <td>{booking.timeBooking}</td>
+                                                        <td>{booking.eyeCategory.nameCategory}</td>
+                                                        <td className='text-center'>
+                                                            <button className='btn btn-warning mr-2' type="button" data-toggle="modal" data-target="#exampleModal" onClick={() => getBookingById(booking.id)}>Sửa</button>
+                                                            <button className='btn btn-danger mr-2' onClick={() => deleteBookingById(booking.id)}>Hủy</button>
+                                                            <button className='btn btn-success' onClick={() => handleChangeStatusBooking(booking.id)}>Xác nhận khám</button>
+
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })
+                                    }
+                                </tbody>
+                            </table>
+                        </>
+                        :
+                        <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
+                }
+                <div className="pagination-container" >
                     <ReactPaginate
                         pageCount={Math.ceil(bookingList.length / appointmentsPerPage)}
                         pageRangeDisplayed={5} // Số lượng trang hiển thị
@@ -416,6 +416,7 @@ export default function BookingList() {
                         breakLabel={'...'}
                     />
                 </div>
+
             </div>
             {/* <// Modal --> */}
             <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

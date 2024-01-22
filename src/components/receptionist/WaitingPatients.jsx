@@ -296,12 +296,9 @@ export default function WaitingPatients() {
                     :
                     <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
               }
-
             </div>
           </div>
         </div>
-
-       
       </div>
       {/* <// Modal --> */}
       <div className="modal fade" id="createBookingModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

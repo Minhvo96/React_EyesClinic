@@ -119,13 +119,12 @@ export default function Patient() {
                                         <p>Danh sách đang trống</p>
                                     </div>
                                 )}
-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <ModalHistoryExam showModal={showModal} closeModal={handleCloseModal} idCustomer={idCustomer} />
+            <ModalHistoryExam showModal={showModal} closeModal={handleCloseModal} idCustomer={idCustomer}  />
         </>
     )
 
