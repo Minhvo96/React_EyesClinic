@@ -35,15 +35,15 @@ export default function BookingForm() {
     }
 
     const registerSchema = yup.object({
-        fullName: yup.string().required("Bạn cần phải cung cấp họ và tên"),
+        fullName: yup.string().required("Vui lòng nhập họ và tên"),
         age: yup.number()
             .integer()
             .min(1934, "Năm sinh phải từ 1934")
             .max(2024, "Năm sinh không vượt quá 2024")
-            .required("Bạn cần phải cung cấp năm sinh")
-            .typeError("Bạn cần phải cung cấp năm sinh"),
-        address: yup.string().required("Bạn cần phải cung cấp địa chỉ"),
-        phoneNumber: yup.string().required("Bạn cần phải cung cấp số điện thoại").matches(/^(0[0-9]{9})$/, "Số điện thoại không hợp lệ"),
+            .required("Vui lòng nhập năm sinh")
+            .typeError("Vui lòng nhập năm sinh"),
+        address: yup.string().required("Vui lòng nhập địa chỉ"),
+        phoneNumber: yup.string().required("Vui lòng nhập số điện thoại").matches(/^(0[0-9]{9})$/, "Số điện thoại không hợp lệ"),
         dateBooking: yup.date()
             .required('Vui lòng chọn ngày hẹn')
             .typeError('Vui lòng chọn ngày đặt hẹn')
@@ -161,11 +161,13 @@ export default function BookingForm() {
         getTodayDate();
     }, [])
 
+    
+
     return (
-        <section className="ftco-intro">
+        <section className="ftco-intro" id='booking-form'>
             <div className="container">
                 <div className="row no-gutters">
-                    <div className="col-md-3 color-1 p-4">
+                    <div className="col-md-3 color-1 p-4" style={{borderRadius:"0.5rem 0 0 0.5rem"}}>
                         <h3 className="mb-4 font-weight-bold">Liên hệ với chúng tôi</h3>
                         <p>Nếu cần tư vấn và đặt lịch khám, đừng ngại ngần mà hãy liên lạc thông qua:</p>
                         <span ><span className="icon-phone2" /> 0836-902-222</span><br /><br />
@@ -183,8 +185,8 @@ export default function BookingForm() {
                         </div>
                     </div>
 
-                    <div className="col-md-9 color-3 p-4">
-                        <h3 className="mb-2 text-center font-weight-bold">Đặt lịch hẹn ngay</h3>
+                    <div className="col-md-9 color-3 p-4" style={{borderRadius:"0 0.5rem 0.5rem 0"}}>
+                        <h3 className="mb-4  text-center font-weight-bold" style={{fontSize:"32px"}}>ĐẶT LỊCH HẸN NGAY</h3>
                         <form onSubmit={handleSubmit(handleSubmitForm)} className="appointment-form">
                             <div className="row">
                                 <div className="col-sm-6 ">
@@ -192,15 +194,17 @@ export default function BookingForm() {
                                         <div className="icon">
                                             <span className="icon-user" />
                                         </div>
+                                        
                                         <input
                                             type="text"
                                             className="form-control"
                                             id="appointment_name"
                                             placeholder="Tên khách hàng"
                                             {...register("fullName")}
+                                            style={{textEmphasisColor:"#FFC75F"}}
                                         />
                                     </div>
-                                    <span className="text-warning font-weight-bold">{errors?.fullName?.message}</span>
+                                    <span className="text-danger font-weight-bold">{errors?.fullName?.message}</span>
                                 </div>
                                 <div className="col-sm-6">
                                     <div className="form-group">
@@ -216,14 +220,14 @@ export default function BookingForm() {
 
                                         />
                                     </div>
-                                    <span className="text-warning font-weight-bold">{errors?.phoneNumber?.message}</span>
+                                    <span className="text-danger font-weight-bold">{errors?.phoneNumber?.message}</span>
                                 </div>
                             </div>
                             <div className="row">
                                 <div className="col-sm-6">
                                     <div className="form-group">
                                         <div className="icon">
-                                            <span className="icon-user" />
+                                            <span className="icon-cake" />
                                         </div>
                                         <input
                                             type="number"
@@ -234,7 +238,7 @@ export default function BookingForm() {
 
                                         />
                                     </div>
-                                    <span className="text-warning font-weight-bold">{errors?.age?.message}</span>
+                                    <span className="text-danger font-weight-bold">{errors?.age?.message}</span>
                                 </div>
                                 <div className="col-sm-6">
                                     <div className="form-group">
@@ -250,37 +254,28 @@ export default function BookingForm() {
 
                                         />
                                     </div>
-                                    <span className="text-warning font-weight-bold">{errors?.address?.message}</span>
+                                    <span className="text-danger font-weight-bold">{errors?.address?.message}</span>
                                 </div>
                             </div>
                             <div className="row">
                                 <div className="col-sm-6">
-                                    <div className="d-flex justify-content-between">
-                                        <div className="form-group">
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Chọn ngày hẹn:"
-                                                disabled
-
-                                            />
-
-
+                                    <div className="d-flex justify-content-between row">
+                                        <div className="col-6 form-group d-flex align-items-center">
+                                            <label>Chọn ngày hẹn:</label>
                                         </div>
-                                        <div className="form-group">
+                                        <div className="col-6 form-group">
                                             <input
                                                 type="date"
-                                                className="form-control"
+                                                className="form-control"                                             
                                                 {...register("dateBooking")}
                                                 min={minDate}
                                                 onInput={handleChangeShowTime}
-
-
+                                                
                                             />
                                         </div>
                                     </div>
 
-                                    <span className="text-warning font-weight-bold">{errors?.dateBooking?.message}</span>
+                                    <span className="text-danger font-weight-bold">{errors?.dateBooking?.message}</span>
                                 </div>
 
                                 <div className="col-sm-6">
@@ -299,7 +294,7 @@ export default function BookingForm() {
                                                     })
                                                 }
                                             </select>
-                                            <div className='mt-3'><span className="text-warning font-weight-bold">{errors?.eyeCategory?.message}</span></div>
+                                            <div className='mt-3'><span className="text-danger font-weight-bold">{errors?.eyeCategory?.message}</span></div>
                                         </div>
                                     </div>
                                 </div>
@@ -364,14 +359,14 @@ export default function BookingForm() {
 
                             {
                                 showError &&
-                                <span className="text-warning font-weight-bold">{errors?.timeBooking?.message}</span>
+                                <span className="text-danger font-weight-bold">{errors?.timeBooking?.message}</span>
                             }
 
                             <div className="row">
                                 <div className="col-sm-12">
                                     <div className="form-group">
                                         <div className="icon">
-                                            <span className="icon-user" />
+                                            <span className="icon-message" />
                                         </div>
                                         <input
                                             type="text"
@@ -398,14 +393,13 @@ export default function BookingForm() {
                                     onMouseOut={(e) => {
                                         e.target.style.backgroundColor = '#1E90FF';
                                     }}
-                                >Xác nhận đặt lịch</button>
+                                >Đặt lịch</button>
                             </div>
                         </form>
 
                     </div>
 
                 </div>
-
             </div>
         </section>
     )
