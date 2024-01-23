@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
-import billService from "../../../services/billServices";
 import medicinePrescriptionService from "../../../services/medicinePrescriptionService";
 
 
@@ -138,7 +137,7 @@ const ModalExamDetail = ({ showModal, closeModal, booking }) => {
                                             {prescriptionDetail?.idsMedicine && prescriptionDetail.idsMedicine.length > 0 ? (
                                                 prescriptionDetail.idsMedicine.map((medicine, index) => (
                                                     <tr key={index + 1}>
-                                                        {/* <td class="border p-2">{index + (selectedBooking?.eyeCategories ? selectedBooking.eyeCategories.length : 0) + (selectedBooking?.eyeCategory ? 2 : 1)}</td> */}
+
                                                         <td className="border-bottom-0">
                                                             <h6 className="fw-semibold mb-1">{`${medicine.split(",")[0]}`}</h6>
                                                         </td>
@@ -181,8 +180,6 @@ const ModalExamDetail = ({ showModal, closeModal, booking }) => {
                                             </tr>
                                         </tbody>
                                     </table>
-
-
                                 </div>
                             </div>
                         </div>

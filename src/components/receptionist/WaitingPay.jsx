@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react'
 import bookingService from '../../services/bookingServices';
 import medicinePrescriptionService from '../../services/medicinePrescriptionService';
 import billService from '../../services/billService';
+import Swal from 'sweetalert2'
 
-import addStyleDashboard from '../../AddStyleDashboard';
 import './waiting.css'
+import { toast } from 'react-toastify';
 
 export default function WaitingPay() {
 
@@ -55,6 +56,7 @@ export default function WaitingPay() {
   }, [selectedPrescription])
 
   const saveBill = async (item) => {
+    console.log(item);
     const newBill = {
       idPrescription: item.id,
       idReceptionist: item.idDoctor,
@@ -64,6 +66,11 @@ export default function WaitingPay() {
     try {
       const response = await billService.createBill(newBill);
       console.log('Bill saved successfully:', response);
+
+      toast.success("Cập nhật hóa đơn thành công!",{
+        position: toast.POSITION.TOP_RIGHT
+    });
+
       const updatedBookings = bookingIds.map((billBooking) => {
         if (billBooking.id === item.idBooking) {
           return {
@@ -112,7 +119,6 @@ export default function WaitingPay() {
   }, [prescriptions]);
 
   
-
   return (
     <>
       <div className="container mr-5" style={{ position: 'fixed', zIndex: '20', marginTop: '100px' }}>
@@ -160,9 +166,9 @@ export default function WaitingPay() {
 
               <div class="modal-content">
                 <div className='container-fluid'>
-                  <div class="d-flex align-items-center row">
-                    <div class="col-3 d-flex align-items-center justify-content-start">
-                      <div class="logo-container mt-4" style={{ marginLeft: '20px', marginTop: '200px' }}>
+                  <div className="d-flex align-items-center row">
+                    <div className="col-3 d-flex align-items-center justify-content-start">
+                      <div className="logo-container mt-4" style={{ marginLeft: '20px', marginTop: '200px' }}>
                         <img src="/images2.png" alt="" class="logo" />
                       </div>
                     </div>
@@ -211,66 +217,66 @@ export default function WaitingPay() {
                       </div>
                     </div>
                   </div>
-                  <div class="modal-body">
-                    <div class="mt-8">
+                  <div className="modal-body">
+                    <div className="mt-8">
                       <strong>Invoice No: 000000{selectedBooking.id}</strong>
                     </div>
-                    <div class="mt-8">
+                    <div className="mt-8">
                       <strong>Họ và tên: {selectedBooking?.customer?.user?.fullName}</strong>
                     </div>
-                    <div class="mt-8">
+                    <div className="mt-8">
                       <strong>Số điện thoại: {selectedBooking?.customer?.user?.phoneNumber}</strong>
                     </div>
-                    <div class="mt-8">
+                    <div className="mt-8">
                       <strong>Ngày đặt lịch: {selectedBooking.dateBooking}</strong>
                     </div>
-                    <div class="mt-8">
+                    <div className="mt-8">
                       <strong>Giờ khám: {selectedBooking.timeBooking}</strong>
                     </div>
-                    <div class="mt-8">
-                      <table class=" mt-8 border-collapse" style={{ width: "100%" }}>
+                    <div className="mt-8">
+                      <table className=" mt-8 border-collapse" style={{ width: "100%" }}>
                         <thead>
                           <tr>
-                            <th class="border p-2 text-center">Item</th>
-                            <th class="border p-2 text-center">Description</th>
-                            <th class="border p-2 text-center">Price</th>
+                            <th className="border p-2 text-center">Item</th>
+                            <th className="border p-2 text-center">Description</th>
+                            <th className="border p-2 text-center">Price</th>
                           </tr>
                         </thead>
                         <tbody>
                           {selectedBooking?.eyeCategory && (
                             <tr>
-                              <td class="border p-2">1</td>
-                              <td class="border p-2">{selectedBooking.eyeCategory.nameCategory}</td>
-                              <td class="border p-2">${selectedBooking.eyeCategory.price.toFixed(2)}</td>
+                              <td className="border p-2">1</td>
+                              <td className="border p-2">{selectedBooking.eyeCategory.nameCategory}</td>
+                              <td className="border p-2">${selectedBooking.eyeCategory.price.toFixed(2)}</td>
                             </tr>
                           )}
                           {selectedBooking?.eyeCategories && selectedBooking.eyeCategories.length > 0 ? (
                             selectedBooking.eyeCategories.map((category, index) => (
                               <tr key={index + 2}>
-                                <td class="border p-2">{index + 2}</td>
-                                <td class="border p-2">{category.nameCategory}</td>
-                                <td class="border p-2">${category.price.toFixed(2)}</td>
+                                <td className="border p-2">{index + 2}</td>
+                                <td className="border p-2">{category.nameCategory}</td>
+                                <td className="border p-2">${category.price.toFixed(2)}</td>
                               </tr>
                             ))
                           ) : null}
                           {selectedPrescription?.idsMedicine && selectedPrescription.idsMedicine.length > 0 ? (
                             selectedPrescription.idsMedicine.map((medicine, index) => (
                               <tr key={index + (selectedBooking?.eyeCategories ? selectedBooking.eyeCategories.length : 0) + (selectedBooking?.eyeCategory ? 2 : 1)}>
-                                <td class="border p-2">{index + (selectedBooking?.eyeCategories ? selectedBooking.eyeCategories.length : 0) + (selectedBooking?.eyeCategory ? 2 : 1)}</td>
-                                <td class="border p-2">{`${medicine.split(",")[0]} (${medicine.split(",")[1]} ${medicine.split(",")[3]}) `}</td>
-                                <td class="border p-2">${parseFloat(medicine.split(",")[1]) * parseFloat(medicine.split(",")[2])}</td>
+                                <td className="border p-2">{index + (selectedBooking?.eyeCategories ? selectedBooking.eyeCategories.length : 0) + (selectedBooking?.eyeCategory ? 2 : 1)}</td>
+                                <td className="border p-2">{`${medicine.split(",")[0]} (${medicine.split(",")[1]} ${medicine.split(",")[3]}) `}</td>
+                                <td className="border p-2">${parseFloat(medicine.split(",")[1]) * parseFloat(medicine.split(",")[2])}</td>
                               </tr>
                             ))
                           ) : null}
                         </tbody>
                       </table>
                     </div>
-                    <div class="mt-8">
+                    <div className="mt-8">
                       <strong>Total: ${selectedPrescription?.totalAmount.toFixed(2)}</strong>
                     </div>
                   </div>
-                  <div class="modal-footer">
-                    <button id="close-save" class="btn btn-primary mr-2" type="button" onClick={() => saveBill(selectedPrescription)}>Save Bill</button>
+                  <div className="modal-footer">
+                    <button id="close-save" className="btn btn-primary mr-2" type="button" onClick={() => saveBill(selectedPrescription)}>Save Bill</button>
                     <button id="close-button" type="button"  class="btn btn-primary mr-2" data-dismiss="modal">Đóng</button>
                   </div>
                 </div>

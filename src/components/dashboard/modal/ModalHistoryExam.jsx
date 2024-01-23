@@ -33,7 +33,7 @@ const ModalHistoryExam = ({ showModal, closeModal, idCustomer }) => {
     }, [idCustomer]);
 
     useEffect(() => {
-        console.log(customer);
+        // console.log(customer);
     }, [customer]);
 
     useEffect(() => {
@@ -60,7 +60,7 @@ const ModalHistoryExam = ({ showModal, closeModal, idCustomer }) => {
     useEffect(() => {
         const phoneBookings = async () => {
             try {
-                const phone = customer?.user?.phoneNumber; // Lấy số điện thoại từ customer (lưu ý kiểm tra null/undefined trước khi truy cập)
+                const phone = customer?.user?.phoneNumber;
                 if (phone) {
                     const bookings = await bookingService.getBookingByPhone(phone);
                     setBookings(bookings);
@@ -86,6 +86,15 @@ const ModalHistoryExam = ({ showModal, closeModal, idCustomer }) => {
     const handleCloseModalDetail = () => {
         setShowModalDetail(false);
     }
+
+    const statusColors = {
+        CANCELLED: 'red',
+        PENDING: 'yellow',
+        WAITING: 'orange',
+        EXAMINING: 'blue',
+        UNPAID: 'purple',
+        COMPLETED: 'green'
+    };
 
 
     return (
@@ -203,7 +212,7 @@ const ModalHistoryExam = ({ showModal, closeModal, idCustomer }) => {
                                                         </td>
                                                         <td className="border-bottom-0">
                                                             <div className="d-flex align-items-center gap-2">
-                                                                <span className="badge bg-success rounded-3 fw-semibold">
+                                                                <span className="badge rounded-3 fw-semibold" style={{ backgroundColor: statusColors[booking?.status] }}>
                                                                     {booking?.status}
                                                                 </span>
                                                             </div>
@@ -220,7 +229,7 @@ const ModalHistoryExam = ({ showModal, closeModal, idCustomer }) => {
                                                     </tr>
                                                 ))}
 
-                                            
+
                                             </tbody>
                                         </table>
                                     </div>
@@ -233,7 +242,7 @@ const ModalHistoryExam = ({ showModal, closeModal, idCustomer }) => {
                 <Modal.Footer>
                     <Button onClick={closeModal} className="me-4">Close</Button>
                 </Modal.Footer>
-                <ModalExamDetail showModal={showModalDetail} closeModal={handleCloseModalDetail} booking = {booking} />
+                <ModalExamDetail showModal={showModalDetail} closeModal={handleCloseModalDetail} booking={booking} />
 
             </Modal>
         </>

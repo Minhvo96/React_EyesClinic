@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import ModalHistoryExam from "./modal/ModalHistoryExam";
-import { ClipLoader } from "react-spinners";
-import medicinePrescriptionService from "../../services/medicinePrescriptionService";
 import customerService from "../../services/customerService";
-import bookingService from "../../services/bookingServices";
 
 export default function Patient() {
 
@@ -30,7 +27,7 @@ export default function Patient() {
     }
 
     useEffect(() => {
-        console.log(idCustomer);
+        // console.log(idCustomer);
         if (idCustomer) {
             setShowModal(true);
         }
@@ -57,16 +54,16 @@ export default function Patient() {
                                     <thead className="text-dark fs-4">
                                         <tr>
                                             <th className="border-bottom-0">
-                                                <h6 className="fw-semibold mb-0">Patient ID</h6>
+                                                <h6 className="fw-semibold mb-0">ID</h6>
                                             </th>
                                             <th className="border-bottom-0">
-                                                <h6 className="fw-semibold mb-0">Full Name</h6>
+                                                <h6 className="fw-semibold mb-0">Họ tên</h6>
                                             </th>
                                             <th className="border-bottom-0">
-                                                <h6 className="fw-semibold mb-0">Phone</h6>
+                                                <h6 className="fw-semibold mb-0">Số ĐT</h6>
                                             </th>
                                             <th className="border-bottom-0">
-                                                <h6 className="fw-semibold mb-0">Age</h6>
+                                                <h6 className="fw-semibold mb-0">Tuổi</h6>
                                             </th>
                                             <th className="border-bottom-0 text-center">
                                                 <h6 className="fw-semibold mb-0">Actions</h6>
@@ -83,7 +80,6 @@ export default function Patient() {
                                                         <h6 className="fw-semibold mb-0">{count}</h6>
                                                     </td>
                                                     <td className="border-bottom-0">
-                                                        {/* <h6 className="fw-semibold mb-1">{item?.customer?.user?.fullName}</h6> */}
                                                         <span className="fw-normal">{item?.fullName}</span>
                                                     </td>
                                                     <td className="border-bottom-0">
@@ -124,8 +120,6 @@ export default function Patient() {
             </div>
 
             <ModalHistoryExam showModal={showModal} closeModal={handleCloseModal} idCustomer={idCustomer}  />
-
-
 
         </>
     )
