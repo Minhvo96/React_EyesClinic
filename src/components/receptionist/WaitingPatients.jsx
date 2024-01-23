@@ -206,8 +206,8 @@ export default function WaitingPatients() {
   }, [defaultDate, reRender])
 
   useEffect(() => {
-    getTodayDate(),
-      getAllEyeCategories()
+    getTodayDate();
+    getAllEyeCategories()
   }, [])
 
   return (

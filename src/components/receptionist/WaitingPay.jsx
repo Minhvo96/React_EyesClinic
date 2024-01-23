@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react'
 import bookingService from '../../services/bookingServices';
 import medicinePrescriptionService from '../../services/medicinePrescriptionService';
 import billService from '../../services/billService';
+import Swal from 'sweetalert2'
+
 import './waiting.css'
+import { toast } from 'react-toastify';
+
 import { useAuthContext } from '../../context/AuthProvider';
 
 export default function WaitingPay() {
@@ -66,6 +70,11 @@ export default function WaitingPay() {
     try {
       const response = await billService.createBill(newBill);
       console.log('Bill saved successfully:', response);
+
+      toast.success("Cập nhật hóa đơn thành công", {
+        position: toast.POSITION.TOP_RIGHT
+    });
+
       const updatedBookings = bookingIds.map((billBooking) => {
         if (billBooking.id === item.idBooking) {
           return {
