@@ -74,6 +74,7 @@ const ModalHistoryExam = ({ showModal, closeModal, idCustomer }) => {
     }, [customer]);
 
     const openModalDetail = (item) => {
+        console.log(item);
         setBooking(item);
     }
 
