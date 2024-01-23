@@ -91,21 +91,20 @@ export default function Assistant() {
         <>
             {
                 loading ? (<span class="loader"></span>) :
-                    <div className='container-fluid d-flex'>
-                        <div className='d-flex row'>
-                            <div className="container">
+                    <div className='container-fluid'>
+                                                 
                                 <div>
                                     <div className="d-flex align-items-center justify-content-between">
-                                        <h5 className="card-title fw-semibold mb-4">Đo thị lực</h5>
+                                        <h5 className="card-title fw-semibold mb-4 fs-6">Đo thị lực</h5>
                                     </div>
-                                    <div style={{ width: '80%', marginLeft: 140 }}>
+                                    <div style={{ width: '80%', marginLeft: 100 }}>
                                         <StepProgressBar eyeSightValues={eyeSightValues} />
                                     </div>
                                 </div>
-                                <div className="d-flex mt-5">
-                                    <div className="col-lg-8 d-flex align-items-around" style={{ padding: 0 }}>
+                                <div className="d-flex row ml-1 mt-5 gap-5">
+                                    <div className="col-lg-7 d-flex align-items-around" style={{ padding: 0 }}>
                                         <div className="card w-100" style={{ '--bs-card-box-shadow': 'rgb(171 145 145) 0px 0px 2px 0px, rgb(171 145 145) 0px 12px 24px -4px', }}>
-                                            <div className="card-body p-4 d-flex justify-content-center">
+                                            <div className="card-body p-4 d-flex justify-content-center align-items-center">
                                                 <div className="text-center d-flex align-items-center" style={{ flexDirection: "column", position: 'relative' }}>
                                                     <div>
                                                         <span className="font-weight-bold">Thị lực mắt phải</span>
@@ -116,7 +115,7 @@ export default function Assistant() {
                                                             {...registerPrescription('rightEye')} name="rightEye" style={{ width: '100%' }}
                                                             onInput={handleChangeEyeSight} />
                                                         <span className="invalid-feedback">{errorsPrescription?.rightEye?.message}</span>
-                                                        <div style={{ position: 'absolute', top: `${errorsPrescription?.rightEye ? '36%' : '50%'}`, right: '70px', transform: 'translateY(-50%)' }}>
+                                                        <div style={{ position: 'absolute', top: `${errorsPrescription?.rightEye ? '36%' : '50%'}`, right: '50px', transform: 'translateY(-50%)' }}>
                                                             /&ensp;10
                                                         </div>
                                                     </div>
@@ -131,7 +130,7 @@ export default function Assistant() {
                                                             {...registerPrescription('leftEye')} name="leftEye" style={{ width: '100%' }}
                                                             onInput={handleChangeEyeSight} />
                                                         <span className="invalid-feedback">{errorsPrescription?.leftEye?.message}</span>
-                                                        <div style={{ position: 'absolute', top: `${errorsPrescription?.leftEye ? '36%' : '50%'}`, right: '70px', transform: 'translateY(-50%)' }}>
+                                                        <div style={{ position: 'absolute', top: `${errorsPrescription?.leftEye ? '36%' : '50%'}`, right: '50px', transform: 'translateY(-50%)' }}>
                                                             /&ensp;10
                                                         </div>
                                                     </div>
@@ -142,7 +141,7 @@ export default function Assistant() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-lg-4 d-flex align-items-around text-center ml-5" style={{ padding: 0 }}>
+                                    <div className="col-lg-4 d-flex align-items-around text-center" style={{ padding: 0 }}>
                                         <div className="card w-100" style={{ '--bs-card-box-shadow': 'rgb(171 145 145) 0px 0px 2px 0px, rgb(171 145 145) 0px 12px 24px -4px', }}>
                                             <div className="card-body p-4">
                                                 <p className="font-weight-bold">Thông tin bệnh nhân</p>
@@ -151,7 +150,7 @@ export default function Assistant() {
                                                     <p style={{ fontWeight: 'bold' }} readOnly>{booking?.customer?.user?.fullName}</p>
                                                 </div>
                                                 <div>
-                                                    <label htmlFor="basic-url" className="form-label">Tuổi:</label>
+                                                    <label htmlFor="basic-url" className="form-label">Năm sinh:</label>
                                                     <div className="input-group mb-3">
                                                         <input type="text" className="form-control text-center" id="basic-url" aria-describedby="basic-addon3" readOnly value={booking?.customer?.age} />
                                                     </div>
@@ -168,8 +167,7 @@ export default function Assistant() {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                            
                     </div>
             }
         </>
