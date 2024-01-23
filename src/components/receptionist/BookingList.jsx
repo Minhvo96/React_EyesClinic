@@ -25,6 +25,7 @@ export default function BookingList() {
     const [timesFreeBooking, setTimesFreeBooking] = useState([])
     const [minDate, setMinDate] = useState();
     const [loading, setLoading] = useState(true);
+    const [render, setRender] = useState(false)
 
     const getTodayDate = () => {
         const today = new Date();
@@ -291,9 +292,7 @@ export default function BookingList() {
     }
 
     useEffect(() => {
-        // if (bookingList.length > 0) {
-        //     setLoading(false);
-        // }
+        
         setBookingListByTime(bookingList);
     }, [bookingList])
 
@@ -304,8 +303,16 @@ export default function BookingList() {
     useEffect(() => {
         getAllEyeCategories();
         getTodayDate();
-        UsingWebSocket();
+        UsingWebSocket(setRender, render);
     }, [])
+
+    useEffect(() => {
+        if (defaultDate) {
+            getAllBookingList()
+            console.log(render);
+        }
+        
+    },[render])
 
     useEffect(() => {
         if (defaultDate) {

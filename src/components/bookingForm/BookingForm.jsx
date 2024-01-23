@@ -77,12 +77,6 @@ export default function BookingForm() {
             age: data.age
         }
         const idCustomer = await userService.createUser(user)
-        if(!Number(idCustomer)){
-            toast.error("Hãy kiểm tra lại số điện thoại!", {
-                position: toast.POSITION.TOP_RIGHT
-            });
-            return;
-        }
 
         const dateBooking = String(data.dateBooking);
         const formattedDate = moment(dateBooking).format('YYYY-MM-DD');
@@ -139,12 +133,11 @@ export default function BookingForm() {
         const targetElement = Object.keys(frequencyCount).filter(
             (num) => frequencyCount[num] === targetFrequency
         );
-
-        const timesPendingLimitNew = [...timesPendingLimit, targetElement]
+        
+        const timesPendingLimitNew = [...timesPendingLimit, ...targetElement]
         console.log(timesPendingLimitNew);
+
         setTimesPendingLimit(timesPendingLimitNew)
-
-
 
         const currentDate = new Date();
         const hours = currentDate.getHours();
