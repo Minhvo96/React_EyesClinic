@@ -133,12 +133,11 @@ export default function BookingForm() {
         const targetElement = Object.keys(frequencyCount).filter(
             (num) => frequencyCount[num] === targetFrequency
         );
-
-        const timesPendingLimitNew = [...timesPendingLimit, targetElement]
+        
+        const timesPendingLimitNew = [...timesPendingLimit, ...targetElement]
         console.log(timesPendingLimitNew);
+
         setTimesPendingLimit(timesPendingLimitNew)
-
-
 
         const currentDate = new Date();
         const hours = currentDate.getHours();

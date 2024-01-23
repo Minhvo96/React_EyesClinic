@@ -77,6 +77,8 @@ export default function WaitingPatients() {
 
     reset()
     setReRender(true)
+    document.getElementById('btn-submit').add
+
   }
 
   const getAllEyeCategories = async () => {
@@ -102,7 +104,6 @@ export default function WaitingPatients() {
     };
     const bookingsPending = await bookingService.getBookingByStatusWaitingOrExaminingAndDate(newBooking);
     setBookingList(bookingsPending);
-
     setLoading(false);
   }
 
@@ -209,7 +210,6 @@ export default function WaitingPatients() {
       getAllEyeCategories()
   }, [])
 
-
   return (
     <>
       <div className="container-fluid">
@@ -232,7 +232,7 @@ export default function WaitingPatients() {
                 </div>
               </div>
               {
-                loading ? (<span class="loader"></span>) :
+                loading ? (<span className="loader"></span>) :
                   bookingList.length ?
                     <>
                       <table className="table text-nowrap mb-0 align-middle">
@@ -376,7 +376,7 @@ export default function WaitingPatients() {
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => reset()} >Đóng</button>
-                <button type="button" className="btn btn-primary" onClick={handleSubmit(handleSubmitForm)}>Đặt lịch</button>
+                <button type="button" id='btn-submit' className="btn btn-primary" onClick={handleSubmit(handleSubmitForm)}  data-dismiss="modal">Đặt lịch</button>
               </div>
             </form>
           </div>

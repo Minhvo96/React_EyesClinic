@@ -35,6 +35,11 @@ export default function Navbar() {
                             </Link>
                         </li>                      
                         <li className="nav-item">
+                            <Link to="/waiting-list" className="nav-link">
+                                HÀNG CHỜ
+                            </Link>
+                        </li>                      
+                        <li className="nav-item">
                             <Link to="/services" className="nav-link">
                                 DỊCH VỤ
                             </Link>
