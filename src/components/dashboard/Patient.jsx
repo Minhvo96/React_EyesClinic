@@ -40,6 +40,7 @@ export default function Patient() {
 
     return (
         <>
+            <div className="container-fluid">
             <div>
                 <div className="d-flex align-items-center justify-content-between">
                     <h5 className="card-title fw-semibold mb-4">Danh sách bệnh nhân</h5>
@@ -123,7 +124,9 @@ export default function Patient() {
                     </div>
                 </div>
             </div>
-            
+            </div>
+           
+
             <ModalHistoryExam showModal={showModal} closeModal={handleCloseModal} idCustomer={idCustomer}  />
 
         </>
