@@ -1,28 +1,21 @@
 import SockJS from "sockjs-client";
 import 'react-toastify/dist/ReactToastify.css';
-import { toast } from "react-toastify";
 import { Stomp } from '@stomp/stompjs';
 
-function UsingWebSocket (callback, value) {
+function UsingWebSocket2 (callback) {
     const url = 'http://localhost:8080/ws';
         const socket = new SockJS(url);
         const stompClient = Stomp.over(socket); 
 
         const onMessage = (message) => {
-            console.log('Received message:', message.body);
-            
-            toast.success(JSON.parse(message.body).content, {
-                position: toast.POSITION.TOP_RIGHT
-            });
-
-            callback(!value);
-
+            console.log('Received message:', JSON.parse(message.body).contents);
+            callback(JSON.parse(message.body).contents)
         };
 
         stompClient.connect({}, () => {
             console.log("SOCKET Connected");
 
-            stompClient.subscribe('/topic/publicChatRoom', onMessage);
+            stompClient.subscribe('/topic/publicContent', onMessage);
         }, (error) => {
             console.error('WebSocket error:', error);
         });
@@ -32,4 +25,4 @@ function UsingWebSocket (callback, value) {
         };
 }
 
-export default UsingWebSocket;
+export default UsingWebSocket2;

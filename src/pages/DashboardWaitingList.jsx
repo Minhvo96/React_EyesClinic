@@ -4,7 +4,7 @@ const WaitingPatients = lazy(() => import('../components/receptionist/WaitingPat
 const StyleDashboard = lazy(() => import('../layouts/StyleDashboard'))
 function DashboardWaitingPatients() {
     return (
-        <StyleDashboard children={<WaitingPatients/>}/>       
+        <StyleDashboard children={<WaitingPatients />}/>       
     )
 }
 

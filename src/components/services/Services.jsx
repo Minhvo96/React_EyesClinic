@@ -16,7 +16,8 @@ export default function Services() {
                     <div className="col-md-3 d-flex align-self-stretch ftco-animate">
                         <div className="media block-6 services d-block text-center">
                             <div className="icon d-flex justify-content-center align-items-center">
-                                <span className="flaticon-tooth-1" />
+                                {/* <span className="flaticon-tooth-1" /> */}
+                                <img src="https://vuakinh.com/wp-content/uploads/2023/10/kham-mat-02.jpg" style={{width: 100, borderRadius: 50}} />
                             </div>
                             <div className="media-body p-2 mt-3">
                                 <h3 className="heading">Khám mắt tổng quát</h3>
@@ -31,7 +32,7 @@ export default function Services() {
                     <div className="col-md-3 d-flex align-self-stretch ftco-animate">
                         <div className="media block-6 services d-block text-center">
                             <div className="icon d-flex justify-content-center align-items-center">
-                                <span className="flaticon-dental-care" />
+                               <img src="https://matvietnga.com/pic/QA/pic-QA-im_637298259873998740.png"  style={{width: 100, borderRadius: 50}}/>
                             </div>
                             <div className="media-body p-2 mt-3">
                                 <h3 className="heading">Sử dụng OrthoK</h3>
@@ -45,7 +46,7 @@ export default function Services() {
                     <div className="col-md-3 d-flex align-self-stretch ftco-animate">
                         <div className="media block-6 services d-block text-center">
                             <div className="icon d-flex justify-content-center align-items-center">
-                                <span className="flaticon-tooth-with-braces" />
+                                <img src="https://sft.vn/wp-content/uploads/2021/01/kinh-ap-trong-can-thi-06-thang-1.jpg" style={{width: 100, borderRadius: 50}} />
                             </div>
                             <div className="media-body p-2 mt-3">
                                 <h3 className="heading">Làm kính áp tròng</h3>
@@ -59,7 +60,7 @@ export default function Services() {
                     <div className="col-md-3 d-flex align-self-stretch ftco-animate">
                         <div className="media block-6 services d-block text-center">
                             <div className="icon d-flex justify-content-center align-items-center">
-                                <span className="flaticon-anesthesia" />
+                                <img src="https://www.matsaigon.com/wp-content/uploads/2019/07/kham-mat.jpg" style={{width: 100, borderRadius: 50}} />
                             </div>
                             <div className="media-body p-2 mt-3">
                                 <h3 className="heading">Chẩn đoán kỹ thuật cao</h3>
