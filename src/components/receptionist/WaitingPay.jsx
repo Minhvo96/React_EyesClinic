@@ -58,7 +58,7 @@ export default function WaitingPay() {
   const saveBill = async (item) => {
     const newBill = {
       idPrescription: item.id,
-      idReceptionist: item.idDoctor,
+      idReceptionist: item.doctor.id,
       idBooking: item.idBooking,
       totalPrice: item.totalAmount,
     };

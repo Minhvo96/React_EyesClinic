@@ -12,7 +12,7 @@ const ModalExamDetail = ({ showModal, closeModal, booking }) => {
         const idPrescription = await medicinePrescriptionService.getPrescriptionByIdBooking(id);
         const prescriptionDetail = await medicinePrescriptionService.getShowDetailPrescription(idPrescription);
 
-        setPrescriptionDetail(prescriptionDetail)
+        setPrescriptionDetail(prescriptionDetail);
         console.log(prescriptionDetail);
     }
 
@@ -20,12 +20,11 @@ const ModalExamDetail = ({ showModal, closeModal, booking }) => {
         if (Object.keys(booking).length) {
             getPrescriptionByIdBooking(booking.id);
         }
-
     }, [booking]);
 
 
     return (
-        <Modal show={showModal} onHide={closeModal} size='lg' centered className="bg-dark bg-opacity-50">
+        <Modal show={showModal} onHide={closeModal} size='xl' centered className="bg-dark bg-opacity-50">
             <Modal.Header closeButton>
                 <Modal.Title className="ms-4">Lịch sử khám bệnh</Modal.Title>
             </Modal.Header>
@@ -134,28 +133,28 @@ const ModalExamDetail = ({ showModal, closeModal, booking }) => {
                                             </tr>
                                         </thead>
                                         <tbody>
-
-                                            {prescriptionDetail?.idsMedicine && prescriptionDetail.idsMedicine.length > 0 ? (
-                                                prescriptionDetail.idsMedicine.map((medicine, index) => (
+                                            
+                                            {prescriptionDetail?.medicines && prescriptionDetail.medicines.length > 0 ? (
+                                                (prescriptionDetail.medicines).map((medicine, index) => (
                                                     <tr key={index + 1}>
                                                         {/* <td class="border p-2">{index + (selectedBooking?.eyeCategories ? selectedBooking.eyeCategories.length : 0) + (selectedBooking?.eyeCategory ? 2 : 1)}</td> */}
                                                         <td className="border-bottom-0">
-                                                            <h6 className="fw-semibold mb-1">{`${medicine.split(",")[0]}`}</h6>
+                                                            <h6 className="fw-semibold mb-1">{medicine?.nameMedicine}</h6>
                                                         </td>
                                                         <td className="border-bottom-0">
-                                                            <h6 className="fw-semibold mb-1">{`${medicine.split(",")[3]}`}</h6>
+                                                            <h6 className="fw-semibold mb-1">{medicine?.type}</h6>
                                                         </td>
                                                         <td className="border-bottom-0">
-                                                            <h6 className="fw-semibold mb-1">{`${medicine.split(",")[1]}`}</h6>
+                                                            <h6 className="fw-semibold mb-1">{medicine?.quantity}</h6>
                                                         </td>
                                                         <td className="border-bottom-0">
-                                                            <h6 className="fw-semibold mb-1">{`${medicine.split(",")[2]}`}</h6>
+                                                            <h6 className="fw-semibold mb-1">{medicine?.priceMedicine}</h6>
                                                         </td>
                                                         <td class="border-bottom-0">
-                                                            <h6 className="fw-semibold mb-1">{parseFloat(medicine.split(",")[1]) * parseFloat(medicine.split(",")[2])} đ</h6>
+                                                            <h6 className="fw-semibold mb-1">{medicine?.quantity * medicine?.priceMedicine } đ</h6>
                                                         </td>
                                                         <td className="border-bottom-0 text-center">
-                                                            <h6 className="mb-0 fw-semibold">{`${medicine.split(",")[4]}`}</h6>
+                                                            <h6 className="mb-0 fw-semibold">{medicine?.useMedicine +", " + medicine?.noteMedicine}</h6>
                                                         </td>
                                                     </tr>
                                                 ))
