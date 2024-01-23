@@ -29,8 +29,11 @@ export default function Doctor() {
     const [medicines, setMedicines] = useState([]);
     const [diseases, setDiseases] = useState([]);
     const [selectedMedicines, setSelectedMedicines] = useState([]);
+
     const [quantityInput, setQuantityInput] = useState({});
     const [usingMedicine, setUsingMedicine] = useState({});
+    const [noteMedicine, setNoteMedicine] = useState({});
+
     const [medicineStatus, setMedicineStatus] = useState(false);
     const [diagnoseInputs, setDiagnoseInputs] = useState();
     const [prescription, setPrescription] = useState({});
@@ -56,8 +59,12 @@ export default function Doctor() {
 
     const getPrescriptionByBookingId = async () => {
         const prescription = await prescriptionService.getPrescriptionByBookingId(bookingId);
-        setPrescriptionById(prescription);
-        setLoading(false);
+        if (prescription.eyeSight == null) {
+            setLoading(false);
+        } else {
+            setPrescriptionById(prescription);
+            setLoading(false);
+        }
     }
 
     const handleAddDisease = () => {
@@ -81,7 +88,8 @@ export default function Doctor() {
         const idsMedicine = selectedMedicines.map(item => ({
             id: String(item.id),
             quantity: item.quantity,
-            usingMedicine: item.usingMedicine
+            usingMedicine: item.usingMedicine,
+            noteMedicine: item.noteMedicine
         }))
 
         Swal.fire({
@@ -141,7 +149,7 @@ export default function Doctor() {
     }, [])
 
     useEffect(() => {
-        if (Object.keys(prescriptionById).length) {
+        if (Object?.keys(prescriptionById)?.length) {
             const eyeSight = prescriptionById.eyeSight;
             setLeftEye(eyeSight.split(",")[0]);
             setRightEye(eyeSight.split(",")[1]);
@@ -158,7 +166,7 @@ export default function Doctor() {
 
     const handleAddMedicines = (item) => {
         setSearchString({});
-        setSelectedMedicines([...selectedMedicines, { id: item.id, nameMedicine: item.nameMedicine, quantity: quantityInput[item.id] || '', usingMedicine: usingMedicine[item.id] || '' }]);
+        setSelectedMedicines([...selectedMedicines, { id: item.id, nameMedicine: item.nameMedicine, quantity: quantityInput[item.id] || '', usingMedicine: usingMedicine[item.id] || '', noteMedicine: noteMedicine[item.id] || '' }]);
     }
 
     const handleOnSelect = (item) => {
@@ -203,6 +211,22 @@ export default function Doctor() {
         const index = selectedMedicines.findIndex(medicine => medicine.id == id);
 
         const updateNewMedicine = { ...updatedMedicine, usingMedicine: updatedInputs[id] };
+        const newSelectedMedicines = [...selectedMedicines];
+        newSelectedMedicines[index] = updateNewMedicine;
+
+        setSelectedMedicines([...newSelectedMedicines]);
+    }
+
+    const handleChangeNoteMedicine = (id, e) => {
+        const updatedInputs = { ...noteMedicine, [id]: e.target.value };
+        setNoteMedicine(updatedInputs);
+
+        const updatedMedicines = selectedMedicines.filter(medicine => medicine.id == id);
+        const updatedMedicine = updatedMedicines[0];
+
+        const index = selectedMedicines.findIndex(medicine => medicine.id == id);
+
+        const updateNewMedicine = { ...updatedMedicine, noteMedicine: updatedInputs[id] };
         const newSelectedMedicines = [...selectedMedicines];
         newSelectedMedicines[index] = updateNewMedicine;
 
@@ -262,13 +286,14 @@ export default function Doctor() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className='d-flex row mt-4'>
+                                        <div className='d-flex row mt-2'>
                                             <div className="col-6">
                                                 <label htmlFor="basic-url" className="form-label">Chẩn đoán bệnh :</label>
                                                 <div className="input-group mb-3">
                                                     <input type="text" className={`form-control ${errorsPrescription?.diagnose?.message ? 'is-invalid' : ''}`}
                                                         {...registerPrescription('diagnose')}
-                                                        id="basic-url" aria-describedby="basic-addon3" placeholder='...' name="diagnose" onChange={handleChangePrescription} />
+                                                        id="basic-url" aria-describedby="basic-addon3" placeholder='...' name="diagnose" onChange={handleChangePrescription}
+                                                        style={{ borderRadius: "0.5rem" }} />
                                                     <span className="invalid-feedback">{errorsPrescription?.diagnose?.message}</span>
                                                 </div>
                                             </div>
@@ -300,10 +325,10 @@ export default function Doctor() {
                                                 </label>
                                             </div>
                                         </div>
-                                        <div className='d-flex row mt-4'>
+                                        <div className='d-flex row mt-4 mb-2'>
                                             <div className="col-12">
                                                 <label htmlFor="basic-url" className="form-label">Ghi chú :</label>
-                                                <div className="input-group mb-3">
+                                                <div className="input-group mb-0">
                                                     <input type="text" className="form-control" id="basic-url" aria-describedby="basic-addon3" placeholder='...' name="note" onChange={handleChangePrescription} />
                                                 </div>
                                             </div>
@@ -316,6 +341,7 @@ export default function Doctor() {
                                                         <th scope="col">Tên thuốc</th>
                                                         <th scope="col">Số lượng</th>
                                                         <th scope="col">Cách dùng</th>
+                                                        <th scope="col">Ghi chú</th>
                                                         <th scope="col">Xóa thuốc</th>
                                                     </tr>
                                                 </thead>
@@ -327,12 +353,13 @@ export default function Doctor() {
                                                         <td>{selectedMedicine.nameMedicine}</td>
                                                         <td>{selectedMedicine.quantity}</td>
                                                         <td>{selectedMedicine.usingMedicine}</td>
+                                                        <td>{selectedMedicine.noteMedicine}</td>
                                                         <td><i className="fa-solid fa-trash icon" onClick={() => handleDeleteMedicine(selectedMedicine.id)}></i></td>
                                                     </tr>
                                                 ))}
                                             </tbody>
                                         </table>
-                                        <button type="button" className="btn btn-secondary rounded-0 py-3 px-5" onClick={handleShowInputSearchMedicine}>
+                                        <button type="button" className="btn btn-secondary p-2 mb-2" onClick={handleShowInputSearchMedicine} style={{ borderRadius: "0.5rem" }}>
                                             Chọn thuốc
                                         </button>
                                         <div>
@@ -355,26 +382,33 @@ export default function Doctor() {
                                                     <input className='form-control col-3' defaultValue={searchString.nameMedicine} readOnly />
                                                     <input
                                                         type="text"
-                                                        placeholder="Nhập số lượng thuốc..."
-                                                        className='form-control col-3'
+                                                        placeholder="Số lượng"
+                                                        className='form-control col-2'
                                                         defaultValue={quantityInput[searchString.id] || ''}
                                                         onChange={(e) => handleChangeQuantity(searchString.id, e)}
                                                     />
                                                     <input
                                                         type="text"
-                                                        placeholder="Nhập HDSD thuốc..."
+                                                        placeholder="HDSD thuốc..."
                                                         className='form-control col-3'
                                                         defaultValue={usingMedicine[searchString.id] || ''}
                                                         onChange={(e) => handleChangeUsingMedicine(searchString.id, e)}
                                                     />
-                                                    <button type='button' className='form-control col-3' onClick={() => handleAddMedicines(searchString)}>Thêm thuốc</button>
+                                                     <input
+                                                        type="text"
+                                                        placeholder="Ghi chú..."
+                                                        className='form-control col-3'
+                                                        defaultValue={noteMedicine[searchString.id] || ''}
+                                                        onChange={(e) => handleChangeNoteMedicine(searchString.id, e)}
+                                                    />
+                                                    <button type='button' className='form-control col-1' onClick={() => handleAddMedicines(searchString)}>Thêm</button>
                                                 </div>
                                             }
                                         </div>
                                         <div className='d-flex row mt-4 text-end'>
                                             <div>
-                                                <button type="button" className="btn btn-primary rounded-0" onClick={handleSubmitPrescription(handleAddPrescription)}>Lưu bệnh án</button>
-                                                <button type="button" className="btn btn-danger ml-2 rounded-0" onClick={() => resetPrescription()}>Hủy thao tác</button>
+                                                <button type="button" className="btn btn-primary" onClick={handleSubmitPrescription(handleAddPrescription)}>Lưu bệnh án</button>
+                                                <button type="button" className="btn btn-danger ml-2" onClick={() => resetPrescription()}>Hủy thao tác</button>
                                             </div>
                                         </div>
                                     </form>

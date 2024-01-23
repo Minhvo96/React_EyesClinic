@@ -45,6 +45,7 @@ export default function BookingList() {
         };
         const bookingsPending = await bookingService.getBookingByStatusPendingAndDate(newBooking);
         setBookingList(bookingsPending);
+        setLoading(false);
     }
 
     const handleChangeListByDate = async (e) => {
@@ -290,9 +291,9 @@ export default function BookingList() {
     }
 
     useEffect(() => {
-        if (bookingList.length > 0) {
-            setLoading(false);
-        }
+        // if (bookingList.length > 0) {
+        //     setLoading(false);
+        // }
         setBookingListByTime(bookingList);
     }, [bookingList])
 
@@ -307,9 +308,9 @@ export default function BookingList() {
     }, [])
 
     useEffect(() => {
-        if(defaultDate) {
+        if (defaultDate) {
             getAllBookingList()
-        } 
+        }
     }, [defaultDate])
 
     const [currentPage, setCurrentPage] = useState(0);
@@ -329,26 +330,36 @@ export default function BookingList() {
     return (
         <>
             <div className="container-fluid" >
-                <div className='d-flex mb-5 align-items-center justify-content-between'>
-                    <div className='d-flex align-items-center'>
-                        <h6 className='mr-3'>Chọn ngày: </h6>
-                        <div className='col-7 '>
-                            <input type="date" className='form-control' defaultValue={defaultDate} onChange={handleChangeListByDate} min={defaultDate} />
-                        </div>
-                    </div>
-                    <div className='d-flex align-items-center gap-4'>
-                        <div>
-                            <button className='btn btn-outline-primary' onClick={() => handleChangeListBookingByTime('all')}>Tất cả</button>
-                        </div>
-                        <div>
-                            <button className='btn btn-outline-primary' onClick={() => handleChangeListBookingByTime('morning')}>Sáng</button>
-                        </div>
-                        <div>
-                            <button className='btn btn-outline-primary' onClick={() => handleChangeListBookingByTime('afternoon')}>Chiều</button>
+                <div className="d-flex align-items-center justify-content-between">
+                    <h5 className="card-title fw-semibold mb-4">Danh sách hẹn khám</h5>
+                </div>
+                <div className="col-lg-12 d-flex align-items-around" style={{ padding: 0 }}>
+                    <div className="card w-100">
+                        <div className="card-body p-4">
+                            <div className='d-flex align-items-center justify-content-between'>
+                                <div className='d-flex align-items-center'>
+                                    <h6 className='mr-3'>Chọn ngày: </h6>
+                                    <div className='col-7 '>
+                                        <input type="date" className='form-control' defaultValue={defaultDate} onChange={handleChangeListByDate} min={defaultDate} />
+                                    </div>
+                                </div>
+                                <div className='d-flex align-items-center gap-4'>
+                                    <div>
+                                        <button className='btn btn-outline-primary' onClick={() => handleChangeListBookingByTime('all')}>Tất cả</button>
+                                    </div>
+                                    <div>
+                                        <button className='btn btn-outline-primary' onClick={() => handleChangeListBookingByTime('morning')}>Sáng</button>
+                                    </div>
+                                    <div>
+                                        <button className='btn btn-outline-primary' onClick={() => handleChangeListBookingByTime('afternoon')}>Chiều</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                {loading ? (<span class="loader"></span>) :
+                {
+                loading ? (<span className="loader"></span>) :
                     bookingListByTime.length ?
                         <>
                             <table className="table">
@@ -388,23 +399,24 @@ export default function BookingList() {
                                     }
                                 </tbody>
                             </table>
-                            <div className="pagination-container">
-                                <ReactPaginate
-                                    pageCount={Math.ceil(bookingList.length / appointmentsPerPage)}
-                                    pageRangeDisplayed={5} // Số lượng trang hiển thị
-                                    marginPagesDisplayed={2} // Số lượng trang được hiển thị ở đầu và cuối
-                                    onPageChange={handlePageChange}
-                                    containerClassName={'pagination'}
-                                    activeClassName={'active'}
-                                    previousLabel={'Previous'}
-                                    nextLabel={'Next'}
-                                    breakLabel={'...'}
-                                />
-                            </div>
                         </>
                         :
                         <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
                 }
+                <div className="pagination-container" >
+                    <ReactPaginate
+                        pageCount={Math.ceil(bookingList.length / appointmentsPerPage)}
+                        pageRangeDisplayed={5} // Số lượng trang hiển thị
+                        marginPagesDisplayed={2} // Số lượng trang được hiển thị ở đầu và cuối
+                        onPageChange={handlePageChange}
+                        containerClassName={'pagination'}
+                        activeClassName={'active'}
+                        previousLabel={'Previous'}
+                        nextLabel={'Next'}
+                        breakLabel={'...'}
+                    />
+                </div>
+
             </div>
             {/* <// Modal --> */}
             <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
