@@ -1,11 +1,28 @@
-import React, { lazy } from "react";
+import React, { lazy, useState } from "react";
+import customerService from "../services/customerService";
 
 const Sidebar = lazy(() => import("../components/dashboard/Sidebar"));
 
 const Header = lazy(() => import("../components/dashboard/Header"));
 
 function DashboardLayout({ children }) {
+
+    const [patientList, setPatientList] = useState([]);
+ 
+    const searchPatient = async (e) => {
+        if(e.target.value === ""){
+            const response = await customerService.getAllCustomers();
+            setPatientList(response);
+        } else {
+            const response = await customerService.searchCustomer(e.target.value);
+            setPatientList(response);
+        } 
+    }
     
+    const childrenWithProps = React.Children.map(children, (child) => {
+        return React.cloneElement(child, { patientList: patientList });
+      });
+
     return (
         <>
             <div
@@ -19,8 +36,8 @@ function DashboardLayout({ children }) {
             >            
                 <Sidebar />
                 <div className="body-wrapper">
-                    <Header />
-                    {children}
+                    <Header search={searchPatient}/>
+                    {childrenWithProps}
                 </div>
             </div>
         </>

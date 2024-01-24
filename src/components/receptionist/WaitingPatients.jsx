@@ -291,14 +291,26 @@ export default function WaitingPatients() {
                               })
                           }
                         </tbody>
-                      </table>
+                      </table>                      
                     </>
                     :
                     <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
               }
-
             </div>
           </div>
+        </div>
+        <div className="pagination-container" style={{ margin: 0,  display: 'flex', justifyContent: 'flex-end'}}>
+                  <ReactPaginate
+                    pageCount={Math.ceil(bookingList.length / appointmentsPerPage)}
+                    pageRangeDisplayed={5} // Số lượng trang hiển thị
+                    marginPagesDisplayed={2} // Số lượng trang được hiển thị ở đầu và cuối
+                    onPageChange={handlePageChange}
+                    containerClassName={'pagination'}
+                    activeClassName={'active'}
+                    previousLabel={'Previous'}
+                    nextLabel={'Next'}
+                    breakLabel={'...'}
+                  />
         </div>
 
        

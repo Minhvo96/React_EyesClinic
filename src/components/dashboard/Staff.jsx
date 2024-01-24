@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
-import addStyleDashboard from "../../AddStyleDashboard";
-import Header from "./Header";
-import Sidebar from "./Sidebar";
-import ModalMedicine from "./modal/ModalMedicine";
 import staffService from "../../services/staffService";
 import Swal from "sweetalert2";
+import ModalStaff from "./modal/ModalStaff";
 
 export default function Staff() {
 
     const [showModalStaff, setShowModalStaff] = useState(false);
     const [staffs, setStaffs] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const openModalStaff = () => {
         setShowModalStaff(true)
@@ -21,7 +19,8 @@ export default function Staff() {
 
     const getAllStaffs = async () => {
         const data = await staffService.getAllStaffs();
-        data.forEach(item => {
+        const users = data.filter(user => user.role !== "ROLE_ADMIN")
+        users.forEach(item => {
             if (item.role == 'ROLE_DOCTOR') {
                 item.role = 'Bác sĩ';
             }
@@ -44,7 +43,8 @@ export default function Staff() {
                 item.degree = 'Trung cấp';
             }
         })
-        setStaffs(data);
+        setStaffs(users);
+        setLoading(false);
     }
 
     useEffect(() => {
@@ -90,7 +90,7 @@ export default function Staff() {
                         </div>
                     </div>
                 </div>
-                <div className="col-lg-12 d-flex align-items-around" style={{ padding: 0 }}>
+                {loading ? (<span className="loader"></span>) : <div className="col-lg-12 d-flex align-items-around" style={{ padding: 0 }}>
                     <div className="card w-100">
                         <div className="d-flex ps-4 pt-4">
                             <span className="h5 fw-semibold">{staffs.length}</span>
@@ -102,7 +102,7 @@ export default function Staff() {
                                     <thead className="text-dark fs-4 text-center">
                                         <tr>
                                             <th className="border-bottom-0">
-                                                <h6 className="fw-semibold mb-0">#ID</h6>
+                                                <h6 className="fw-semibold mb-0">STT</h6>
                                             </th>
                                             <th className="border-bottom-0">
                                                 <h6 className="fw-semibold mb-0">Ảnh</h6>
@@ -198,9 +198,10 @@ export default function Staff() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>}
+
             </div>
-            <ModalMedicine showModal={showModalStaff} closeModal={closeModalStaff} />
+            <ModalStaff showModal={showModalStaff} closeModal={closeModalStaff} />
         </>
     )
 }

@@ -314,7 +314,7 @@ export default function BookingList() {
     }, [defaultDate])
 
     const [currentPage, setCurrentPage] = useState(0);
-    const appointmentsPerPage = 8;
+    const appointmentsPerPage = 5;
 
     const handlePageChange = (selectedPage) => {
         setCurrentPage(selectedPage.selected);
@@ -403,7 +403,7 @@ export default function BookingList() {
                         </div>
                     </div>
                 </div>
-                <div className="pagination-container" style={{ margin: 0,  display: 'flex', justifyContent: 'flex-end'}}>
+                <div className="pagination-container" style={{display: 'flex', justifyContent: 'flex-end'}}>
                     <ReactPaginate
                         pageCount={Math.ceil(bookingList.length / appointmentsPerPage)}
                         pageRangeDisplayed={5} // Số lượng trang hiển thị

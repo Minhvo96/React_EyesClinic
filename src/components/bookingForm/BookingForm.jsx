@@ -76,13 +76,7 @@ export default function BookingForm() {
             password: null,
             age: data.age
         }
-        const idCustomer = await userService.createUser(user)
-        if(!Number(idCustomer)){
-            toast.error("Hãy kiểm tra lại số điện thoại!", {
-                position: toast.POSITION.TOP_RIGHT
-            });
-            return;
-        }
+        const idCustomer = await userService.createUser(user);
 
         const dateBooking = String(data.dateBooking);
         const formattedDate = moment(dateBooking).format('YYYY-MM-DD');

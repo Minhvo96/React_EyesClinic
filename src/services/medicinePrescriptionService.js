@@ -34,17 +34,13 @@ const medicinePrescriptionService = {
                 console.log(error);
             });
     },
-    getPrescriptionByIdBooking: async (id) => {
-        
-        console.log("URL_API", URL_API);
+    getPrescriptionByIdBooking: async (id) => {       
         const response = await  axios
             .get(URL_API + '/' + id);
         return response.data
     },
 
-    getShowDetailPrescription: async (id) => {
-        
-        console.log("URL_API", URL_API);
+    getShowDetailPrescription: async (id) => {       
         const response = await  axios
             .get(URL_API + '/detail/' + id);
         return response.data

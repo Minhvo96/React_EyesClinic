@@ -258,19 +258,30 @@ export default function WaitingPay() {
                               </span>
                             </div>
                           </div>
-                          <div class="mt-8 row d-flex">
-                            <strong className='col-3'>Chẩn đoán:</strong>
-                            <span className='d-flex justify-content-start col-9'>
+                          <div class="mt-8 d-flex align-items-center row">
+                            <strong className='col-2'>Chẩn đoán:</strong>
+                            <span className='d-flex justify-content-center col-10'>
                               {selectedPrescription?.diagnose}
                             </span>
                           </div>
 
-                          <div class="mt-8 row d-flex" style={{ marginBottom: "30px" }}>
-                            <strong className='col-3'>Ghi chú: </strong>
-                            <span className='d-flex justify-content-start col-9'>
-                              {selectedPrescription?.note}
+                          <div class="mt-8 row d-flex">
+                            <strong className='col-2'>Bệnh phụ: </strong>
+                            <span className='d-flex justify-content-center align-items-center col-10'>
+                              {selectedPrescription?.note.split(",")[1] ? selectedPrescription?.note.split(",")[1]  : "" }
+                              {selectedPrescription?.note.split(",")[2] ? ", " + selectedPrescription?.note.split(",")[2] + ", " : "" }
+                              {selectedPrescription?.note.split(",")[3] ? selectedPrescription?.note.split(",")[3] : ""}
                             </span>
                           </div>
+
+                          <div class="mt-8 row d-flex" style={{ marginBottom: "30px" }}>
+                            <strong className='col-2'>Ghi chú: </strong>
+                            <span className='d-flex justify-content-center align-items-center col-10'>
+                              {selectedPrescription?.note.split(",")[0] || ""}
+                            </span>
+                          </div>
+
+                          
 
                           <div class="mt-8" style={{ marginBottom: "30px" }}>
                             <table class="border-collapse" style={{ width: "100%" }}>
@@ -344,22 +355,31 @@ export default function WaitingPay() {
                               <tbody>
                                 {selectedPrescription?.medicines && selectedPrescription.medicines.length > 0 ? (
                                   selectedPrescription.medicines.map((medicine, index) => (
-                                    <tr key={index + (selectedBooking?.eyeCategories ? selectedBooking.eyeCategories.length : 0) + (selectedBooking?.eyeCategory ? 2 : 1)}>
-                                      <td class="border p-2 text-center">{index + (selectedBooking?.eyeCategories ? selectedBooking.eyeCategories.length : 0) + (selectedBooking?.eyeCategory ? 1 : 0)}</td>
-                                      <td class="border p-2 text-center">{medicine?.nameMedicine}</td>
-                                      <td class="border p-2 text-center">{medicine?.type === "PELLET" ? "Viên" : "Chai"}</td>
-                                      <td class="border p-2 text-center">{medicine?.quantity}</td>
-                                      <td class="border p-2 text-center">{medicine?.priceMedicine.toLocaleString("vi-VN", {
-                                        style: "currency",
-                                        currency: "VND",
-                                        minimumFractionDigits: 0,
-                                      })}</td>
-                                      <td class="border p-2 text-center">{(medicine?.priceMedicine * medicine?.quantity).toLocaleString("vi-VN", {
-                                        style: "currency",
-                                        currency: "VND",
-                                        minimumFractionDigits: 0,
-                                      })}</td>
-                                    </tr>
+                                    <>
+                                      <tr key={index + (selectedBooking?.eyeCategories ? selectedBooking.eyeCategories.length : 0) + (selectedBooking?.eyeCategory ? 2 : 1)}>
+                                        <td class="border p-2 text-center">{index + (selectedBooking?.eyeCategories ? selectedBooking.eyeCategories.length : 0) + (selectedBooking?.eyeCategory ? 1 : 0)}</td>
+                                        <td class="border p-2 text-center">
+                                          <div className='d-flex justify-content-center align-items-center'>
+                                            <div>{medicine?.nameMedicine}</div>
+                                            <div style={{fontSize:"13px"}}><em>&nbsp;( {medicine?.useMedicine} - {medicine?.noteMedicine} )</em></div>
+                                          </div>
+                                        </td>
+                                        <td class="border p-2 text-center">{medicine?.type === "PELLET" ? "Viên" : "Chai"}</td>
+                                        <td class="border p-2 text-center">{medicine?.quantity}</td>
+                                        <td class="border p-2 text-center">{medicine?.priceMedicine.toLocaleString("vi-VN", {
+                                          style: "currency",
+                                          currency: "VND",
+                                          minimumFractionDigits: 0,
+                                        })}</td>
+                                        <td class="border p-2 text-center">{(medicine?.priceMedicine * medicine?.quantity).toLocaleString("vi-VN", {
+                                          style: "currency",
+                                          currency: "VND",
+                                          minimumFractionDigits: 0,
+                                        })}</td>
+                                      </tr>
+                                    </>
+                                    
+                                    
                                   ))
                                 ) : null}
                                 <tr>
