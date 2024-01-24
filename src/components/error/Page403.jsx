@@ -7,7 +7,7 @@ export default function Page403() {
   const navigate = useNavigate();
 
   const handleGoBack = () => {
-    navigate(-2)// Quay lại trang trước đó
+    navigate("/dashboard/waiting-list")// Quay lại trang trước đó
   };
   return (
     <>
