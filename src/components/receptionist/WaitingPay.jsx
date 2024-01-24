@@ -16,6 +16,7 @@ export default function WaitingPay() {
   const [prescriptions, setPrescriptions] = useState([]);
   const [bookingIds, setBookingIds] = useState([]);
   const [selectedPrescription, setSelectedPrescription] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const [selectedBooking, setSelectedBooking] = useState({
     id: '',
@@ -42,6 +43,8 @@ export default function WaitingPay() {
     } catch (error) {
       console.log(error);
     }
+
+    setLoading(false);
   };
 
   const showPrescriptionDetails = async (item) => {
@@ -72,7 +75,7 @@ export default function WaitingPay() {
 
       toast.success("Cập nhật hóa đơn thành công", {
         position: toast.POSITION.TOP_RIGHT
-    });
+      });
 
       const updatedBookings = bookingIds.map((billBooking) => {
         if (billBooking.id === item.idBooking) {
@@ -85,6 +88,7 @@ export default function WaitingPay() {
       });
 
       setBill(newBill);
+      setLoading(true);
       await getAllPrescriptionList();
       $(`#modal-${item.idBooking}`).modal('hide');
       $('.modal-backdrop').css("display", "none");
@@ -131,6 +135,7 @@ export default function WaitingPay() {
     return formattedDate;
   }
 
+
   return (
     <>
       <div className='container-fluid'>
@@ -141,75 +146,86 @@ export default function WaitingPay() {
         </div>
         <div className="card w-100">
           <div className="d-flex ps-4 pt-4">
-            <span className="h5 fw-semibold">10</span>
+            <span className="h5 fw-semibold">{bookingIds.length}</span>
             <p className="ms-1 fw-normal">hóa đơn</p>
           </div>
+
           <div className="card-body p-4">
-            {bookingIds.length ? (
-              <table className="table text-nowrap mb-0 align-middle">
-                <thead className="text-dark fs-3">
-                  <tr className='text-center'>
-                    <th>STT</th>
-                    <th>Họ và tên</th>
-                    <th>Số điện thoại</th>
-                    <th>Ngày khám</th>
-                    <th>Chi tiết hóa đơn</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {bookingIds.map((item, index) => {
-                    const count = index + 1;
-                    return (
-                      <tr key={item.id} className='text-center'>
-                        <td>{count}</td>
-                        <td>{item.customer.user.fullName}</td>
-                        <td>{item.customer.user.phoneNumber}</td>
-                        <td>{item.dateBooking}</td>
-                        <td>
-                          <div className="d-flex align-items-center justify-content-center">
-                            <button className="btn btn-outline-info d-flex align-items-center justify-content-center"
-                              style={{ width: "36px", height: "36px" }}
-                              type="button" data-toggle="modal" data-target={`#modal-${item.id}`} onClick={() => showPrescriptionDetails(item)}>
-                              <i className="ti ti-wallet" style={{ fontSize: "18px" }}></i>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            ) : (
-              <div>
-                <p>Danh sách đang trống</p>
-              </div>
-            )}
 
-            {bookingIds.map((item, index) => (
-              <div className="modal-frame" key={item.id}>
-                <div className="modal fade" id={`modal-${item.id}`} tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                  <div className="modal-dialog modal-xl modal-dialog-centered">
+            {
+              loading ? (<span class="loader"></span>) :
+                bookingIds.length ?
+                  <>
 
-                    {/* Modal content here */}
+                    <table className="table text-nowrap mb-0 align-middle">
+                      <thead className="text-dark fs-3">
+                        <tr className='text-center'>
+                          <th>STT</th>
+                          <th>Họ và tên</th>
+                          <th>Số điện thoại</th>
+                          <th>Ngày khám</th>
+                          <th>Chi tiết hóa đơn</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {bookingIds.map((item, index) => {
+                          const count = index + 1;
 
-                    <div class="modal-content">
-                      <div className='container-fluid'>
-                        <div class="d-flex align-items-center row">
-                          <div class="col-3 d-flex align-items-center justify-content-start">
-                            <div class="logo-container mt-4" style={{ marginLeft: '20px', marginTop: '200px' }}>
-                              <img src="../../images/logo2.png" alt="" class="logo" style={{ width: "240px" }} />
-                            </div>
-                          </div>
-                          <div className="col-6 flex justify-between">
-                            <div className="flex flex-col justify-center items-center" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginLeft: '20px', marginTop: '20px', marginRight: "20px" }}>
-                              <h1 className="" style={{ fontSize: '36px' }}>Phòng khám mắt Văn Minh</h1>
-                              <h1 className="" style={{ fontSize: '20px' }}>28 Lê Lợi - TP.Huế</h1>
-                              <h1 className="" style={{ fontSize: '20px' }}>ĐT: 0836.092.222</h1>
-                              <h1 className="" style={{ fontSize: '24px', fontWeight: "bolder" }}>Mã BN: {selectedBooking?.customer?.user?.phoneNumber}</h1>
-                            </div>
-                          </div>
-                          <div className='col-3' style={{ marginTop: '50px' }}>
-                            {/* <div className='d-flex align-items-center justify-content-around row mb-2'>
+                          return (
+                            <tr key={item.id} className='text-center'>
+                              <td>{count}</td>
+                              <td>{item.customer.user.fullName}</td>
+                              <td>{item.customer.user.phoneNumber}</td>
+                              <td>{item.dateBooking}</td>
+                              <td>
+                                <div className="d-flex align-items-center justify-content-center">
+                                  <button className="btn btn-outline-info d-flex align-items-center justify-content-center"
+                                    style={{ width: "36px", height: "36px" }}
+                                    type="button" data-toggle="modal" data-target={`#modal-${item.id}`} onClick={() => showPrescriptionDetails(item)}>
+                                    <i className="ti ti-wallet" style={{ fontSize: "18px" }}></i>
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </>
+                  :
+                  <div>
+                    <p>Danh sách đang trống</p>
+                  </div>
+
+            }
+
+            {
+              loading ? (<span class="loader"></span>) :
+                bookingIds.map((item, index) => (
+                  <div className="modal-frame" key={item.id}>
+                    <div className="modal fade" id={`modal-${item.id}`} tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div className="modal-dialog modal-xl modal-dialog-centered">
+
+                        {/* Modal content here */}
+
+                        <div class="modal-content">
+                          <div className='container-fluid'>
+                            <div class="d-flex align-items-center row">
+                              <div class="col-3 d-flex align-items-center justify-content-start">
+                                <div class="logo-container mt-4" style={{ marginLeft: '20px', marginTop: '200px' }}>
+                                  <img src="../../images/logo2.png" alt="" class="logo" style={{ width: "240px" }} />
+                                </div>
+                              </div>
+                              <div className="col-6 flex justify-between">
+                                <div className="flex flex-col justify-center items-center" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginLeft: '20px', marginTop: '20px', marginRight: "20px" }}>
+                                  <h1 className="" style={{ fontSize: '36px' }}>Phòng khám mắt Văn Minh</h1>
+                                  <h1 className="" style={{ fontSize: '20px' }}>28 Lê Lợi - TP.Huế</h1>
+                                  <h1 className="" style={{ fontSize: '20px' }}>ĐT: 0836.092.222</h1>
+                                  <h1 className="" style={{ fontSize: '24px', fontWeight: "bolder" }}>Mã BN: {selectedBooking?.customer?.user?.phoneNumber}</h1>
+                                </div>
+                              </div>
+                              <div className='col-3' style={{ marginTop: '50px' }}>
+                                {/* <div className='d-flex align-items-center justify-content-around row mb-2'>
                               <div className='col-5 d-flex align-items-center justify-content-center'>
                                 <h5>T2-T6:</h5>
                               </div>
@@ -222,20 +238,20 @@ export default function WaitingPay() {
                                 </div>
                               </div>
                             </div> */}
-                            <div className='d-flex align-items-center justify-content-around row mb-4'>
-                              <div className='col-5 d-flex align-items-center justify-content-center'>
-                                <h5>T2 - CN:</h5>
-                              </div>
-                              <div className='d-flex align-items-center justify-content-end col-7 gap-2' style={{ flexDirection: "column" }}>
-                                <div className='d-flex align-items-center justify-content-center mb-0'>
-                                  <p className='mb-0'>08:00-12:00</p>
+                                <div className='d-flex align-items-center justify-content-around row mb-4'>
+                                  <div className='col-5 d-flex align-items-center justify-content-center'>
+                                    <h5>T2 - CN:</h5>
+                                  </div>
+                                  <div className='d-flex align-items-center justify-content-end col-7 gap-2' style={{ flexDirection: "column" }}>
+                                    <div className='d-flex align-items-center justify-content-center mb-0'>
+                                      <p className='mb-0'>08:00-12:00</p>
+                                    </div>
+                                    <div className='d-flex align-items-center justify-content-center'>
+                                      <p className='mb-0'>14:00-18:00</p>
+                                    </div>
+                                  </div>
                                 </div>
-                                <div className='d-flex align-items-center justify-content-center'>
-                                  <p className='mb-0'>14:00-18:00</p>
-                                </div>
-                              </div>
-                            </div>
-                            {/* <div className='d-flex align-items-center justify-content-around row'>
+                                {/* <div className='d-flex align-items-center justify-content-around row'>
                               <div className='col-5 d-flex align-items-center justify-content-center'>
                                 <h5 className='mb-0'>CN & Lễ:</h5>
                               </div>
@@ -243,176 +259,177 @@ export default function WaitingPay() {
                                 <p className='mb-0'>08h30-11h30</p>
                               </div>
                             </div> */}
-                          </div>
-                        </div>
-                        <div class="modal-body">
-                          <div className='d-flex justify-content-center'>
-                            <h2 className='fw-bolder' style={{ fontSize: "44px" }}>
-                              ĐƠN THUỐC
-                            </h2>
-                          </div>
-                          <div className='row'>
-                            <div className='col-9 mt-8 row'>
-                              <strong className='col-4'>Họ và tên: </strong>
-                              <span className='col-8 d-flex justify-content-start '>
-                                {selectedBooking?.customer?.user?.fullName}
-                              </span>
+                              </div>
                             </div>
-                            <div className='col-3 mt-8 d-flex justify-content-end row'>
-                              <strong className='col-6'>Năm sinh:</strong>
-                              <span className='d-flex justify-content-center col-6'>
-                                {selectedBooking?.customer?.age}
-                              </span>
-                            </div>
-                          </div>
-                          <div class="mt-8 row d-flex">
-                            <strong className='col-3'>Chẩn đoán:</strong>
-                            <span className='d-flex justify-content-start col-9'>
-                              {selectedPrescription?.diagnose}
-                            </span>
-                          </div>
+                            <div class="modal-body">
+                              <div className='d-flex justify-content-center'>
+                                <h2 className='fw-bolder' style={{ fontSize: "44px" }}>
+                                  ĐƠN THUỐC
+                                </h2>
+                              </div>
+                              <div className='row'>
+                                <div className='col-9 mt-8 row'>
+                                  <strong className='col-4'>Họ và tên: </strong>
+                                  <span className='col-8 d-flex justify-content-start '>
+                                    {selectedBooking?.customer?.user?.fullName}
+                                  </span>
+                                </div>
+                                <div className='col-3 mt-8 d-flex justify-content-end row'>
+                                  <strong className='col-6'>Năm sinh:</strong>
+                                  <span className='d-flex justify-content-center col-6'>
+                                    {selectedBooking?.customer?.age}
+                                  </span>
+                                </div>
+                              </div>
+                              <div class="mt-8 row d-flex">
+                                <strong className='col-3'>Chẩn đoán:</strong>
+                                <span className='d-flex justify-content-start col-9'>
+                                  {selectedPrescription?.diagnose}
+                                </span>
+                              </div>
 
-                          <div class="mt-8 row d-flex" style={{ marginBottom: "30px" }}>
-                            <strong className='col-3'>Ghi chú: </strong>
-                            <span className='d-flex justify-content-start col-9'>
-                              {selectedPrescription?.note}
-                            </span>
-                          </div>
+                              <div class="mt-8 row d-flex" style={{ marginBottom: "30px" }}>
+                                <strong className='col-3'>Ghi chú: </strong>
+                                <span className='d-flex justify-content-start col-9'>
+                                  {selectedPrescription?.note}
+                                </span>
+                              </div>
 
-                          <div class="mt-8" style={{ marginBottom: "30px" }}>
-                            <table class="border-collapse" style={{ width: "100%" }}>
-                              <thead>
-                                <tr>
-                                  <th class="border p-2 text-center"></th>
-                                  <th class="border p-2 text-center">Thị lực</th>
-                                  <th class="border p-2 text-center">Mắt phải</th>
-                                  <th class="border p-2 text-center">Mắt trái</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr>
-                                  <td class="border p-2 text-center">MP</td>
-                                  <td class="border p-2 text-center">{selectedPrescription?.eyeSight
-                                    ? selectedPrescription.eyeSight[0] + "/10"
-                                    : null}</td>
-                                  <td rowSpan={3} className='border p-2 text-center'>
-                                    <i class="fa-solid fa-eye" style={{ fontSize: "60px" }}></i>
-                                  </td>
-                                  <td rowSpan={3} className='border p-2 text-center'>
-                                    <i class="fa-solid fa-eye" style={{ fontSize: "60px" }}></i>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td class="border p-2 text-center">MT</td>
-                                  <td class="border p-2 text-center">{selectedPrescription?.eyeSight
-                                    ? selectedPrescription.eyeSight[3] + "/10"
-                                    : null}</td>
+                              <div class="mt-8" style={{ marginBottom: "30px" }}>
+                                <table class="border-collapse" style={{ width: "100%" }}>
+                                  <thead>
+                                    <tr>
+                                      <th class="border p-2 text-center"></th>
+                                      <th class="border p-2 text-center">Thị lực</th>
+                                      <th class="border p-2 text-center">Mắt phải</th>
+                                      <th class="border p-2 text-center">Mắt trái</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td class="border p-2 text-center">MP</td>
+                                      <td class="border p-2 text-center">{selectedPrescription?.eyeSight
+                                        ? selectedPrescription.eyeSight[0] + "/10"
+                                        : null}</td>
+                                      <td rowSpan={3} className='border p-2 text-center'>
+                                        <i class="fa-solid fa-eye" style={{ fontSize: "60px" }}></i>
+                                      </td>
+                                      <td rowSpan={3} className='border p-2 text-center'>
+                                        <i class="fa-solid fa-eye" style={{ fontSize: "60px" }}></i>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td class="border p-2 text-center">MT</td>
+                                      <td class="border p-2 text-center">{selectedPrescription?.eyeSight
+                                        ? selectedPrescription.eyeSight[3] + "/10"
+                                        : null}</td>
 
-                                </tr>
-                                <tr>
-                                  <td class="border p-2 text-center">Khác</td>
-                                  <td class="border p-2 text-center"></td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                          <div class="mt-8">
-                            <table class=" mt-8 border-collapse" style={{ width: "100%" }}>
+                                    </tr>
+                                    <tr>
+                                      <td class="border p-2 text-center">Khác</td>
+                                      <td class="border p-2 text-center"></td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                              <div class="mt-8">
+                                <table class=" mt-8 border-collapse" style={{ width: "100%" }}>
 
-                              <thead>
-                                <tr>
-                                  <th class="border p-2 text-center"></th>
-                                  <th colSpan={4} class="border p-2 text-center">Dịch vụ</th>
-                                  <th class="border p-2 text-center">Giá dịch vụ</th>
-                                </tr>
-                                <tr>
-                                  <th class="border p-2 text-center"></th>
-                                  {selectedBooking?.eyeCategory ? (
-                                    <>
-                                      <td colSpan={4} className="border p-2 text-center">{selectedBooking?.eyeCategory?.nameCategory}</td>
-                                      <td className="border p-2 text-center">{selectedBooking?.eyeCategory?.price.toLocaleString("vi-VN", {
-                                        style: "currency",
-                                        currency: "VND",
-                                        minimumFractionDigits: 0,
-                                      })}</td>
-                                    </>
-                                  ) : null}
-                                </tr>
-                                <tr>
+                                  <thead>
+                                    <tr>
+                                      <th class="border p-2 text-center"></th>
+                                      <th colSpan={4} class="border p-2 text-center">Dịch vụ</th>
+                                      <th class="border p-2 text-center">Giá dịch vụ</th>
+                                    </tr>
+                                    <tr>
+                                      <th class="border p-2 text-center"></th>
+                                      {selectedBooking?.eyeCategory ? (
+                                        <>
+                                          <td colSpan={4} className="border p-2 text-center">{selectedBooking?.eyeCategory?.nameCategory}</td>
+                                          <td className="border p-2 text-center">{selectedBooking?.eyeCategory?.price.toLocaleString("vi-VN", {
+                                            style: "currency",
+                                            currency: "VND",
+                                            minimumFractionDigits: 0,
+                                          })}</td>
+                                        </>
+                                      ) : null}
+                                    </tr>
+                                    <tr>
 
-                                  <th class="border p-2 text-center">STT</th>
-                                  <th class="border p-2 text-center">Tên thuốc</th>
-                                  <th class="border p-2 text-center">Đơn vị</th>
-                                  <th class="border p-2 text-center">Số lượng</th>
-                                  <th class="border p-2 text-center">Đơn giá</th>
-                                  <th class="border p-2 text-center">Thành tiền</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {selectedPrescription?.medicines && selectedPrescription.medicines.length > 0 ? (
-                                  selectedPrescription.medicines.map((medicine, index) => (
-                                    <tr key={index + (selectedBooking?.eyeCategories ? selectedBooking.eyeCategories.length : 0) + (selectedBooking?.eyeCategory ? 2 : 1)}>
-                                      <td class="border p-2 text-center">{index + (selectedBooking?.eyeCategories ? selectedBooking.eyeCategories.length : 0) + (selectedBooking?.eyeCategory ? 1 : 0)}</td>
-                                      <td class="border p-2 text-center">{medicine?.nameMedicine}</td>
-                                      <td class="border p-2 text-center">{medicine?.type === "PELLET" ? "Viên" : "Chai"}</td>
-                                      <td class="border p-2 text-center">{medicine?.quantity}</td>
-                                      <td class="border p-2 text-center">{medicine?.priceMedicine.toLocaleString("vi-VN", {
-                                        style: "currency",
-                                        currency: "VND",
-                                        minimumFractionDigits: 0,
-                                      })}</td>
-                                      <td class="border p-2 text-center">{(medicine?.priceMedicine * medicine?.quantity).toLocaleString("vi-VN", {
+                                      <th class="border p-2 text-center">STT</th>
+                                      <th class="border p-2 text-center">Tên thuốc</th>
+                                      <th class="border p-2 text-center">Đơn vị</th>
+                                      <th class="border p-2 text-center">Số lượng</th>
+                                      <th class="border p-2 text-center">Đơn giá</th>
+                                      <th class="border p-2 text-center">Thành tiền</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {selectedPrescription?.medicines && selectedPrescription.medicines.length > 0 ? (
+                                      selectedPrescription.medicines.map((medicine, index) => (
+                                        <tr key={index + (selectedBooking?.eyeCategories ? selectedBooking.eyeCategories.length : 0) + (selectedBooking?.eyeCategory ? 2 : 1)}>
+                                          <td class="border p-2 text-center">{index + (selectedBooking?.eyeCategories ? selectedBooking.eyeCategories.length : 0) + (selectedBooking?.eyeCategory ? 1 : 0)}</td>
+                                          <td class="border p-2 text-center">{medicine?.nameMedicine}</td>
+                                          <td class="border p-2 text-center">{medicine?.type === "PELLET" ? "Viên" : "Chai"}</td>
+                                          <td class="border p-2 text-center">{medicine?.quantity}</td>
+                                          <td class="border p-2 text-center">{medicine?.priceMedicine.toLocaleString("vi-VN", {
+                                            style: "currency",
+                                            currency: "VND",
+                                            minimumFractionDigits: 0,
+                                          })}</td>
+                                          <td class="border p-2 text-center">{(medicine?.priceMedicine * medicine?.quantity).toLocaleString("vi-VN", {
+                                            style: "currency",
+                                            currency: "VND",
+                                            minimumFractionDigits: 0,
+                                          })}</td>
+                                        </tr>
+                                      ))
+                                    ) : null}
+                                    <tr>
+                                      <td class="border p-2 text-center"></td>
+                                      <th colSpan={4} class="border p-2 text-center">Tổng tiền:</th>
+                                      <td class="border p-2 text-danger text-center fw-bolder">{selectedPrescription?.totalAmount.toLocaleString("vi-VN", {
                                         style: "currency",
                                         currency: "VND",
                                         minimumFractionDigits: 0,
                                       })}</td>
                                     </tr>
-                                  ))
-                                ) : null}
-                                <tr>
-                                  <td class="border p-2 text-center"></td>
-                                  <th colSpan={4} class="border p-2 text-center">Tổng tiền:</th>
-                                  <td class="border p-2 text-danger text-center fw-bolder">{selectedPrescription?.totalAmount.toLocaleString("vi-VN", {
-                                        style: "currency",
-                                        currency: "VND",
-                                        minimumFractionDigits: 0,
-                                      })}</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                          <div class="mt-4">
-                            <strong>Ngày khám: <span className='fw-normal'> {formatDate(selectedBooking?.dateBooking)}</span></strong>
-                          </div>
-                          <div className='row mt-2 d-flex align-items-center'>
-                            <div className='col-6'>
-                              <div className='d-flex align-items-center justify-content-end' style={{ flexDirection: "column" }}>
-                                <strong>Người thu tiền</strong>
-                                <p className='mt-5'>{auth?.user?.fullName}</p>
+                                  </tbody>
+                                </table>
+                              </div>
+                              <div class="mt-4">
+                                <strong>Ngày khám: <span className='fw-normal'> {formatDate(selectedBooking?.dateBooking)}</span></strong>
+                              </div>
+                              <div className='row mt-2 d-flex align-items-center'>
+                                <div className='col-6'>
+                                  <div className='d-flex align-items-center justify-content-end' style={{ flexDirection: "column" }}>
+                                    <strong>Người thu tiền</strong>
+                                    <p className='mt-5'>{auth?.user?.fullName}</p>
+                                  </div>
+                                </div>
+                                <div className='col-6'>
+                                  <div className='d-flex align-items-center justify-content-end' style={{ flexDirection: "column" }}>
+                                    <strong>Bác sĩ khám bệnh</strong>
+                                    <p className='mt-5'>ThS BS {selectedPrescription?.doctor?.name}</p>
+                                  </div>
+                                </div>
                               </div>
                             </div>
-                            <div className='col-6'>
-                              <div className='d-flex align-items-center justify-content-end' style={{ flexDirection: "column" }}>
-                                <strong>Bác sĩ khám bệnh</strong>
-                                <p className='mt-5'>ThS BS {selectedPrescription?.doctor?.name}</p>
-                              </div>
+                            <div class="modal-footer">
+                              <button id="close-save" class="btn btn-primary mr-2" type="button" onClick={() => saveBill(selectedPrescription)}>Xác nhận</button>
+                              <button id="close-button" type="button" class="btn btn-danger mr-2" data-dismiss="modal">Đóng</button>
                             </div>
                           </div>
                         </div>
-                        <div class="modal-footer">
-                          <button id="close-save" class="btn btn-primary mr-2" type="button" onClick={() => saveBill(selectedPrescription)}>Xác nhận</button>
-                          <button id="close-button" type="button" class="btn btn-danger mr-2" data-dismiss="modal">Đóng</button>
-                        </div>
+
                       </div>
                     </div>
-
                   </div>
-                </div>
-              </div>
-            ))}
+                ))
+            }
           </div>
-        </div>
-      </div>
+        </div >
+      </div >
 
 
     </>
