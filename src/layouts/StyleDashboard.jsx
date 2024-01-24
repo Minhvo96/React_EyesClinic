@@ -13,7 +13,7 @@ const StyleDashboard = ({ children }) => {
   const URL_RECEPTIONIST = ["booking-list", "waiting-list"]
   const URL_DOCTOR = ["doctor", "patient", "waiting-list"]
   const URL_ASSISTANT = ["assistant", "waiting-list"]
-  const URL_CASHIER = ["cashier", "waiting-list"]
+  const URL_CASHIER = ["waiting-pay", "waiting-list"]
 
   const checkUrlIsSecure = (arrayUrl) => {
     const lowercaseURL = location.href.toLowerCase();
