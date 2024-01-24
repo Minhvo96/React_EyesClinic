@@ -324,7 +324,7 @@ export default function BookingList() {
     }, [defaultDate])
 
     const [currentPage, setCurrentPage] = useState(0);
-    const appointmentsPerPage = 8;
+    const appointmentsPerPage = 5;
 
     const handlePageChange = (selectedPage) => {
         setCurrentPage(selectedPage.selected);
@@ -393,55 +393,65 @@ export default function BookingList() {
                                 </div>
 
                             </div>
+
+                        </div>
+                        <div className="card-body p-2">
+                            {
+                                loading ? (<span className="loader"></span>) :
+                                    bookingListByTime.length ?
+                                        <>
+                                            <table className="table">
+                                                <thead className="thead-primary">
+                                                    <tr>
+                                                        <th>STT</th>
+                                                        <th>Họ và tên</th>
+                                                        <th>Số điện thoại</th>
+                                                        <th>Ngày khám</th>
+                                                        <th>Giờ khám</th>
+                                                        <th className='text-center'>Dịch vụ</th>
+                                                        <th className='col-4 text-center'>Hành động</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {
+                                                        currentAppointments
+                                                            .map((booking, index) => {
+                                                                const count = index + 1 + indexOfFirstAppointment;
+                                                                return (
+                                                                    <tr key={booking.id}>
+                                                                        <td className='text-center'>{count}</td>
+                                                                        <td>{booking.customer.user.fullName}</td>
+                                                                        <td>{booking.customer.user.phoneNumber}</td>
+                                                                        <td>{booking.dateBooking}</td>
+                                                                        <td className='text-center'>{booking.timeBooking}</td>
+                                                                        <td className='text-center'>{booking.eyeCategory.nameCategory}</td>
+                                                                        <td className='text-center'>
+                                                                            <button className='btn btn-warning mr-2' type="button" data-toggle="modal" data-target="#exampleModal" onClick={() => getBookingById(booking.id)}>Sửa</button>
+                                                                            <button className='btn btn-danger mr-2' onClick={() => deleteBookingById(booking.id)}>Hủy</button>
+                                                                            <button className='btn btn-success' onClick={() => handleChangeStatusBooking(booking.id)}>Xác nhận khám</button>
+
+                                                                        </td>
+                                                                    </tr>
+                                                                )
+                                                            })
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </>
+                                        :
+                                        <div className='m-4'>
+                                            <div className='d-flex align-items-center justify-content-center gap-4' style={{flexDirection:"column"}}>
+                                                <div>
+                                                    <i class="fa-regular fa-calendar-xmark text-danger" style={{fontSize:"124px"}}></i>
+                                                </div>
+                                                <span className='fw-semibold' style={{fontSize:"32px"}}>Danh sách hôm nay đang trống!</span>
+                                            </div>                             
+                                        </div>
+                            }
                         </div>
                     </div>
                 </div>
-                {
-                    loading ? (<span className="loader"></span>) :
-                        bookingListByTime.length ?
-                            <>
-                                <table className="table">
-                                    <thead className="thead-primary">
-                                        <tr>
-                                            <th>STT</th>
-                                            <th>Họ và tên</th>
-                                            <th>Số điện thoại</th>
-                                            <th>Ngày khám</th>
-                                            <th>Giờ khám</th>
-                                            <th>Dịch vụ</th>
-                                            <th className='col-4 text-center'>Hành động</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            currentAppointments
-                                                .map((booking, index) => {
-                                                    const count = index + 1 + indexOfFirstAppointment;
-                                                    return (
-                                                        <tr key={booking.id}>
-                                                            <td>{count}</td>
-                                                            <td>{booking.customer.user.fullName}</td>
-                                                            <td>{booking.customer.user.phoneNumber}</td>
-                                                            <td>{booking.dateBooking}</td>
-                                                            <td>{booking.timeBooking}</td>
-                                                            <td>{booking.eyeCategory.nameCategory}</td>
-                                                            <td className='text-center'>
-                                                                <button className='btn btn-warning mr-2' type="button" data-toggle="modal" data-target="#exampleModal" onClick={() => getBookingById(booking.id)}>Sửa</button>
-                                                                <button className='btn btn-danger mr-2' onClick={() => deleteBookingById(booking.id)}>Hủy</button>
-                                                                <button className='btn btn-success' onClick={() => handleChangeStatusBooking(booking.id)}>Xác nhận khám</button>
-
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                })
-                                        }
-                                    </tbody>
-                                </table>
-                            </>
-                            :
-                            <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
-                }
-                <div className="pagination-container" >
+                <div className="pagination-container" style={{ margin: 0, display: 'flex', justifyContent: 'flex-end' }} >
                     <ReactPaginate
                         pageCount={Math.ceil(bookingList.length / appointmentsPerPage)}
                         pageRangeDisplayed={5} // Số lượng trang hiển thị
@@ -548,9 +558,6 @@ export default function BookingList() {
                     </div>
                 </div>
             </div>
-
         </>
-
-
     )
 }

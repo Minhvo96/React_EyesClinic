@@ -76,6 +76,7 @@ export default function BookingForm() {
             password: null,
             age: data.age
         }
+
         const idCustomer = await userService.createUser(user)
 
         const dateBooking = String(data.dateBooking);

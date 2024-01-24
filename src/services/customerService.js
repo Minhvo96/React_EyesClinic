@@ -63,10 +63,18 @@ const customerService = {
             .catch((error) => {
                 console.log(error);
             });
+    },
+
+    searchCustomer: async (keyword) => {
+        return axios
+            .get(URL_API + "/search/" + keyword)
+            .then((response) => {
+                return response.data;
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
-
-
-
 }
 
 export default customerService;

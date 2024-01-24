@@ -14,6 +14,13 @@ export default function Home() {
         UseEffectForRender()
     }, []);
 
+    const scrollToBookingForm = () => {
+        const element = document.getElementById("booking-form");
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
     return (
         <>
             <Navbar />
@@ -118,9 +125,9 @@ export default function Home() {
                     </div>
                 </div>
             </div>
-            <a style={{ position: "fixed", bottom: "20px", right: "20px", cursor: "pointer" }} className='btn btn-primary d-flex' href='#booking-form'>             
-                    <i className="fa-solid fa-comment-medical" style={{ fontSize: "42px" }}></i>
-            </a>
+            <div style={{ position: "fixed", bottom: "20px", right: "20px", cursor: "pointer" }} className='btn btn-primary d-flex' onClick={scrollToBookingForm}>
+                <i className="fa-solid fa-comment-medical" style={{ fontSize: "42px" }}></i>
+            </div>
         </>
 
 
