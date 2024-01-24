@@ -5,6 +5,7 @@ import customerService from "../../services/customerService";
 export default function Patient() {
 
     const [showModal, setShowModal] = useState(false);
+
     const [customerIds, setCustomerIds] = useState([]);
     const [idCustomer, setIdCustomer] = useState();
 
@@ -162,7 +163,6 @@ export default function Patient() {
                                                     </tr>
                                                 );
                                             })}
-
 
                                         </tbody>
                                     </table>
