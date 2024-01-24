@@ -6,6 +6,7 @@ import billService from '../../services/billService';
 import addStyleDashboard from '../../AddStyleDashboard';
 import './waiting.css'
 import { useAuthContext } from '../../context/AuthProvider';
+import { toast } from 'react-toastify';
 
 export default function WaitingPay() {
 
@@ -61,13 +62,16 @@ export default function WaitingPay() {
   const saveBill = async (item) => {
     const newBill = {
       idPrescription: item.id,
-      idReceptionist: item.idDoctor,
+      idReceptionist: item.doctor.id,
       idBooking: item.idBooking,
       totalPrice: item.totalAmount,
     };
     try {
       const response = await billService.createBill(newBill);
       console.log('Bill saved successfully:', response);
+      toast.success("Đã thanh toán hóa đơn!", {
+        position: toast.POSITION.TOP_RIGHT
+      });
       const updatedBookings = bookingIds.map((billBooking) => {
         if (billBooking.id === item.idBooking) {
           return {
