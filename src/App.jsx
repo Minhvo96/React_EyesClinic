@@ -19,10 +19,12 @@ import Home from './components/Home';
 import { ToastContainer } from 'react-toastify';
 import DashboardStaff from './pages/DashboardStaff';
 import DashboardPatient from './pages/DashboardPatient';
+import WaitingList from './components/waitingList/WaitingList';
 
 
 
 function App() {
+  
   return (
     <>
       <BrowserRouter>
@@ -38,6 +40,7 @@ function App() {
               <Route path='/dashboard/booking-list' element={<DashboardBookingList />} />
               <Route path='/dashboard/waiting-pay' element={<DashboardWaitingPay />} />
               <Route path='/dashboard/waiting-list' element={<DashboardWaitingPatients />} />
+              <Route path='/waiting-list' element={<WaitingList />} />
               <Route path='/dashboard/medicine' element={<Medicine />} />
               <Route path='/dashboard/staff' element={<DashboardStaff />} />
               <Route path='/dashboard/assistant/:bookingId' element={<DashboardAssistant />} />

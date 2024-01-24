@@ -57,6 +57,15 @@ const ModalHistoryExam = ({ showModal, closeModal, idCustomer }) => {
         }
     }, [bookings])
 
+    const statusColors = {
+        CANCELLED: '#FA896B',
+        PENDING: '#2A3547',
+        WAITING: '#49BEFF',
+        EXAMINING: '#5D87FF',
+        UNPAID: '#FFAE1F',
+        COMPLETED: '#13DEB9'
+    };
+
 
     return (
         <>
@@ -158,7 +167,7 @@ const ModalHistoryExam = ({ showModal, closeModal, idCustomer }) => {
                                                         </td>
                                                         <td className="border-bottom-0">
                                                             <div className="d-flex align-items-center gap-2">
-                                                                <span className="badge bg-success rounded-3 fw-semibold">
+                                                                <span className="badge rounded-3 fw-semibold" style={{ backgroundColor: statusColors[booking?.status] }}>
                                                                     {booking?.status}
                                                                 </span>
                                                             </div>

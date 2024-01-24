@@ -8,6 +8,7 @@ import Pagination from "../pagination/pagination";
 export default function Patient({ patientList }) {
 
     const [showModal, setShowModal] = useState(false);
+
     const [customerIds, setCustomerIds] = useState([]);
     const [idCustomer, setIdCustomer] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
@@ -75,7 +76,6 @@ export default function Patient({ patientList }) {
                                 <div className="card-body p-4">
                                     <div className="table-responsive">
                                         {customerIds.length ? (
-
                                             <table className="table text-nowrap mb-0 align-middle">
                                                 <thead className="text-dark fs-4">
                                                     <tr className="text-center">
@@ -134,7 +134,6 @@ export default function Patient({ patientList }) {
                                                         );
                                                     })}
 
-
                                                 </tbody>
                                             </table>
                                         ) : (
@@ -157,7 +156,6 @@ export default function Patient({ patientList }) {
                             />
                         </div>
                     </>}
-
             </div>
             <ModalHistoryExam showModal={showModal} closeModal={handleCloseModal} idCustomer={idCustomer} />
         </>

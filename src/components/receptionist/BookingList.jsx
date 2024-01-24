@@ -25,6 +25,8 @@ export default function BookingList() {
     const [timesFreeBooking, setTimesFreeBooking] = useState([])
     const [minDate, setMinDate] = useState();
     const [loading, setLoading] = useState(true);
+    const [render, setRender] = useState(false)
+    const [selectedTime, setSelectedTime] = useState('all');
 
     const getTodayDate = () => {
         const today = new Date();
@@ -277,23 +279,23 @@ export default function BookingList() {
         setBooking({})
     }
 
-
     const handleChangeListBookingByTime = (time) => {
-        if (time == 'all') {
-            setBookingListByTime(bookingList)
+        setSelectedTime(time);
+
+        if (time === 'all') {
+            setBookingListByTime(bookingList);
         }
-        if (time == 'morning') {
-            setBookingListByTime(bookingList.filter(item => timesMorning.includes(item.timeBooking)))
+        else if (time === 'morning') {
+            setBookingListByTime(bookingList.filter(item => timesMorning.includes(item.timeBooking)));
         }
-        if (time == 'afternoon') {
-            setBookingListByTime(bookingList.filter(item => timesAfternoon.includes(item.timeBooking)))
+        else if (time === 'afternoon') {
+            setBookingListByTime(bookingList.filter(item => timesAfternoon.includes(item.timeBooking)));
         }
-    }
+    };
+
 
     useEffect(() => {
-        // if (bookingList.length > 0) {
-        //     setLoading(false);
-        // }
+
         setBookingListByTime(bookingList);
     }, [bookingList])
 
@@ -304,8 +306,16 @@ export default function BookingList() {
     useEffect(() => {
         getAllEyeCategories();
         getTodayDate();
-        UsingWebSocket();
+        UsingWebSocket(setRender, render);
     }, [])
+
+    useEffect(() => {
+        if (defaultDate) {
+            getAllBookingList()
+            console.log(render);
+        }
+
+    }, [render])
 
     useEffect(() => {
         if (defaultDate) {
@@ -336,74 +346,112 @@ export default function BookingList() {
                 <div className="col-lg-12 d-flex align-items-around" style={{ padding: 0 }}>
                     <div className="card w-100">
                         <div className="card-body p-4">
-                            <div className='d-flex mb-5 align-items-center justify-content-between'>
+                            <div className='d-flex align-items-center justify-content-between'>
                                 <div className='d-flex align-items-center'>
                                     <h6 className='mr-3'>Chọn ngày: </h6>
                                     <div className='col-7 '>
                                         <input type="date" className='form-control' defaultValue={defaultDate} onChange={handleChangeListByDate} min={defaultDate} />
                                     </div>
                                 </div>
-                                <div className='d-flex align-items-center gap-4'>
+                                <div className='d-flex align-items-center gap-4' >
                                     <div>
-                                        <button className='btn btn-outline-primary' onClick={() => handleChangeListBookingByTime('all')}>Tất cả</button>
+                                        <button
+                                            className='btn btn-outline-primary'
+                                            onClick={() => handleChangeListBookingByTime('all')}
+                                            style={{
+                                                backgroundColor: selectedTime === 'all' ? '#007bff' : 'initial',
+                                                color: selectedTime === 'all' ? '#fff' : 'initial'
+                                            }}
+                                        >
+                                            Tất cả
+                                        </button>
                                     </div>
                                     <div>
-                                        <button className='btn btn-outline-primary' onClick={() => handleChangeListBookingByTime('morning')}>Sáng</button>
+                                        <button
+                                            className='btn btn-outline-primary'
+                                            onClick={() => handleChangeListBookingByTime('morning')}
+                                            style={{
+                                                backgroundColor: selectedTime === 'morning' ? '#007bff' : 'initial',
+                                                color: selectedTime === 'morning' ? '#fff' : 'initial'
+                                            }}
+                                        >
+                                            Sáng
+                                        </button>
                                     </div>
                                     <div>
-                                        <button className='btn btn-outline-primary' onClick={() => handleChangeListBookingByTime('afternoon')}>Chiều</button>
+                                        <button
+                                            className='btn btn-outline-primary'
+                                            onClick={() => handleChangeListBookingByTime('afternoon')}
+                                            style={{
+                                                backgroundColor: selectedTime === 'afternoon' ? '#007bff' : 'initial',
+                                                color: selectedTime === 'afternoon' ? '#fff' : 'initial'
+                                            }}
+                                        >
+                                            Chiều
+                                        </button>
                                     </div>
                                 </div>
+
                             </div>
-                            {loading ? (<span class="loader"></span>) :
-                                bookingListByTime.length ?
-                                    <>
-                                        <table className="table text-nowrap mb-0 align-middle">
-                                            <thead className="thead-primary">
-                                                <tr className='text-center text-dark fs-3'>
-                                                    <th>STT</th>
-                                                    <th>Họ và tên</th>
-                                                    <th>Số điện thoại</th>
-                                                    <th className='col-2'>Ngày khám</th>
-                                                    <th>Giờ khám</th>
-                                                    <th>Dịch vụ</th>
-                                                    <th className='col-3 text-center'>Hành động</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {
-                                                    currentAppointments
-                                                        .map((booking, index) => {
-                                                            const count = index + 1 + indexOfFirstAppointment;
-                                                            return (
-                                                                <tr key={booking.id} className='text-center'>
-                                                                    <td>{count}</td>
-                                                                    <td>{booking.customer.user.fullName}</td>
-                                                                    <td>{booking.customer.user.phoneNumber}</td>
-                                                                    <td>{booking.dateBooking}</td>
-                                                                    <td>{booking.timeBooking}</td>
-                                                                    <td>{booking.eyeCategory.nameCategory}</td>
-                                                                    <td className='text-center'>
-                                                                        <button className='btn btn-warning mr-2' type="button" data-toggle="modal" data-target="#exampleModal" onClick={() => getBookingById(booking.id)}>Sửa</button>
-                                                                        <button className='btn btn-danger mr-2' onClick={() => deleteBookingById(booking.id)}>Hủy</button>
-                                                                        <button className='btn btn-success' onClick={() => handleChangeStatusBooking(booking.id)}>Xác nhận</button>
 
-                                                                    </td>
-                                                                </tr>
-                                                            )
-                                                        })
-                                                }
-                                            </tbody>
-                                        </table>
+                        </div>
+                        <div className="card-body p-2">
+                            {
+                                loading ? (<span className="loader"></span>) :
+                                    bookingListByTime.length ?
+                                        <>
+                                            <table className="table">
+                                                <thead className="thead-primary">
+                                                    <tr>
+                                                        <th>STT</th>
+                                                        <th>Họ và tên</th>
+                                                        <th>Số điện thoại</th>
+                                                        <th>Ngày khám</th>
+                                                        <th>Giờ khám</th>
+                                                        <th className='text-center'>Dịch vụ</th>
+                                                        <th className='col-4 text-center'>Hành động</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {
+                                                        currentAppointments
+                                                            .map((booking, index) => {
+                                                                const count = index + 1 + indexOfFirstAppointment;
+                                                                return (
+                                                                    <tr key={booking.id}>
+                                                                        <td className='text-center'>{count}</td>
+                                                                        <td>{booking.customer.user.fullName}</td>
+                                                                        <td>{booking.customer.user.phoneNumber}</td>
+                                                                        <td>{booking.dateBooking}</td>
+                                                                        <td className='text-center'>{booking.timeBooking}</td>
+                                                                        <td className='text-center'>{booking.eyeCategory.nameCategory}</td>
+                                                                        <td className='text-center'>
+                                                                            <button className='btn btn-warning mr-2' type="button" data-toggle="modal" data-target="#exampleModal" onClick={() => getBookingById(booking.id)}>Sửa</button>
+                                                                            <button className='btn btn-danger mr-2' onClick={() => deleteBookingById(booking.id)}>Hủy</button>
+                                                                            <button className='btn btn-success' onClick={() => handleChangeStatusBooking(booking.id)}>Xác nhận khám</button>
 
-                                    </>
-                                    :
-                                    <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
+                                                                        </td>
+                                                                    </tr>
+                                                                )
+                                                            })
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </>
+                                        :
+                                        <div className='m-4'>
+                                            <div className='d-flex align-items-center justify-content-center gap-4' style={{flexDirection:"column"}}>
+                                                <div>
+                                                    <i class="fa-regular fa-calendar-xmark text-danger" style={{fontSize:"124px"}}></i>
+                                                </div>
+                                                <span className='fw-semibold' style={{fontSize:"32px"}}>Danh sách hôm nay đang trống!</span>
+                                            </div>                             
+                                        </div>
                             }
                         </div>
                     </div>
                 </div>
-                <div className="pagination-container" style={{display: 'flex', justifyContent: 'flex-end'}}>
+                <div className="pagination-container" style={{ margin: 0, display: 'flex', justifyContent: 'flex-end' }} >
                     <ReactPaginate
                         pageCount={Math.ceil(bookingList.length / appointmentsPerPage)}
                         pageRangeDisplayed={5} // Số lượng trang hiển thị
@@ -416,6 +464,7 @@ export default function BookingList() {
                         breakLabel={'...'}
                     />
                 </div>
+
             </div>
             {/* <// Modal --> */}
             <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -509,9 +558,6 @@ export default function BookingList() {
                     </div>
                 </div>
             </div>
-
         </>
-
-
     )
 }

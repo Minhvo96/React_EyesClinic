@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
-import billService from "../../../services/billServices";
 import medicinePrescriptionService from "../../../services/medicinePrescriptionService";
 
 
@@ -26,6 +25,7 @@ const ModalExamDetail = ({ showModal, closeModal, booking }) => {
             setPrescriptionDetail(null)
         }
     }, [booking])
+
 
 
     return (
@@ -140,11 +140,10 @@ const ModalExamDetail = ({ showModal, closeModal, booking }) => {
                                             </tr>
                                         </thead>
                                         <tbody>
-
                                             {prescriptionDetail?.medicines && prescriptionDetail.medicines.length > 0 ? (
                                                 prescriptionDetail.medicines.map((medicine, index) => (
                                                     <tr key={index + 1}>
-                                                        {/* <td class="border p-2">{index + (selectedBooking?.eyeCategories ? selectedBooking.eyeCategories.length : 0) + (selectedBooking?.eyeCategory ? 2 : 1)}</td> */}
+
                                                         <td className="border-bottom-0">
                                                             <div className='d-flex justify-content-center align-items-center' style={{ flexDirection: "column" }}>
                                                                 <div className="fw-bolder">{medicine?.nameMedicine}</div>
@@ -156,6 +155,7 @@ const ModalExamDetail = ({ showModal, closeModal, booking }) => {
                                                         </td>
                                                         <td className="border-bottom-0 text-center">
                                                             <h6 className="fw-semibold mb-1">{medicine?.quantity}</h6>
+
                                                         </td>
                                                         <td className="border-bottom-0">
                                                             <h6 className="fw-semibold mb-1">{(medicine?.priceMedicine).toLocaleString("vi-VN", {
@@ -225,8 +225,6 @@ const ModalExamDetail = ({ showModal, closeModal, booking }) => {
                                            
                                         </tbody>
                                     </table>
-
-
                                 </div>
                             </div>
                         </div>

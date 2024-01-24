@@ -77,6 +77,8 @@ export default function WaitingPatients() {
 
     reset()
     setReRender(true)
+    document.getElementById('btn-submit').add
+
   }
 
   const getAllEyeCategories = async () => {
@@ -102,7 +104,6 @@ export default function WaitingPatients() {
     };
     const bookingsPending = await bookingService.getBookingByStatusWaitingOrExaminingAndDate(newBooking);
     setBookingList(bookingsPending);
-
     setLoading(false);
   }
 
@@ -125,6 +126,7 @@ export default function WaitingPatients() {
   }
 
   const handleChangeStatusExamining = (id) => {
+
     if (auth?.user?.roles === 'ROLE_DOCTOR' || auth?.user?.roles === 'ROLE_ASSISTANT' || auth?.user?.roles === "ROLE_ADMIN") {
       handleChangeStatusBooking(id, "EXAMINING")
       if (auth?.user?.roles === 'ROLE_DOCTOR' || auth?.user?.roles === "ROLE_ADMIN") {
@@ -204,10 +206,9 @@ export default function WaitingPatients() {
   }, [defaultDate, reRender])
 
   useEffect(() => {
-    getTodayDate(),
-      getAllEyeCategories()
+    getTodayDate();
+    getAllEyeCategories()
   }, [])
-
 
   return (
     <>
@@ -231,7 +232,7 @@ export default function WaitingPatients() {
                 </div>
               </div>
               {
-                loading ? (<span class="loader"></span>) :
+                loading ? (<span className="loader"></span>) :
                   bookingList.length ?
                     <>
                       <table className="table text-nowrap mb-0 align-middle">
@@ -291,31 +292,40 @@ export default function WaitingPatients() {
                               })
                           }
                         </tbody>
-                      </table>                      
+                      </table>
                     </>
                     :
-                    <div><p className='text-danger'>Danh sách hôm nay đang trống</p></div>
+                    <div className='m-4'>
+                      <div className='d-flex align-items-center justify-content-center gap-4' style={{ flexDirection: "column" }}>
+                        <div>
+                          <i class="fa-regular fa-calendar-xmark text-danger" style={{ fontSize: "124px" }}></i>
+                        </div>
+                        <span className='fw-semibold' style={{ fontSize: "32px" }}>Danh sách hôm nay đang trống!</span>
+                      </div>
+                    </div>
               }
             </div>
           </div>
         </div>
-        <div className="pagination-container" style={{ margin: 0,  display: 'flex', justifyContent: 'flex-end'}}>
-                  <ReactPaginate
-                    pageCount={Math.ceil(bookingList.length / appointmentsPerPage)}
-                    pageRangeDisplayed={5} // Số lượng trang hiển thị
-                    marginPagesDisplayed={2} // Số lượng trang được hiển thị ở đầu và cuối
-                    onPageChange={handlePageChange}
-                    containerClassName={'pagination'}
-                    activeClassName={'active'}
-                    previousLabel={'Previous'}
-                    nextLabel={'Next'}
-                    breakLabel={'...'}
-                  />
+        <div className="pagination-container" style={{ margin: 0, display: 'flex', justifyContent: 'flex-end' }}>
+          <ReactPaginate
+            pageCount={Math.ceil(bookingList.length / appointmentsPerPage)}
+            pageRangeDisplayed={5} // Số lượng trang hiển thị
+            marginPagesDisplayed={2} // Số lượng trang được hiển thị ở đầu và cuối
+            onPageChange={handlePageChange}
+            containerClassName={'pagination'}
+            activeClassName={'active'}
+            previousLabel={'Previous'}
+            nextLabel={'Next'}
+            breakLabel={'...'}
+          />
         </div>
 
-       
+
       </div>
+
       {/* <// Modal --> */}
+
       <div className="modal fade" id="createBookingModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div className="modal-dialog modal-lg modal-dialog-centered">
           <div className="modal-content">
@@ -390,7 +400,7 @@ export default function WaitingPatients() {
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => reset()} >Đóng</button>
-                <button type="button" className="btn btn-primary" onClick={handleSubmit(handleSubmitForm)}>Đặt lịch</button>
+                <button type="button" id='btn-submit' className="btn btn-primary" onClick={handleSubmit(handleSubmitForm)} data-dismiss="modal">Đặt lịch</button>
               </div>
             </form>
           </div>

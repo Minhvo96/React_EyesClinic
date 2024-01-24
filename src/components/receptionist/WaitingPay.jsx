@@ -14,7 +14,7 @@ export default function WaitingPay() {
   const [prescriptions, setPrescriptions] = useState([]);
   const [bookingIds, setBookingIds] = useState([]);
   const [selectedPrescription, setSelectedPrescription] = useState(null);
-
+  const [loading, setLoading] = useState(true);
   const [selectedBooking, setSelectedBooking] = useState({
     id: '',
     fullName: '',
@@ -37,6 +37,7 @@ export default function WaitingPay() {
       const response = await medicinePrescriptionService.getMdicinePrescription();
       const prescriptions = response.content;
       setPrescriptions(prescriptions);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -132,9 +133,9 @@ export default function WaitingPay() {
             <h5 className="card-title fw-semibold mb-4">Danh sách chờ thanh toán</h5>
           </div>
         </div>
-        <div className="card w-100">
+        {loading ? (<span className='loader'></span>) : <div className="card w-100">
           <div className="d-flex ps-4 pt-4">
-            <span className="h5 fw-semibold">10</span>
+            <span className="h5 fw-semibold">{prescriptions.length}</span>
             <p className="ms-1 fw-normal">hóa đơn</p>
           </div>
           <div className="card-body p-4">
@@ -173,8 +174,13 @@ export default function WaitingPay() {
                 </tbody>
               </table>
             ) : (
-              <div>
-                <p>Danh sách đang trống</p>
+              <div className='m-4'>
+                <div className='d-flex align-items-center justify-content-center gap-4' style={{ flexDirection: "column" }}>
+                  <div>
+                    <i class="fa-regular fa-calendar-xmark text-danger" style={{ fontSize: "124px" }}></i>
+                  </div>
+                  <span className='fw-semibold' style={{ fontSize: "32px" }}>Danh sách hôm nay đang trống!</span>
+                </div>
               </div>
             )}
 
@@ -268,8 +274,8 @@ export default function WaitingPay() {
                           <div class="mt-8 row d-flex">
                             <strong className='col-2'>Bệnh phụ: </strong>
                             <span className='d-flex justify-content-center align-items-center col-10'>
-                              {selectedPrescription?.note.split(",")[1] ? selectedPrescription?.note.split(",")[1]  : "" }
-                              {selectedPrescription?.note.split(",")[2] ? ", " + selectedPrescription?.note.split(",")[2] + ", " : "" }
+                              {selectedPrescription?.note.split(",")[1] ? selectedPrescription?.note.split(",")[1] : ""}
+                              {selectedPrescription?.note.split(",")[2] ? ", " + selectedPrescription?.note.split(",")[2] + ", " : ""}
                               {selectedPrescription?.note.split(",")[3] ? selectedPrescription?.note.split(",")[3] : ""}
                             </span>
                           </div>
@@ -281,7 +287,7 @@ export default function WaitingPay() {
                             </span>
                           </div>
 
-                          
+
 
                           <div class="mt-8" style={{ marginBottom: "30px" }}>
                             <table class="border-collapse" style={{ width: "100%" }}>
@@ -361,7 +367,7 @@ export default function WaitingPay() {
                                         <td class="border p-2 text-center">
                                           <div className='d-flex justify-content-center align-items-center'>
                                             <div>{medicine?.nameMedicine}</div>
-                                            <div style={{fontSize:"13px"}}><em>&nbsp;( {medicine?.useMedicine} - {medicine?.noteMedicine} )</em></div>
+                                            <div style={{ fontSize: "13px" }}><em>&nbsp;( {medicine?.useMedicine} - {medicine?.noteMedicine} )</em></div>
                                           </div>
                                         </td>
                                         <td class="border p-2 text-center">{medicine?.type === "PELLET" ? "Viên" : "Chai"}</td>
@@ -378,18 +384,18 @@ export default function WaitingPay() {
                                         })}</td>
                                       </tr>
                                     </>
-                                    
-                                    
+
+
                                   ))
                                 ) : null}
                                 <tr>
                                   <td class="border p-2 text-center"></td>
                                   <th colSpan={4} class="border p-2 text-center">Tổng tiền:</th>
                                   <td class="border p-2 text-danger text-center fw-bolder">{selectedPrescription?.totalAmount.toLocaleString("vi-VN", {
-                                        style: "currency",
-                                        currency: "VND",
-                                        minimumFractionDigits: 0,
-                                      })}</td>
+                                    style: "currency",
+                                    currency: "VND",
+                                    minimumFractionDigits: 0,
+                                  })}</td>
                                 </tr>
                               </tbody>
                             </table>
@@ -424,7 +430,8 @@ export default function WaitingPay() {
               </div>
             ))}
           </div>
-        </div>
+        </div>}
+
       </div>
 
 
