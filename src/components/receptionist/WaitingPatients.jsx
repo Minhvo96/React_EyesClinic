@@ -67,6 +67,9 @@ export default function WaitingPatients() {
     console.log(bookingNew);
 
     await bookingService.createBooking(bookingNew)
+    reset()
+    setReRender(true)
+    document.getElementById('btn-submit').add
     Swal.fire({
       position: 'center',
       icon: 'success',
@@ -74,11 +77,6 @@ export default function WaitingPatients() {
       showConfirmButton: false,
       timer: 3500
     })
-
-    reset()
-    setReRender(true)
-    document.getElementById('btn-submit').add
-
   }
 
   const getAllEyeCategories = async () => {
@@ -275,7 +273,7 @@ export default function WaitingPatients() {
                                         }
                                       </select>
                                     </td>
-                                    <td className="border-bottom-0">
+                                    <td>
                                       <div className="d-flex align-items-center justify-content-center">
 
                                         <button className="btn btn-outline-success d-flex justify-content-center align-items-center"
@@ -399,8 +397,8 @@ export default function WaitingPatients() {
                 </div>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => reset()} >Đóng</button>
                 <button type="button" id='btn-submit' className="btn btn-primary" onClick={handleSubmit(handleSubmitForm)} data-dismiss="modal">Đặt lịch</button>
+                <button type="button" className="btn btn-danger" data-dismiss="modal" onClick={() => reset()} >Đóng</button>
               </div>
             </form>
           </div>

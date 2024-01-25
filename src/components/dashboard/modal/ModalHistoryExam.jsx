@@ -25,7 +25,12 @@ const ModalHistoryExam = ({ showModal, closeModal, idCustomer }) => {
 
     const getBookingsByPhoneNumber = async (phoneNumber) => {
         const bookingList = await bookingService.getBookingByPhone(phoneNumber)
-        setBookings(bookingList)
+        const sortedBookings = bookingList.sort((a, b) => {
+            const dateA = new Date(`${a.dateBooking} ${a.timeBooking}`);
+            const dateB = new Date(`${b.dateBooking} ${b.timeBooking}`);
+            return dateB - dateA;
+        });
+        setBookings(sortedBookings)
     }
 
     const handleCloseModalDetail = () => {

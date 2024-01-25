@@ -118,7 +118,7 @@ export default function Header({ search }) {
                           <p className="mb-0 fs-3 text-secondary">ADMIN</p>
                         )}
                         {auth?.user?.roles === 'ROLE_CASHIER' && (
-                          <p className="mb-0 fs-3 text-secondary">PHÁT THUỐC</p>
+                          <p className="mb-0 fs-3 text-secondary">THU NGÂN</p>
                         )}
                         {auth?.user?.roles === 'ROLE_ASSISTANT' && (
                           <p className="mb-0 fs-3 text-secondary">PHỤ TÁ</p>

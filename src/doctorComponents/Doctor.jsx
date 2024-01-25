@@ -374,11 +374,12 @@ export default function Doctor() {
                                                     resultStringKeyName="nameMedicine"
                                                     placeholder='Mời nhập tên thuốc...'
                                                     className='mt-2'
+                                                    styling={{zIndex:"100"}}
                                                 />
                                             }
                                             {
                                                 Object.keys(searchString).length > 0 &&
-                                                <div key={searchString.id} className='d-flex'>
+                                                <div key={searchString.id} className='d-flex mt-3 gap-2'>
                                                     <input className='form-control col-3' defaultValue={searchString.nameMedicine} readOnly />
                                                     <input
                                                         type="text"
@@ -390,18 +391,23 @@ export default function Doctor() {
                                                     <input
                                                         type="text"
                                                         placeholder="HDSD thuốc..."
-                                                        className='form-control col-3'
+                                                        className='form-control'
                                                         defaultValue={usingMedicine[searchString.id] || ''}
                                                         onChange={(e) => handleChangeUsingMedicine(searchString.id, e)}
                                                     />
-                                                     <input
+                                                    <input
                                                         type="text"
                                                         placeholder="Ghi chú..."
-                                                        className='form-control col-3'
+                                                        className='form-control'
                                                         defaultValue={noteMedicine[searchString.id] || ''}
                                                         onChange={(e) => handleChangeNoteMedicine(searchString.id, e)}
                                                     />
-                                                    <button type='button' className='form-control col-1' onClick={() => handleAddMedicines(searchString)}>Thêm</button>
+                                                    <div className="d-flex align-items-center" style={{ cursor: "pointer" }} onClick={() => handleAddMedicines(searchString)}>
+                                                        <button className="btn btn-success d-flex align-items-center justify-content-center" style={{ borderRadius: '50%', width: "32px", height: "32px" }}>
+                                                            <i className="ti ti-plus text-center" style={{ fontSize: "16px" }}></i>
+                                                        </button>
+                                                        <p className="mb-0 fw-normal link-success" style={{ marginLeft: "10px" }}>Thêm</p>
+                                                    </div>
                                                 </div>
                                             }
                                         </div>
