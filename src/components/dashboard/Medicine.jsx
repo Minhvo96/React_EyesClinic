@@ -2,7 +2,7 @@ import { useState } from "react";
 import addStyleDashboard from "../../AddStyleDashboard";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
-import ModalMedicine from "./modal/ModalMedicine";
+
 
 export default function Medicine() {
 
@@ -153,7 +153,7 @@ export default function Medicine() {
                         </div>
                     </div>
                 </div>
-                <ModalMedicine showModal={showModalMedicine} closeModal={closeModalMedicine}/>
+                {/* <ModalMedicine showModal={showModalMedicine} closeModal={closeModalMedicine}/> */}
             </div>
         </>
     )

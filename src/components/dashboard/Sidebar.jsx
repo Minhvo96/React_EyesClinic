@@ -11,11 +11,8 @@ export default function Sidebar() {
     useEffect(() => {
         const sideBarItem = ["overview", "patient", "booking-list", "waiting-list", "waiting-pay", "medicine", "staff"]
         const url = location.href.toLowerCase();
-        console.log(url);
         // Lặp qua mảng sideBarItem để kiểm tra từ khóa nào khớp với URL
         sideBarItem.forEach(item => {
-            console.log(item);
-            console.log(url.includes(item));
             if (url.includes(item)) {
                 setSideBarItem(item);
             }
