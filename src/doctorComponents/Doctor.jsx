@@ -145,7 +145,6 @@ export default function Doctor() {
         getBookingById();
         getPrescriptionByBookingId();
         getAllMedicines();
-        UsingWebSocket();
     }, [])
 
     useEffect(() => {

@@ -8,6 +8,7 @@ import './waiting.css'
 import { toast } from 'react-toastify';
 
 import { useAuthContext } from '../../context/AuthProvider';
+import UsingWebSocket from '../../Socket';
 
 export default function WaitingPay() {
 
@@ -96,6 +97,8 @@ export default function WaitingPay() {
 
   useEffect(() => {
     getAllPrescriptionList();
+    
+    UsingWebSocket();
   }, []);
 
   useEffect(() => {
