@@ -3,7 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { toast } from "react-toastify";
 import { Stomp } from '@stomp/stompjs';
 
-function UsingWebSocket (callback, value) {
+function UsingWebSocket () {
     const url = 'http://localhost:8080/ws';
         const socket = new SockJS(url);
         const stompClient = Stomp.over(socket); 
@@ -14,9 +14,6 @@ function UsingWebSocket (callback, value) {
             toast.success(JSON.parse(message.body).content, {
                 position: toast.POSITION.TOP_RIGHT
             });
-
-            callback(!value);
-
         };
 
         stompClient.connect({}, () => {
