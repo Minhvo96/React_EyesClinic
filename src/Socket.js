@@ -15,14 +15,13 @@ function UsingWebSocket () {
                 position: toast.POSITION.TOP_RIGHT
             });
         };
-
         stompClient.connect({}, () => {
             console.log("SOCKET Connected");
 
             stompClient.subscribe('/topic/publicChatRoom', onMessage);
         }, (error) => {
             console.error('WebSocket error:', error);
-        });
+        }); 
 
         return () => {
             stompClient.disconnect();
