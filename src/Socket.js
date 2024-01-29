@@ -3,7 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { toast } from "react-toastify";
 import { Stomp } from '@stomp/stompjs';
 
-function UsingWebSocket (callback, value) {
+function UsingWebSocket () {
     const url = 'http://localhost:8080/ws';
         const socket = new SockJS(url);
         const stompClient = Stomp.over(socket); 
@@ -15,8 +15,6 @@ function UsingWebSocket (callback, value) {
                 position: toast.POSITION.TOP_RIGHT
             });
 
-            callback(!value);
-
         };
 
         stompClient.connect({}, () => {
@@ -25,7 +23,7 @@ function UsingWebSocket (callback, value) {
             stompClient.subscribe('/topic/publicChatRoom', onMessage);
         }, (error) => {
             console.error('WebSocket error:', error);
-        });
+        }); 
 
         return () => {
             stompClient.disconnect();

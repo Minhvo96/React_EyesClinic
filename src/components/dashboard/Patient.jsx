@@ -101,7 +101,7 @@ export default function Patient({ patientList }) {
                                                 <tbody>
                                                     {currentTableData.map((item, index) => {
 
-                                                        const count = index + 1;
+                                                        const count = (currentPage * PageSize) - (PageSize - index - 1);
                                                         return (
                                                             <tr key={item.id} className="text-center">
                                                                 <td className="border-bottom-0">

@@ -126,11 +126,11 @@ export default function Staff() {
                                     </thead>
                                     <tbody className="text-center">
                                         {
-                                            staffs.length > 0 && staffs.map(staff => {
+                                            staffs.length > 0 && staffs.map((staff, index) => {
                                                 return (
                                                     <tr key={staff.id}>
                                                         <td className="border-bottom-0">
-                                                            <h6 className="fw-semibold mb-1">{staff.id}</h6>
+                                                            <h6 className="fw-semibold mb-1">{index + 1}</h6>
                                                         </td>
                                                         <td className="border-bottom-0">
                                                             <img src={staff.avatar} alt="" style={{ width: 50 }} />

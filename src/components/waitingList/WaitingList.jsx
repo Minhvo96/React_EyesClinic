@@ -104,12 +104,10 @@ export default function WaitingList() {
                                                         <td>{item.customer.user.fullName}</td>
                                                         <td>{item.timeBooking}</td>
                                                     </tr>)
-
                                             })
                                         :
                                         <p>Danh sách trống</p>
                                 }
-
                             </tbody>
                         </table>
                     </div>

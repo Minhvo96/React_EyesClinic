@@ -1,12 +1,14 @@
-import axios from 'axios'
+
 import React, { useEffect, useMemo, useState } from 'react'
 import bookingService from '../../services/bookingServices';
 import eyeCategoriesService from '../../services/eyeCategoriesServices';
 import Swal from 'sweetalert2'
-import Pagination from '../pagination/pagination';
 import SockJS from 'sockjs-client';
-import UsingWebSocket from '../../Socket';
 import ReactPaginate from 'react-paginate';
+
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
+import { Stomp } from '@stomp/stompjs';
 
 
 
@@ -306,16 +308,35 @@ export default function BookingList() {
     useEffect(() => {
         getAllEyeCategories();
         getTodayDate();
-        UsingWebSocket(setRender, render);
+        // UsingWebSocket();
     }, [])
 
     useEffect(() => {
-        if (defaultDate) {
-            getAllBookingList()
-            console.log(render);
-        }
+        const url = 'http://localhost:8080/ws';
+        const socket = new SockJS(url);
+        const stompClient = Stomp.over(socket); 
 
-    }, [render])
+        const onMessage = (message) => {
+            console.log('Received message:', message.body);
+            
+            toast.success(JSON.parse(message.body).content, {
+                position: toast.POSITION.TOP_RIGHT
+            });
+
+        };
+
+        stompClient.connect({}, () => {
+            console.log("SOCKET Connected");
+
+            stompClient.subscribe('/topic/publicChatRoom', onMessage);
+        }, (error) => {
+            console.error('WebSocket error:', error);
+        }); 
+
+        return () => {
+            stompClient.disconnect();
+        };
+    }, [])
 
     useEffect(() => {
         if (defaultDate) {
