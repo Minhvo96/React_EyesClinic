@@ -99,13 +99,11 @@ export default function Patient({ patientList }) {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {currentTableData.map((item, index) => {
-
-                                                        const count = index + 1;
+                                                    {currentTableData.map((item, index) => {                      
                                                         return (
                                                             <tr key={item.id} className="text-center">
                                                                 <td className="border-bottom-0">
-                                                                    <h6 className="fw-semibold mb-0">{count}</h6>
+                                                                    <h6 className="fw-semibold mb-0">{(currentPage*PageSize)-(PageSize-index-1)}</h6>
                                                                 </td>
                                                                 <td className="border-bottom-0">
                                                                     {/* <h6 className="fw-semibold mb-1">{item?.customer?.user?.fullName}</h6> */}

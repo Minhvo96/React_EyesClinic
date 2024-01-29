@@ -37,12 +37,8 @@ export default function BookingForm() {
 
     const registerSchema = yup.object({
         fullName: yup.string().required("Vui lòng nhập họ và tên"),
-        age: yup.number()
-            .integer()
-            .min(1934, "Năm sinh phải từ 1934")
-            .max(2024, "Năm sinh không vượt quá 2024")
-            .required("Vui lòng nhập năm sinh")
-            .typeError("Vui lòng nhập năm sinh"),
+        age: yup.string()
+            .required("Vui lòng nhập năm sinh"),
         address: yup.string().required("Vui lòng nhập địa chỉ"),
         phoneNumber: yup.string().required("Vui lòng nhập số điện thoại").matches(/^(0[0-9]{9})$/, "Số điện thoại không hợp lệ"),
         dateBooking: yup.date()
@@ -231,7 +227,7 @@ export default function BookingForm() {
                                             <span className="icon-cake" />
                                         </div>
                                         <input
-                                            type="number"
+                                            type="text"
                                             className="form-control"
                                             id="appointment_name"
                                             placeholder="Năm sinh"

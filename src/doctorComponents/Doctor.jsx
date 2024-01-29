@@ -9,9 +9,9 @@ import * as yup from 'yup'
 import { useNavigate, useParams } from 'react-router-dom';
 import StepProgressBar from '../components/progress/Progress';
 import Swal from 'sweetalert2';
-import UsingWebSocket from '../Socket';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete';
 import { toast } from 'react-toastify';
+import { useAuthContext } from '../context/AuthProvider';
 
 const schemaPrescription = yup.object({
     diagnose: yup.string()
@@ -39,6 +39,8 @@ export default function Doctor() {
     const [prescription, setPrescription] = useState({});
     const [loading, setLoading] = useState(true);
 
+    const auth = useAuthContext();
+    
     const navigator = useNavigate();
 
     const { register: registerPrescription, handleSubmit: handleSubmitPrescription, formState: { errors: errorsPrescription }, reset: resetPrescription } = useForm({
@@ -101,7 +103,7 @@ export default function Doctor() {
             if (result.isConfirmed) {
                 setPrescription({
                     idBooking: String(bookingId),
-                    idDoctor: "1",
+                    idDoctor: auth?.user?.id,
                     eyeSight: leftEye + ',' + rightEye,
                     diagnose: diagnoseInputs.diagnose,
                     note: `${diagnoseInputs.note}, ${diseases.join(", ")}`,
@@ -145,7 +147,6 @@ export default function Doctor() {
         getBookingById();
         getPrescriptionByBookingId();
         getAllMedicines();
-        UsingWebSocket();
     }, [])
 
     useEffect(() => {

@@ -31,7 +31,7 @@ const ModalExamDetail = ({ showModal, closeModal, booking }) => {
     return (
         <Modal show={showModal} onHide={closeModal} size='lg' centered className="bg-dark bg-opacity-50">
             <Modal.Header closeButton>
-                <Modal.Title className="ms-4">Lịch sử khám bệnh</Modal.Title>
+                <Modal.Title className="ms-4">Chi tiết bệnh án</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <div className="container-fluid">
