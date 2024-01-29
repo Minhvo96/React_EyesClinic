@@ -2,11 +2,8 @@ import React, { useEffect, useState } from 'react'
 import bookingService from '../../services/bookingServices';
 import medicinePrescriptionService from '../../services/medicinePrescriptionService';
 import billService from '../../services/billService';
-
-import addStyleDashboard from '../../AddStyleDashboard';
 import './waiting.css'
 import { useAuthContext } from '../../context/AuthProvider';
-import UsingWebSocket from '../../Socket';
 import { toast } from 'react-toastify';
 
 export default function WaitingPay() {
@@ -94,8 +91,6 @@ export default function WaitingPay() {
 
   useEffect(() => {
     getAllPrescriptionList();
-    
-    UsingWebSocket();
   }, []);
 
   useEffect(() => {

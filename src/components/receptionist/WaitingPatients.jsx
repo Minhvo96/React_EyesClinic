@@ -10,21 +10,17 @@ import { useForm } from 'react-hook-form';
 import moment from 'moment';
 import userService from '../../services/userService';
 import { useAuthContext } from '../../context/AuthProvider';
+import customerService from '../../services/customerService';
 
 const registerSchema = yup.object({
   fullName: yup.string().required("Bạn cần phải cung cấp họ và tên"),
-  age: yup.number()
-    .integer()
-    .min(1934, "Năm sinh phải từ 1934")
-    .max(2024, "Năm sinh pkhông vượt quá 2024")
-    .required("Bạn cần phải cung cấp năm sinh")
-    .typeError("Bạn cần phải cung cấp năm sinh"),
+  age: yup.string()
+    .required("Bạn cần phải cung cấp năm sinh"),
   address: yup.string().required("Bạn cần phải cung cấp địa chỉ"),
   phoneNumber: yup.string().required("Bạn cần phải cung cấp số điện thoại").matches(/^(0[0-9]{9})$/, "Số điện thoại không hợp lệ"),
   eyeCategory: yup.string().required('Vui lòng chọn dịch vụ khám'),
   message: yup.string()
 })
-
 
 export default function WaitingPatients() {
   const [bookingList, setBookingList] = useState([]);
@@ -44,6 +40,8 @@ export default function WaitingPatients() {
   const navigate = useNavigate();
 
   const handleSubmitForm = async (data) => {
+
+    console.log(data);
     const user = {
       fullName: data.fullName,
       phoneNumber: data.phoneNumber,
@@ -208,6 +206,20 @@ export default function WaitingPatients() {
     getAllEyeCategories()
   }, [])
 
+  const [cus, setCus] = useState({})
+  const search = async (value) => {
+    if(value.length === 10) {
+      const cusList = await customerService.searchCustomer(value);
+      setCus(cusList[0])
+    }
+  }
+
+  const submitSearch = () => {
+    const searchInput = document.getElementById('search');
+    search(searchInput.value);
+  }
+
+
   return (
     <>
       <div className="container-fluid">
@@ -329,6 +341,27 @@ export default function WaitingPatients() {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title font-weight-bold" id="exampleModalLabel">Đặt lịch tại quầy</h5>
+              <div className='ml-5'>
+                <div className='d-flex align-items-center'>
+
+                  <input
+                    type="search"
+                    className='form-control me-2'
+                    id='search'
+                    placeholder='Tìm kiếm...'
+                    style={{
+                      border: "1px solid #ced4da",
+                      borderRadius: "0.5rem",
+                      height: "32px",
+                      padding: "20px"
+                    }}
+                  />
+                  <button className='btn btn-primary' type='button' onClick={() => submitSearch()}>
+                    <i className="fas fa-search" />
+                  </button>
+
+                </div>
+              </div>
               <button type="button" className="btn-close" data-dismiss="modal" aria-label="Close" onClick={() => reset()}></button>
             </div>
             <form className="appointment-form needs-validation">
@@ -340,6 +373,7 @@ export default function WaitingPatients() {
                       <input type="text"
                         className={`form-control ${errors?.fullName?.message ? 'is-invalid' : ''}`}
                         {...register("fullName")}
+                        defaultValue={cus?.fullName}
                       />
                       <span className="text-danger font-weight-bold invalid-feedback">{errors?.fullName?.message}</span>
                     </div>
@@ -348,6 +382,7 @@ export default function WaitingPatients() {
                       <input type="text"
                         className={`form-control ${errors?.phoneNumber?.message ? 'is-invalid' : ''}`}
                         {...register("phoneNumber")}
+                        defaultValue={cus?.phoneNumber}
                       />
                       <span className="text-danger font-weight-bold invalid-feedback">{errors?.phoneNumber?.message}</span>
                     </div>
@@ -355,9 +390,10 @@ export default function WaitingPatients() {
                   <div className="row mb-3">
                     <div className="col-md-6 has-validation">
                       <label>Năm sinh</label>
-                      <input type="number"
+                      <input type="text"
                         className={`form-control ${errors?.age?.message ? 'is-invalid' : ''}`}
                         {...register("age")}
+                        defaultValue={cus?.age}
                       />
                       <span className="text-danger font-weight-bold invalid-feedback">{errors?.age?.message}</span>
                     </div>
@@ -366,6 +402,7 @@ export default function WaitingPatients() {
                       <input type="text"
                         className={`form-control ${errors?.address?.message ? 'is-invalid' : ''}`}
                         {...register("address")}
+                        defaultValue={cus?.address}
                       />
                       <span className="text-danger font-weight-bold invalid-feedback">{errors?.address?.message}</span>
                     </div>

@@ -13,20 +13,20 @@ export default function Patient({ patientList }) {
     const [idCustomer, setIdCustomer] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true);
+    const [stt, setStt] = useState(0)
 
     let PageSize = 5;
 
     const currentTableData = useMemo(() => {
         const firstPageIndex = (currentPage - 1) * PageSize;
         const lastPageIndex = firstPageIndex + PageSize;
+
+        setStt(firstPageIndex);
+
         return customerIds.sort((a, b) => {
             return a.fullName.localeCompare(b.fullName);
         }).slice(firstPageIndex, lastPageIndex);
     }, [currentPage, customerIds]);
-
-    const handlePageChange = (selectedPage) => {
-        setCurrentPage(selectedPage.selected);
-    };
 
     const getAllCustomers = async () => {
         const response = await customerService.getAllCustomers()
@@ -101,7 +101,7 @@ export default function Patient({ patientList }) {
                                                 <tbody>
                                                     {currentTableData.map((item, index) => {
 
-                                                        const count = index + 1;
+                                                        const count = index + 1 + stt ;
                                                         return (
                                                             <tr key={item.id} className="text-center">
                                                                 <td className="border-bottom-0">

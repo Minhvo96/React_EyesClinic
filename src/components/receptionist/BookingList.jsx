@@ -306,16 +306,13 @@ export default function BookingList() {
     useEffect(() => {
         getAllEyeCategories();
         getTodayDate();
-        UsingWebSocket(setRender, render);
+
     }, [])
 
     useEffect(() => {
-        if (defaultDate) {
-            getAllBookingList()
-            console.log(render);
-        }
+        UsingWebSocket();
+    }, [])
 
-    }, [render])
 
     useEffect(() => {
         if (defaultDate) {
@@ -440,12 +437,12 @@ export default function BookingList() {
                                         </>
                                         :
                                         <div className='m-4'>
-                                            <div className='d-flex align-items-center justify-content-center gap-4' style={{flexDirection:"column"}}>
+                                            <div className='d-flex align-items-center justify-content-center gap-4' style={{ flexDirection: "column" }}>
                                                 <div>
-                                                    <i class="fa-regular fa-calendar-xmark text-danger" style={{fontSize:"124px"}}></i>
+                                                    <i class="fa-regular fa-calendar-xmark text-danger" style={{ fontSize: "124px" }}></i>
                                                 </div>
-                                                <span className='fw-semibold' style={{fontSize:"32px"}}>Danh sách hôm nay đang trống!</span>
-                                            </div>                             
+                                                <span className='fw-semibold' style={{ fontSize: "32px" }}>Danh sách hôm nay đang trống!</span>
+                                            </div>
                                         </div>
                             }
                         </div>
