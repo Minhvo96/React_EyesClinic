@@ -62,7 +62,7 @@ export default function WaitingPay() {
   const saveBill = async (item) => {
     const newBill = {
       idPrescription: item.id,
-      idReceptionist: item.doctor.id,
+      idReceptionist: auth?.user?.id,
       idBooking: item.idBooking,
       totalPrice: item.totalAmount,
     };
@@ -256,8 +256,8 @@ export default function WaitingPay() {
                           </div>
                           <div className='row'>
                             <div className='col-9 mt-8 row'>
-                              <strong className='col-4'>Họ và tên: </strong>
-                              <span className='col-8 d-flex justify-content-start '>
+                              <strong className='col-2'>Họ và tên: </strong>
+                              <span className='col-10 d-flex justify-content-start' style={{paddingLeft:"4rem"}}>
                                 {selectedBooking?.customer?.user?.fullName}
                               </span>
                             </div>
@@ -270,14 +270,14 @@ export default function WaitingPay() {
                           </div>
                           <div class="mt-8 d-flex align-items-center row">
                             <strong className='col-2'>Chẩn đoán:</strong>
-                            <span className='d-flex justify-content-center col-10'>
+                            <span className='d-flex justify-content-start col-10'>
                               {selectedPrescription?.diagnose}
                             </span>
                           </div>
 
                           <div class="mt-8 row d-flex">
                             <strong className='col-2'>Bệnh phụ: </strong>
-                            <span className='d-flex justify-content-center align-items-center col-10'>
+                            <span className='d-flex justify-content-start align-items-center col-10'>
                               {selectedPrescription?.note.split(",")[1] ? selectedPrescription?.note.split(",")[1] : ""}
                               {selectedPrescription?.note.split(",")[2] ? ", " + selectedPrescription?.note.split(",")[2] + ", " : ""}
                               {selectedPrescription?.note.split(",")[3] ? selectedPrescription?.note.split(",")[3] : ""}
@@ -286,7 +286,7 @@ export default function WaitingPay() {
 
                           <div class="mt-8 row d-flex" style={{ marginBottom: "30px" }}>
                             <strong className='col-2'>Ghi chú: </strong>
-                            <span className='d-flex justify-content-center align-items-center col-10'>
+                            <span className='d-flex justify-content-start align-items-center col-10'>
                               {selectedPrescription?.note.split(",")[0] || ""}
                             </span>
                           </div>

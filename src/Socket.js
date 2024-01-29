@@ -14,9 +14,7 @@ function UsingWebSocket () {
             toast.success(JSON.parse(message.body).content, {
                 position: toast.POSITION.TOP_RIGHT
             });
-
         };
-
         stompClient.connect({}, () => {
             console.log("SOCKET Connected");
 
