@@ -76,7 +76,7 @@ const ModalHistoryExam = ({ showModal, closeModal, idCustomer }) => {
         <>
             <Modal show={showModal} onHide={closeModal} size='xl' centered>
                 <Modal.Header closeButton>
-                    <Modal.Title className="ms-4">Chi tiết bệnh án</Modal.Title>
+                    <Modal.Title className="ms-4">Lịch sử khám bệnh</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="container-fluid">
@@ -148,10 +148,10 @@ const ModalHistoryExam = ({ showModal, closeModal, idCustomer }) => {
                                                     <th className="border-bottom-0">
                                                         <h6 className="fw-semibold mb-0">Ngày giờ khám</h6>
                                                     </th>
-                                                    <th className="border-bottom-0">
+                                                    <th className="border-bottom-0 text-center">
                                                         <h6 className="fw-semibold mb-0">Dịch vụ</h6>
                                                     </th>
-                                                    <th className="border-bottom-0">
+                                                    <th className="border-bottom-0 text-center">
                                                         <h6 className="fw-semibold mb-0">Trạng thái</h6>
                                                     </th>
                                                     <th className="border-bottom-0 text-center">
@@ -167,13 +167,18 @@ const ModalHistoryExam = ({ showModal, closeModal, idCustomer }) => {
                                                             <h6 className="fw-semibold mb-1">{booking?.dateBooking}</h6>
                                                             <span className="fw-normal">{booking?.timeBooking}</span>
                                                         </td>
-                                                        <td className="border-bottom-0">
+                                                        <td className="border-bottom-0 text-center">
                                                             <h6 className="fw-semibold mb-0">{booking?.eyeCategory?.nameCategory}</h6>
                                                         </td>
-                                                        <td className="border-bottom-0">
-                                                            <div className="d-flex align-items-center gap-2">
+                                                        <td className="border-bottom-0 text-center">
+                                                            <div className="d-flex align-items-center justify-content-center gap-2">
                                                                 <span className="badge rounded-3 fw-semibold" style={{ backgroundColor: statusColors[booking?.status] }}>
-                                                                    {booking?.status}
+                                                                    {booking?.status === "COMPLETED" && "HOÀN THÀNH"}
+                                                                    {booking?.status === "CANCELLED" && "ĐÃ HỦY"}
+                                                                    {booking?.status === "PENDING" && "CHỜ DUYỆT"}
+                                                                    {booking?.status === "WAITING" && "CHỜ KHÁM"}
+                                                                    {booking?.status === "EXAMINING" && "ĐANG KHÁM"}
+                                                                    {booking?.status === "UNPAID" && "CHỜ THANH TOÁN"}
                                                                 </span>
                                                             </div>
                                                         </td>
