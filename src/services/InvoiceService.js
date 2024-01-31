@@ -1,25 +1,26 @@
-import axios from "axios"
+import axios from "axios";
 
-const urlAPI = 'http://localhost:3300/invoices';
+// const urlAPI = 'http://localhost:3300/invoices';
+const URL_API = `${import.meta.env.VITE_API_URL}/invoices`;
 
 class invoiceService {
-    static getAll() {
-        return axios.get(urlAPI)
-    }
+  static getAll() {
+    return axios.get(urlAPI);
+  }
 
-    static getInvoiceById(invoiceId) {
-        return axios.get(urlAPI + '/' + invoiceId)
-    }
-    static createInvoice(data) {
-        return axios.post(urlAPI, data);
-    }
+  static getInvoiceById(invoiceId) {
+    return axios.get(urlAPI + "/" + invoiceId);
+  }
+  static createInvoice(data) {
+    return axios.post(urlAPI, data);
+  }
 
-    static updateInvoiceById(invoiceId, data) { 
-        return axios.put(urlAPI + '/' + invoiceId, data)
-    }
-    static deleteInvoiceById(id) {
-        return axios.delete(urlAPI + '/' + id)
-    }
+  static updateInvoiceById(invoiceId, data) {
+    return axios.put(urlAPI + "/" + invoiceId, data);
+  }
+  static deleteInvoiceById(id) {
+    return axios.delete(urlAPI + "/" + id);
+  }
 }
 
 export default invoiceService;
