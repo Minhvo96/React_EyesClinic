@@ -1,0 +1,1 @@
+.row{display:flex}.col-span-1{flex-basis:120px}.text-container{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%}.logo{width:160px;height:auto}.clinic-name,.clinic-address,.clinic-contact,.invoice-title{margin:0;text-align:center}
